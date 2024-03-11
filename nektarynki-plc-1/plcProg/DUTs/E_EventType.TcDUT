@@ -3,6 +3,7 @@
   <DUT Name="E_EventType" Id="{958c92db-32ca-4dce-a4f7-a49212f20e74}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
+{attribute 'to_string'}
 TYPE E_EventType :
 (
 	Alarm := 0,

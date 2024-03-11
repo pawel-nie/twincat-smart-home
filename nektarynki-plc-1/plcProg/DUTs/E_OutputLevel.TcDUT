@@ -3,6 +3,7 @@
   <DUT Name="E_OutputLevel" Id="{e8345885-1238-46fd-979f-6d45b490d002}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
+{attribute 'to_string'}
 TYPE E_OutputLevel :
 (
 	small := 1,
