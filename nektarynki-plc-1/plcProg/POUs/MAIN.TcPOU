@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{ba37e07b-b35e-420a-a01b-24b84cc886a6}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	initialized : BOOL := FALSE;
+	fbTon : TON := (PT := T#5S);
+	bVar : BOOL;
+	bMsgPrinted : BOOL := FALSE;
+	
+	stThisIsFirstInstanceOfAStructure : ST_Event;
+
+	eEventType : E_EventType := E_EventType.Alarm;
+	eEventSeverity : TcEventSeverity := TcEventSeverity.Info;
+	nEventIdentity : UDINT := 44444;
+	sEventText : STRING(255) := 'Some informational event';
+	
+	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
+	EventLogger : EventLogger(CsvPersistentEventStorage);
+	
+	
+	btn : BOOL;
+	led1_1 : BOOL;
+	led2_1 : BOOL;
+	led2_2 : BOOL;
+	led3 : BOOL;
+	led4_1 : BOOL;
+	led4_2 : BOOL;
+	led4_3 : BOOL;
+	led4_4 : BOOL;
+	arr1 : ARRAY[1..3] OF BOOL;
+	arr2 : ARRAY[1..3] OF BOOL;
+	arr3 : ARRAY[1..3] OF BOOL;
+	arr4 : ARRAY[1..3] OF BOOL;
+	button1 : BUTTON;
+	testTimer : TON;
+	testBool : BOOL := FALSE;
+END_VAR
+
+
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT initialized THEN
+	initButtons();
+	
+	
+			fbTon(IN := bVar);
+			GVL.b_led_1 := fbTon.Q;
+			
+			IF NOT bMsgPrinted THEN 
+				bMsgPrinted := TRUE;
+				ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_LOG,
+				msgFmtStr := 'Hello world!',
+				//ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'Hello world!',
+				strArg := '');
+				F_UpdateEventTimestampWithSystemTime(stEvent := stThisIsFirstInstanceOfAStructure);
+				
+				EventLogger.AddEvent(eEventType, eEventSeverity, nEventIdentity, sEventText);
+				
+				arr1[1] := led1_1;
+				arr2[1] := led2_1; arr2[2] := led2_2;
+				arr3[1] := led3;
+				arr4[1] := led4_1; arr4[2] := led4_2; arr4[3] := led4_3;
+				testTimer(IN:= btn, PT := T#3S);
+				testBool := testTimer.Q;
+			END_IF
+			
+			
+	initialized := TRUE;
+END_IF
+
+
+//-------------------------------
+
+//CsvPersistentEventStorage();
+button1.listen();
+
+
+
+
+
+
+
+]]></ST>
+    </Implementation>
+    <Method Name="initButtons" Id="{bf7480a3-2217-4091-9e5a-54e832bdb26c}">
+      <Declaration><![CDATA[METHOD initButtons
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[button1(digitalInput := btn,
+	small_outputs := arr1,
+	medium_outputs := arr2,
+	big_outputs := arr3,
+	superstrong_outputs := arr4,
+	levelsManaged := 4);]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="MAIN">
+      <LineId Id="161" Count="10" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="172" Count="9" />
+      <LineId Id="211" Count="0" />
+      <LineId Id="182" Count="5" />
+      <LineId Id="190" Count="3" />
+      <LineId Id="200" Count="6" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="71" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.initButtons">
+      <LineId Id="6" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

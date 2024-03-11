@@ -1,0 +1,349 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="Button" Id="{aec94d50-ff8e-4733-83a7-9ffb2f475799}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK Button
+
+VAR CONSTANT
+	MAX_OUTPUTS_PER_LEVEL : INT := 3;
+	ACTIVITY_TIMEOUT_MILISECONDS : INT := 500;
+END_VAR
+
+VAR_INPUT
+	digitalInput : REFERENCE TO BOOL;
+	
+	small_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	medium_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	big_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	superstrong_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	levelsManaged : INT := 3;
+END_VAR
+
+VAR
+	wasRecentlyActive : BOOL := FALSE;
+
+	lightsOn : BOOL := FALSE;
+	click : R_TRIG;
+	smallOutputTimer : TON := (PT := T#1S);
+	mediumOutputTimer : TON := (PT := T#2S); 
+	bigOutputTimer : TON; 
+	superStrongOutputTimer : TON := (PT := T#4S);
+	
+	doublePressTimer : TON := (PT := T#1000MS);
+	testBool0 : BOOL;
+	testBool2 : REFERENCE TO BOOL;
+	
+	initialized : BOOL := FALSE;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT initialized THEN
+	initialized := TRUE;	
+END_IF
+
+
+]]></ST>
+    </Implementation>
+    <Method Name="listen" Id="{8ef97f03-9ee7-4fed-a21d-d7d2049ac2bc}">
+      <Declaration><![CDATA[METHOD listen
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[			click(CLK:= digitalInput);
+	smallOutputTimer(IN := digitalInput);
+	mediumOutputTimer(IN := MAIN.btn);
+	bigOutputTimer(IN := digitalInput, PT := T#3S);
+	superStrongOutputTimer(IN := digitalInput);
+	doublePressTimer(IN := digitalInput);
+	
+		testBool0 := digitalInput;
+		testBool2 REF= digitalInput;
+		click.Q;
+		smallOutputTimer.ET;
+		smallOutputTimer.IN;
+		smallOutputTimer.PT;
+		smallOutputTimer.Q;
+		
+		digitalInput;
+		testBool0;
+		testBool2;
+		click;
+		MAIN.btn;
+		MAIN.button1;
+
+IF TIME_TO_DWORD(doublePressTimer.ET) > ACTIVITY_TIMEOUT_MILISECONDS THEN
+	wasRecentlyActive := FALSE;
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'activity timeout',strArg := '');
+END_IF
+
+IF click.Q THEN
+	wasRecentlyActive := TRUE;
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'rising edge detected',strArg := '');
+END_IF
+
+IF lightsOn AND click.Q THEN
+	turnOff();
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'lights turned off',strArg := '');
+ELSE 
+	manageLongPress();
+	manageDoublePress();
+END_IF
+
+
+
+
+//nacisniecie przycisku - przycisk aktywny przez iles czasu
+
+//przytrzymanie przycisku - TON_1 -> stopniowe włączanie
+//R_TRIG_1 -> domyslne swiatlo
+//przycisk nieaktywny, F_TRIG_1 -> wyłącz
+//przycisk aktywny, F_TRIG_1 -> włącz silne
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="manageDoublePress" Id="{dc38532a-23e3-4596-a5ed-a8602a208064}">
+      <Declaration><![CDATA[METHOD manageDoublePress
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF click.Q AND
+   wasRecentlyActive AND
+   TIME_TO_DWORD(doublePressTimer.ET) <= ACTIVITY_TIMEOUT_MILISECONDS
+THEN
+	turnOnStrongestOutput();
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON strongest',strArg := '');
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="manageLongPress" Id="{9f04a0be-cdbd-4dba-be58-f2a3e3154f07}">
+      <Declaration><![CDATA[METHOD manageLongPress
+VAR_INPUT
+END_VAR
+
+VAR
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF smallOutputTimer.Q THEN
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON small',strArg := '');
+	setOutputs(outputLevel := E_OutputLevel.small, state := TRUE);
+END_IF
+
+IF mediumOutputTimer.Q THEN
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON medium',strArg := '');
+	setOutputs(outputLevel := E_OutputLevel.medium, state := TRUE);
+END_IF
+
+IF bigOutputTimer.Q THEN
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON big',strArg := '');
+	setOutputs(outputLevel := E_OutputLevel.big, state := TRUE);
+END_IF
+
+IF superStrongOutputTimer.Q THEN
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON superstrong',strArg := '');
+	setOutputs(outputLevel := E_OutputLevel.superstrong, state := TRUE);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="setOutputs" Id="{98f0d494-d3da-4ed5-b4b3-67a830019a2c}">
+      <Declaration><![CDATA[METHOD setOutputs
+VAR_INPUT
+	outputLevel : E_OutputLevel;
+	state : BOOL;
+END_VAR
+
+VAR
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE outputLevel OF
+	
+	E_OutputLevel.small:
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := state;
+		END_FOR
+		
+	E_OutputLevel.medium:
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			medium_outputs[i] := state;
+		END_FOR
+		
+	E_OutputLevel.big:
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			big_outputs[i] := state;
+		END_FOR
+		
+	E_OutputLevel.superstrong:
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			superstrong_outputs[i] := state;
+		END_FOR
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="turnOff" Id="{6af44e6f-dbfa-4c03-a237-33da5be5a32c}">
+      <Declaration><![CDATA[METHOD turnOff
+VAR_INPUT
+END_VAR
+
+VAR 
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE levelsManaged OF
+	1 :
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := FALSE;
+		END_FOR
+
+	2 :
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := FALSE;
+			medium_outputs[i] := FALSE;
+		END_FOR
+	
+	3 :
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := FALSE;
+			medium_outputs[i] := FALSE;
+			big_outputs[i] := FALSE;
+		END_FOR
+		
+	4 :
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := FALSE;
+			medium_outputs[i] := FALSE;
+			big_outputs[i] := FALSE;
+			superstrong_outputs[i] := FALSE;
+		END_FOR
+
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="turnOnStrongestOutput" Id="{3f4fabbe-4d13-4779-9909-6746b7be7f4d}">
+      <Declaration><![CDATA[METHOD turnOnStrongestOutput
+VAR_INPUT
+END_VAR
+
+VAR
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE levelsManaged OF
+	1:
+		setOutputs(outputLevel := E_OutputLevel.small, state := TRUE);
+		
+	2:
+		setOutputs(outputLevel := E_OutputLevel.medium, state := TRUE);
+		
+	3:
+		setOutputs(outputLevel := E_OutputLevel.big, state := TRUE);
+		
+	4:
+		setOutputs(outputLevel := E_OutputLevel.superstrong, state := TRUE);
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="Button">
+      <LineId Id="179" Count="0" />
+      <LineId Id="182" Count="0" />
+      <LineId Id="181" Count="0" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="195" Count="0" />
+    </LineIds>
+    <LineIds Name="Button.listen">
+      <LineId Id="44" Count="12" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="36" Count="2" />
+      <LineId Id="40" Count="2" />
+      <LineId Id="6" Count="1" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="8" Count="3" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="12" Count="3" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="16" Count="14" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="Button.manageDoublePress">
+      <LineId Id="5" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="Button.manageLongPress">
+      <LineId Id="5" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="14" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="20" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="25" Count="0" />
+    </LineIds>
+    <LineIds Name="Button.setOutputs">
+      <LineId Id="5" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="12" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="2" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="26" Count="2" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="31" Count="2" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="Button.turnOff">
+      <LineId Id="5" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="17" Count="6" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="25" Count="4" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="32" Count="5" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="Button.turnOnStrongestOutput">
+      <LineId Id="5" Count="1" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

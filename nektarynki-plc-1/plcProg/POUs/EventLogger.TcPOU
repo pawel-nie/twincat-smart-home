@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="EventLogger" Id="{49a270de-7b38-4c0a-b542-93db06ca3178}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK EventLogger
+VAR
+	EventBuffer : ARRAY[1..EVENT_BUFFER_MAX_SIZE] OF ST_Event;
+	CurrentEventBufferIndex : INT := 0;
+	_PersistentEventStorage : I_PersistentEventStorage;
+END_VAR
+VAR CONSTANT
+	EVENT_BUFFER_MAX_SIZE : INT := 100;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="AddEvent" Id="{8442e16c-f730-4c65-b703-9df028836144}">
+      <Declaration><![CDATA[METHOD PUBLIC AddEvent : BOOL
+VAR_INPUT
+	eEventType : E_EventType;
+	eEventSeverity : TcEventSeverity;
+	nEventIdentity : UDINT;
+	sEventText : STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT IsEventBufferFull() THEN
+	//todo
+	CurrentEventBufferIndex := CurrentEventBufferIndex + 1;
+	EventBuffer[CurrentEventBufferIndex].eEventType := eEventType;
+	EventBuffer[CurrentEventBufferIndex].eEventSeverity := eEventSeverity;
+	EventBuffer[CurrentEventBufferIndex].nEventIdentity := nEventIdentity;
+	EventBuffer[CurrentEventBufferIndex].sEventText := sEventText;
+	F_UpdateEventTimestampWithSystemTime(stEvent := EventBuffer[CurrentEventBufferIndex]); 
+	AddEvent := TRUE;
+ELSE
+	AddEvent := FALSE;
+END_IF
+
+_PersistentEventStorage.StoreEvent(stEvent := EventBuffer[CurrentEventBufferIndex]);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_Init" Id="{732d1647-b707-4d0e-b915-0e3d09f67b76}">
+      <Declaration><![CDATA[METHOD FB_Init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL;
+	bInCopyCode : BOOL;
+	iPersistentEventStorage : I_PersistentEventStorage;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_PersistentEventStorage := iPersistentEventStorage;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsEventBufferFull" Id="{6c0e3054-2059-437d-ace7-75813699a690}">
+      <Declaration><![CDATA[METHOD PRIVATE IsEventBufferFull : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF (CurrentEventBufferIndex + 1) >= EVENT_BUFFER_MAX_SIZE THEN
+	IsEventBufferFull := TRUE;
+ELSE
+	IsEventBufferFull := FALSE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="EventLogger">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="EventLogger.AddEvent">
+      <LineId Id="11" Count="1" />
+      <LineId Id="17" Count="5" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="14" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="30" Count="0" />
+    </LineIds>
+    <LineIds Name="EventLogger.FB_Init">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="EventLogger.IsEventBufferFull">
+      <LineId Id="6" Count="1" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

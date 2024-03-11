@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_OutputLevel" Id="{e8345885-1238-46fd-979f-6d45b490d002}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE E_OutputLevel :
+(
+	small := 1,
+	medium := 2,
+	big := 3,
+	superstrong := 4	
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
