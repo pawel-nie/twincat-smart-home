@@ -20,6 +20,7 @@ VAR
 	
 	
 	btn : BOOL;
+	
 	led1_1 : BOOL;
 	led2_1 : BOOL;
 	led2_2 : BOOL;
@@ -28,6 +29,7 @@ VAR
 	led4_2 : BOOL;
 	led4_3 : BOOL;
 	led4_4 : BOOL;
+
 	arr1 : ARRAY[1..3] OF BOOL;
 	arr2 : ARRAY[1..3] OF BOOL;
 	arr3 : ARRAY[1..3] OF BOOL;
@@ -37,6 +39,9 @@ VAR
 	testBool : BOOL := FALSE;
 END_VAR
 
+VAR_IN_OUT
+
+END_VAR
 
 
 ]]></Declaration>
@@ -58,12 +63,17 @@ END_VAR
 				
 				EventLogger.AddEvent(eEventType, eEventSeverity, nEventIdentity, sEventText);
 				
-				arr1[1] := led1_1;
-				arr2[1] := led2_1; arr2[2] := led2_2;
-				arr3[1] := led3;
-				arr4[1] := led4_1; arr4[2] := led4_2; arr4[3] := led4_3;
+
 				testTimer(IN:= btn, PT := T#3S);
 				testBool := testTimer.Q;
+				
+			main.led1_1 := MAIN.arr1[1];
+			MAIN.led2_1  := MAIN.arr2[1]; 
+			MAIN.led2_2 := MAIN.arr2[2];
+			MAIN.led3 := MAIN.arr3[1];
+			MAIN.led4_1 := MAIN.arr4[1]; 
+			MAIN.led4_2 := MAIN.arr4[2]; 
+			MAIN.led4_3 := MAIN.arr4[3];
 			END_IF
 			
 			
@@ -101,8 +111,12 @@ END_VAR
     <LineIds Name="MAIN">
       <LineId Id="161" Count="10" />
       <LineId Id="207" Count="0" />
-      <LineId Id="172" Count="9" />
+      <LineId Id="172" Count="4" />
+      <LineId Id="180" Count="1" />
       <LineId Id="211" Count="0" />
+      <LineId Id="269" Count="0" />
+      <LineId Id="271" Count="5" />
+      <LineId Id="270" Count="0" />
       <LineId Id="182" Count="5" />
       <LineId Id="190" Count="3" />
       <LineId Id="200" Count="6" />

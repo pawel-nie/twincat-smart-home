@@ -29,7 +29,6 @@ VAR
 	mediumOutputTimer : TON := (PT := T#2S); 
 	bigOutputTimer : TON := (PT := T#3S); 
 	superStrongOutputTimer : TON := (PT := T#4S);
-	outputsRepeatSequenceTimer : TON := (PT := T#5S);
 	
 	doublePressTimer : TON := (PT := T#1000MS);
 	inactivityTimeout : TP := (PT := T#500MS);
@@ -40,7 +39,6 @@ VAR
 	mediumOutputsSet : BOOL := FALSE;
 	bigOutputsSet: BOOL := FALSE;
 	superStrongOutputsSet: BOOL := FALSE;
-	outputsRepeatingSequence : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -67,9 +65,16 @@ smallOutputTimer(IN := digitalInput);
 mediumOutputTimer(IN := digitalInput);
 bigOutputTimer(IN := digitalInput);
 superStrongOutputTimer(IN := digitalInput);
-outputsRepeatSequenceTimer(IN := digitalInput);
 doublePressTimer(IN := digitalInput);
 inactivityTimeout(IN := digitalInput);
+
+			main.led1_1 := MAIN.arr1[1];
+			MAIN.led2_1  := MAIN.arr2[1]; 
+			MAIN.led2_2 := MAIN.arr2[2];
+			MAIN.led3 := MAIN.arr3[1];
+			MAIN.led4_1 := MAIN.arr4[1]; 
+			MAIN.led4_2 := MAIN.arr4[2]; 
+			MAIN.led4_3 := MAIN.arr4[3];
 
 		boool := click.Q;
 		smallOutputTimer.ET;
@@ -77,21 +82,23 @@ inactivityTimeout(IN := digitalInput);
 		smallOutputTimer.PT;
 		smallOutputTimer.Q;
 		mediumOutputTimer.Q;
-		outputsRepeatSequenceTimer.Q;
 		bigOutputTimer.Q;
 		digitalInput;
 		click;
 		MAIN.btn;
 		MAIN.button1;
 		number := TIME_TO_DWORD(doublePressTimer.ET);
+		small_outputs;
+		MAIN.led1_1;
+		small_outputs[1];
+		small_outputs[2];
 
-IF NOT digitalInput AND NOT inactivityTimeout.Q THEN
+IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
 	wasRecentlyActive := FALSE;
 	smallOutputsSet := FALSE;
 	mediumOutputsSet := FALSE;
 	bigOutputsSet := FALSE;
 	superStrongOutputsSet := FALSE;
-	outputsRepeatingSequence := TRUE;
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'activity timeout',strArg := '');
 END_IF
 
@@ -135,11 +142,8 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF smallOutputTimer.Q THEN
 	IF NOT smallOutputsSet THEN
-				ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := '--small output timer %s',strArg := TO_STRING(smallOutputTimer.Q));
-				ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := '--smallOutputsSet %s',strArg := TO_STRING(smallOutputsSet));
 		setOutputs(outputLevel := E_OutputLevel.small, state := TRUE);
 		smallOutputsSet := TRUE;
-		outputsRepeatingSequence := FALSE;
 	END_IF
 END_IF
 
@@ -161,16 +165,6 @@ IF superStrongOutputTimer.Q THEN
 	IF NOT superStrongOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.superstrong, state := TRUE);
 		superStrongOutputsSet := TRUE;
-	END_IF
-END_IF
-
-IF outputsRepeatSequenceTimer.Q THEN
-	IF NOT outputsRepeatingSequence THEN
-		smallOutputsSet := FALSE;
-		mediumOutputsSet := FALSE;
-		bigOutputsSet := FALSE;
-		superStrongOutputsSet := FALSE;
-		outputsRepeatingSequence := TRUE;
 	END_IF
 END_IF]]></ST>
       </Implementation>
@@ -290,23 +284,28 @@ END_CASE]]></ST>
     <LineIds Name="Button.listen">
       <LineId Id="44" Count="0" />
       <LineId Id="74" Count="0" />
-      <LineId Id="45" Count="3" />
-      <LineId Id="83" Count="0" />
-      <LineId Id="49" Count="0" />
+      <LineId Id="45" Count="4" />
       <LineId Id="89" Count="0" />
-      <LineId Id="52" Count="4" />
+      <LineId Id="102" Count="2" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="109" Count="1" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="53" Count="3" />
       <LineId Id="35" Count="0" />
       <LineId Id="57" Count="0" />
-      <LineId Id="82" Count="0" />
       <LineId Id="81" Count="0" />
       <LineId Id="43" Count="0" />
       <LineId Id="38" Count="0" />
       <LineId Id="40" Count="1" />
       <LineId Id="64" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="101" Count="0" />
+      <LineId Id="99" Count="1" />
       <LineId Id="42" Count="0" />
       <LineId Id="6" Count="1" />
       <LineId Id="85" Count="3" />
-      <LineId Id="84" Count="0" />
       <LineId Id="32" Count="0" />
       <LineId Id="8" Count="3" />
       <LineId Id="33" Count="0" />
@@ -331,13 +330,12 @@ END_CASE]]></ST>
     </LineIds>
     <LineIds Name="Button.manageLongPress">
       <LineId Id="92" Count="1" />
-      <LineId Id="144" Count="0" />
-      <LineId Id="146" Count="0" />
-      <LineId Id="95" Count="7" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="98" Count="4" />
       <LineId Id="104" Count="6" />
       <LineId Id="112" Count="6" />
-      <LineId Id="120" Count="12" />
-      <LineId Id="73" Count="0" />
+      <LineId Id="120" Count="3" />
     </LineIds>
     <LineIds Name="Button.setOutputs">
       <LineId Id="46" Count="0" />
