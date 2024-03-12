@@ -68,13 +68,7 @@ superStrongOutputTimer(IN := digitalInput);
 doublePressTimer(IN := digitalInput);
 inactivityTimeout(IN := digitalInput);
 
-			main.led1_1 := MAIN.arr1[1];
-			MAIN.led2_1  := MAIN.arr2[1]; 
-			MAIN.led2_2 := MAIN.arr2[2];
-			MAIN.led3 := MAIN.arr3[1];
-			MAIN.led4_1 := MAIN.arr4[1]; 
-			MAIN.led4_2 := MAIN.arr4[2]; 
-			MAIN.led4_3 := MAIN.arr4[3];
+
 
 		boool := click.Q;
 		smallOutputTimer.ET;
@@ -89,10 +83,17 @@ inactivityTimeout(IN := digitalInput);
 		MAIN.button1;
 		number := TIME_TO_DWORD(doublePressTimer.ET);
 		small_outputs;
-		MAIN.led1_1;
 		small_outputs[1];
 		small_outputs[2];
 
+			HMI.led1_1 := MAIN.arr1[1];
+			HMI.led2_1  := MAIN.arr2[1]; 
+			HMI.led2_2 := MAIN.arr2[2];
+			HMI.led3 := MAIN.arr3[1];
+			HMI.led4_1 := MAIN.arr4[1]; 
+			HMI.led4_2 := MAIN.arr4[2]; 
+			HMI.led4_3 := MAIN.arr4[3];
+			
 IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
 	wasRecentlyActive := FALSE;
 	smallOutputsSet := FALSE;
@@ -111,7 +112,7 @@ IF release.Q THEN
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'button released',strArg := '');
 END_IF
 
-IF lightsOn AND click.Q THEN
+IF click.Q THEN
 	turnOff();
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'lights turned off',strArg := '');
 ELSE 
@@ -286,11 +287,8 @@ END_CASE]]></ST>
       <LineId Id="74" Count="0" />
       <LineId Id="45" Count="4" />
       <LineId Id="89" Count="0" />
-      <LineId Id="102" Count="2" />
-      <LineId Id="108" Count="0" />
-      <LineId Id="105" Count="0" />
-      <LineId Id="52" Count="0" />
-      <LineId Id="109" Count="1" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="110" Count="0" />
       <LineId Id="107" Count="0" />
       <LineId Id="53" Count="3" />
       <LineId Id="35" Count="0" />
@@ -301,9 +299,10 @@ END_CASE]]></ST>
       <LineId Id="40" Count="1" />
       <LineId Id="64" Count="0" />
       <LineId Id="97" Count="0" />
-      <LineId Id="101" Count="0" />
       <LineId Id="99" Count="1" />
+      <LineId Id="111" Count="6" />
       <LineId Id="42" Count="0" />
+      <LineId Id="118" Count="0" />
       <LineId Id="6" Count="1" />
       <LineId Id="85" Count="3" />
       <LineId Id="32" Count="0" />

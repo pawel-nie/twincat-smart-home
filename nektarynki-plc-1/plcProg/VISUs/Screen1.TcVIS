@@ -186,7 +186,7 @@
                     </o>
                     <o>
                       <v n="Id">743958181L</v>
-                      <v n="Value">"MAIN.led1_1"</v>
+                      <v n="Value">"HMI.led1_1"</v>
                     </o>
                   </l>
                 </o>
@@ -280,7 +280,7 @@
                     </o>
                     <o>
                       <v n="Id">743958181L</v>
-                      <v n="Value">"MAIN.led2_2"</v>
+                      <v n="Value">"HMI.led2_2"</v>
                     </o>
                   </l>
                 </o>
@@ -374,7 +374,7 @@
                     </o>
                     <o>
                       <v n="Id">743958181L</v>
-                      <v n="Value">"MAIN.led2_1"</v>
+                      <v n="Value">"HMI.led2_1"</v>
                     </o>
                   </l>
                 </o>
@@ -468,7 +468,7 @@
                     </o>
                     <o>
                       <v n="Id">743958181L</v>
-                      <v n="Value">"MAIN.led3"</v>
+                      <v n="Value">"HMI.led3"</v>
                     </o>
                   </l>
                 </o>
@@ -562,7 +562,7 @@
                     </o>
                     <o>
                       <v n="Id">743958181L</v>
-                      <v n="Value">"MAIN.led4_1"</v>
+                      <v n="Value">"HMI.led4_1"</v>
                     </o>
                   </l>
                 </o>
@@ -656,7 +656,7 @@
                     </o>
                     <o>
                       <v n="Id">743958181L</v>
-                      <v n="Value">"MAIN.led4_2"</v>
+                      <v n="Value">"HMI.led4_2"</v>
                     </o>
                   </l>
                 </o>
@@ -750,7 +750,7 @@
                     </o>
                     <o>
                       <v n="Id">743958181L</v>
-                      <v n="Value">"MAIN.led4_3"</v>
+                      <v n="Value">"HMI.led4_3"</v>
                     </o>
                   </l>
                 </o>

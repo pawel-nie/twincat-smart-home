@@ -12,6 +12,17 @@ VAR_GLOBAL
 	bIndicator1 : BOOL;
 	bIndicator2 : BOOL;
 	
+	
+	led1_1 : BOOL;
+	led2_1 : BOOL;
+	led2_2 : BOOL;
+	led3 : BOOL;
+	led4_1 : BOOL;
+	led4_2 : BOOL;
+	led4_3 : BOOL;
+	led4_4 : BOOL;
+	
+	
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>
