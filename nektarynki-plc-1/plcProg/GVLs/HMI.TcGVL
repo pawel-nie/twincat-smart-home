@@ -13,6 +13,8 @@ VAR_GLOBAL
 	bIndicator2 : BOOL;
 	
 	
+	btn : BOOL;
+		
 	led1_1 : BOOL;
 	led2_1 : BOOL;
 	led2_2 : BOOL;

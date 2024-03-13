@@ -5,7 +5,6 @@
 
 VAR CONSTANT
 	MAX_OUTPUTS_PER_LEVEL : INT := 3;
-	ACTIVITY_TIMEOUT_MILISECONDS : INT := 500;
 END_VAR
 
 VAR_INPUT
@@ -23,7 +22,7 @@ VAR
 	wasRecentlyActive : BOOL := FALSE;
 
 	lightsOn : BOOL := FALSE;
-	click : R_TRIG;
+	press : R_TRIG;
 	release : F_TRIG;
 	smallOutputTimer : TON := (PT := T#1S);
 	mediumOutputTimer : TON := (PT := T#2S); 
@@ -59,7 +58,7 @@ VAR
 	boool : BOOL;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[click(CLK:= digitalInput);
+        <ST><![CDATA[press(CLK:= digitalInput);
 release(CLK:= digitalInput);
 smallOutputTimer(IN := digitalInput);
 mediumOutputTimer(IN := digitalInput);
@@ -70,7 +69,7 @@ inactivityTimeout(IN := digitalInput);
 
 
 
-		boool := click.Q;
+		boool := press.Q;
 		smallOutputTimer.ET;
 		smallOutputTimer.IN;
 		smallOutputTimer.PT;
@@ -78,8 +77,8 @@ inactivityTimeout(IN := digitalInput);
 		mediumOutputTimer.Q;
 		bigOutputTimer.Q;
 		digitalInput;
-		click;
-		MAIN.btn;
+		press;
+		HMI.btn;
 		MAIN.button1;
 		number := TIME_TO_DWORD(doublePressTimer.ET);
 		small_outputs;
@@ -87,7 +86,7 @@ inactivityTimeout(IN := digitalInput);
 		small_outputs[2];
 
 			HMI.led1_1 := MAIN.arr1[1];
-			HMI.led2_1  := MAIN.arr2[1]; 
+			HMI.led2_1 := MAIN.arr2[1]; 
 			HMI.led2_2 := MAIN.arr2[2];
 			HMI.led3 := MAIN.arr3[1];
 			HMI.led4_1 := MAIN.arr4[1]; 
@@ -103,21 +102,24 @@ IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'activity timeout',strArg := '');
 END_IF
 
-IF click.Q THEN
-	wasRecentlyActive := TRUE;
+IF press.Q THEN
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'button pressed',strArg := '');
+	IF wasRecentlyActive THEN
+		turnOnStrongestOutput();
+		ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON strongest as double press',strArg := '');
+	END_IF
+	wasRecentlyActive := TRUE;
 END_IF
 
 IF release.Q THEN
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'button released',strArg := '');
 END_IF
 
-IF click.Q THEN
+IF press.Q THEN
 	turnOff();
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'lights turned off',strArg := '');
 ELSE 
 	manageLongPress();
-	//manageDoublePress();
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -127,9 +129,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF click.Q AND
-   wasRecentlyActive AND
-   TIME_TO_DWORD(doublePressTimer.ET) <= ACTIVITY_TIMEOUT_MILISECONDS
+        <ST><![CDATA[IF press.Q AND
+   wasRecentlyActive
 THEN
 	turnOnStrongestOutput();
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON strongest as double press',strArg := '');
@@ -306,9 +307,12 @@ END_CASE]]></ST>
       <LineId Id="6" Count="1" />
       <LineId Id="85" Count="3" />
       <LineId Id="32" Count="0" />
-      <LineId Id="8" Count="3" />
-      <LineId Id="33" Count="0" />
-      <LineId Id="12" Count="0" />
+      <LineId Id="8" Count="2" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="127" Count="1" />
+      <LineId Id="11" Count="1" />
       <LineId Id="80" Count="0" />
       <LineId Id="76" Count="0" />
       <LineId Id="78" Count="0" />
@@ -316,12 +320,12 @@ END_CASE]]></ST>
       <LineId Id="79" Count="0" />
       <LineId Id="14" Count="1" />
       <LineId Id="34" Count="0" />
-      <LineId Id="16" Count="3" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="19" Count="0" />
     </LineIds>
     <LineIds Name="Button.manageDoublePress">
       <LineId Id="5" Count="0" />
       <LineId Id="11" Count="0" />
-      <LineId Id="9" Count="0" />
       <LineId Id="8" Count="0" />
       <LineId Id="6" Count="0" />
       <LineId Id="12" Count="0" />

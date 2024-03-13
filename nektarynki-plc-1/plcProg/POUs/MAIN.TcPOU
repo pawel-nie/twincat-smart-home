@@ -18,7 +18,7 @@ VAR
 	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
 	EventLogger : EventLogger(CsvPersistentEventStorage);
 	
-	btn : BOOL;
+
 
 	arr1 : ARRAY[1..3] OF BOOL;
 	arr2 : ARRAY[1..3] OF BOOL;
@@ -54,7 +54,7 @@ END_VAR
 				EventLogger.AddEvent(eEventType, eEventSeverity, nEventIdentity, sEventText);
 				
 
-				testTimer(IN:= btn, PT := T#3S);
+				testTimer(IN:= HMI.btn, PT := T#3S);
 				testBool := testTimer.Q;
 				
 
@@ -84,7 +84,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[button1(digitalInput := btn,
+        <ST><![CDATA[button1(digitalInput := HMI.btn,
 	small_outputs := arr1,
 	medium_outputs := arr2,
 	big_outputs := arr3,
