@@ -105,8 +105,11 @@ END_IF
 IF press.Q THEN
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'button pressed',strArg := '');
 	IF wasRecentlyActive THEN
-		turnOnStrongestOutput();
 		ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON strongest as double press',strArg := '');
+		turnOnStrongestOutput();
+	ELSE
+		ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'lights turned off',strArg := '');
+		turnOff();
 	END_IF
 	wasRecentlyActive := TRUE;
 END_IF
@@ -115,12 +118,7 @@ IF release.Q THEN
 	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'button released',strArg := '');
 END_IF
 
-IF press.Q THEN
-	turnOff();
-	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'lights turned off',strArg := '');
-ELSE 
-	manageLongPress();
-END_IF]]></ST>
+manageLongPress();]]></ST>
       </Implementation>
     </Method>
     <Method Name="manageDoublePress" Id="{dc38532a-23e3-4596-a5ed-a8602a208064}">
@@ -184,7 +182,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[levelAsText := TO_STRING(outputLevel);
-ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON %s as long press',strArg := levelAsText);
+ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON %s',strArg := levelAsText);
 
 CASE outputLevel OF
 	
@@ -310,17 +308,18 @@ END_CASE]]></ST>
       <LineId Id="8" Count="2" />
       <LineId Id="131" Count="0" />
       <LineId Id="126" Count="0" />
+      <LineId Id="141" Count="0" />
       <LineId Id="130" Count="0" />
-      <LineId Id="127" Count="1" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="132" Count="0" />
       <LineId Id="11" Count="1" />
       <LineId Id="80" Count="0" />
       <LineId Id="76" Count="0" />
       <LineId Id="78" Count="0" />
       <LineId Id="13" Count="0" />
       <LineId Id="79" Count="0" />
-      <LineId Id="14" Count="1" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="16" Count="1" />
       <LineId Id="19" Count="0" />
     </LineIds>
     <LineIds Name="Button.manageDoublePress">
