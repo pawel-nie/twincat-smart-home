@@ -16,12 +16,14 @@ VAR_INPUT
 	superstrong_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	levelsManaged : INT := 3;
+	
+	defaultDayOutput : E_OutputLevel;
+	defaultNightOutput : E_OutputLevel;
 END_VAR
 
 VAR
 	wasRecentlyActive : BOOL := FALSE;
 
-	lightsOn : BOOL := FALSE;
 	press : R_TRIG;
 	release : F_TRIG;
 	smallOutputTimer : TON := (PT := T#1S);
@@ -33,7 +35,8 @@ VAR
 	inactivityTimeout : TP := (PT := T#500MS);
 	
 	initialized : BOOL := FALSE;
-	
+	isOn : BOOL := FALSE;
+		
 	smallOutputsSet : BOOL := FALSE;
 	mediumOutputsSet : BOOL := FALSE;
 	bigOutputsSet: BOOL := FALSE;
@@ -67,31 +70,13 @@ superStrongOutputTimer(IN := digitalInput);
 doublePressTimer(IN := digitalInput);
 inactivityTimeout(IN := digitalInput);
 
-
-
-		boool := press.Q;
-		smallOutputTimer.ET;
-		smallOutputTimer.IN;
-		smallOutputTimer.PT;
-		smallOutputTimer.Q;
-		mediumOutputTimer.Q;
-		bigOutputTimer.Q;
-		digitalInput;
-		press;
-		HMI.btn;
-		MAIN.button1;
-		number := TIME_TO_DWORD(doublePressTimer.ET);
-		small_outputs;
-		small_outputs[1];
-		small_outputs[2];
-
-			HMI.led1_1 := MAIN.arr1[1];
-			HMI.led2_1 := MAIN.arr2[1]; 
-			HMI.led2_2 := MAIN.arr2[2];
-			HMI.led3 := MAIN.arr3[1];
-			HMI.led4_1 := MAIN.arr4[1]; 
-			HMI.led4_2 := MAIN.arr4[2]; 
-			HMI.led4_3 := MAIN.arr4[3];
+HMI.led1_1 := MAIN.arr1[1];
+HMI.led2_1 := MAIN.arr2[1]; 
+HMI.led2_2 := MAIN.arr2[2];
+HMI.led3 := MAIN.arr3[1];
+HMI.led4_1 := MAIN.arr4[1]; 
+HMI.led4_2 := MAIN.arr4[2]; 
+HMI.led4_3 := MAIN.arr4[3];
 			
 IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
 	wasRecentlyActive := FALSE;
@@ -108,8 +93,12 @@ IF press.Q THEN
 		ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON strongest as double press',strArg := '');
 		turnOnStrongestOutput();
 	ELSE
-		ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'lights turned off',strArg := '');
-		turnOff();
+		IF isON THEN
+			ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'lights turned off',strArg := '');
+			turnOff();
+		ELSE
+			turnOnDefault();
+		END_IF
 	END_IF
 	wasRecentlyActive := TRUE;
 END_IF
@@ -121,20 +110,6 @@ END_IF
 manageLongPress();]]></ST>
       </Implementation>
     </Method>
-    <Method Name="manageDoublePress" Id="{dc38532a-23e3-4596-a5ed-a8602a208064}">
-      <Declaration><![CDATA[METHOD manageDoublePress
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF press.Q AND
-   wasRecentlyActive
-THEN
-	turnOnStrongestOutput();
-	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON strongest as double press',strArg := '');
-END_IF]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="manageLongPress" Id="{9f04a0be-cdbd-4dba-be58-f2a3e3154f07}">
       <Declaration><![CDATA[METHOD manageLongPress
 VAR_INPUT
@@ -144,6 +119,7 @@ END_VAR]]></Declaration>
 	IF NOT smallOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.small, state := TRUE);
 		smallOutputsSet := TRUE;
+		isOn := TRUE;
 	END_IF
 END_IF
 
@@ -151,6 +127,7 @@ IF mediumOutputTimer.Q THEN
 	IF NOT mediumOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.medium, state := TRUE);
 		mediumOutputsSet := TRUE;
+		isOn := TRUE;
 	END_IF
 END_IF
 
@@ -158,6 +135,7 @@ IF bigOutputTimer.Q THEN
 	IF NOT bigOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.big, state := TRUE);
 		bigOutputsSet := TRUE;
+		isOn := TRUE;
 	END_IF
 END_IF
 
@@ -165,8 +143,11 @@ IF superStrongOutputTimer.Q THEN
 	IF NOT superStrongOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.superstrong, state := TRUE);
 		superStrongOutputsSet := TRUE;
+		isOn := TRUE;
 	END_IF
-END_IF]]></ST>
+END_IF
+
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="setOutputs" Id="{98f0d494-d3da-4ed5-b4b3-67a830019a2c}">
@@ -245,7 +226,26 @@ END_VAR]]></Declaration>
 			superstrong_outputs[i] := FALSE;
 		END_FOR
 
-END_CASE]]></ST>
+END_CASE
+
+isOn := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="turnOnDefault" Id="{0b29667d-d1f0-4d16-a335-62900f4a810a}">
+      <Declaration><![CDATA[METHOD turnOnDefault
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF MAIN.isDay THEN
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON default: %s for day', strArg := TO_STRING(defaultDayOutput));
+	setOutputs(outputLevel := defaultDayOutput, state := TRUE);
+ELSE
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON default: %s for night', strArg := TO_STRING(defaultNightOutput));
+	setOutputs(outputLevel := defaultNightOutput, state := TRUE);
+END_IF
+
+isOn := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="turnOnStrongestOutput" Id="{3f4fabbe-4d13-4779-9909-6746b7be7f4d}">
@@ -270,7 +270,9 @@ END_VAR]]></Declaration>
 	4:
 		setOutputs(outputLevel := E_OutputLevel.superstrong, state := TRUE);
 		
-END_CASE]]></ST>
+END_CASE
+
+isOn := TRUE;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="Button">
@@ -286,19 +288,6 @@ END_CASE]]></ST>
       <LineId Id="74" Count="0" />
       <LineId Id="45" Count="4" />
       <LineId Id="89" Count="0" />
-      <LineId Id="102" Count="0" />
-      <LineId Id="110" Count="0" />
-      <LineId Id="107" Count="0" />
-      <LineId Id="53" Count="3" />
-      <LineId Id="35" Count="0" />
-      <LineId Id="57" Count="0" />
-      <LineId Id="81" Count="0" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="38" Count="0" />
-      <LineId Id="40" Count="1" />
-      <LineId Id="64" Count="0" />
-      <LineId Id="97" Count="0" />
-      <LineId Id="99" Count="1" />
       <LineId Id="111" Count="6" />
       <LineId Id="42" Count="0" />
       <LineId Id="118" Count="0" />
@@ -311,8 +300,12 @@ END_CASE]]></ST>
       <LineId Id="141" Count="0" />
       <LineId Id="130" Count="0" />
       <LineId Id="127" Count="0" />
-      <LineId Id="140" Count="0" />
       <LineId Id="142" Count="0" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="153" Count="0" />
       <LineId Id="132" Count="0" />
       <LineId Id="11" Count="1" />
       <LineId Id="80" Count="0" />
@@ -322,22 +315,23 @@ END_CASE]]></ST>
       <LineId Id="79" Count="0" />
       <LineId Id="19" Count="0" />
     </LineIds>
-    <LineIds Name="Button.manageDoublePress">
-      <LineId Id="5" Count="0" />
-      <LineId Id="11" Count="0" />
-      <LineId Id="8" Count="0" />
-      <LineId Id="6" Count="0" />
-      <LineId Id="12" Count="0" />
-      <LineId Id="7" Count="0" />
-    </LineIds>
     <LineIds Name="Button.manageLongPress">
       <LineId Id="92" Count="1" />
       <LineId Id="149" Count="0" />
       <LineId Id="96" Count="0" />
+      <LineId Id="154" Count="0" />
       <LineId Id="98" Count="4" />
-      <LineId Id="104" Count="6" />
-      <LineId Id="112" Count="6" />
-      <LineId Id="120" Count="3" />
+      <LineId Id="104" Count="1" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="106" Count="4" />
+      <LineId Id="112" Count="1" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="114" Count="4" />
+      <LineId Id="120" Count="1" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="122" Count="1" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="152" Count="0" />
     </LineIds>
     <LineIds Name="Button.setOutputs">
       <LineId Id="46" Count="0" />
@@ -372,6 +366,19 @@ END_CASE]]></ST>
       <LineId Id="31" Count="0" />
       <LineId Id="12" Count="0" />
       <LineId Id="7" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="44" Count="0" />
+    </LineIds>
+    <LineIds Name="Button.turnOnDefault">
+      <LineId Id="6" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="Button.turnOnStrongestOutput">
       <LineId Id="5" Count="1" />
@@ -387,6 +394,8 @@ END_CASE]]></ST>
       <LineId Id="33" Count="0" />
       <LineId Id="16" Count="0" />
       <LineId Id="7" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

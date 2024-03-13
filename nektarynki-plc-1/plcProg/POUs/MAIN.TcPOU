@@ -27,6 +27,8 @@ VAR
 	button1 : BUTTON;
 	testTimer : TON;
 	testBool : BOOL := FALSE;
+	
+	isDay : BOOL := TRUE;
 END_VAR
 
 VAR_IN_OUT
@@ -89,7 +91,9 @@ END_VAR
 	medium_outputs := arr2,
 	big_outputs := arr3,
 	superstrong_outputs := arr4,
-	levelsManaged := 4);]]></ST>
+	levelsManaged := 4,
+	defaultDayOutput := E_OutputLevel.big,
+	defaultNightOutput := E_OutputLevel.small);]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
@@ -108,6 +112,7 @@ END_VAR
     <LineIds Name="MAIN.initButtons">
       <LineId Id="6" Count="4" />
       <LineId Id="5" Count="0" />
+      <LineId Id="14" Count="1" />
     </LineIds>
   </POU>
 </TcPlcObject>

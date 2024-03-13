@@ -14,6 +14,7 @@ VAR_GLOBAL
 	
 	
 	btn : BOOL;
+	dayNightSwitch : BOOL;
 		
 	led1_1 : BOOL;
 	led2_1 : BOOL;
