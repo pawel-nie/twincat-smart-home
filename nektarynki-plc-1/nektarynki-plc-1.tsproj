@@ -10,7 +10,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{A14C7FBD-5B32-49C5-96AB-4C1D0189B914}" Name="plcProg" PrjFilePath="plcProg\plcProg.plcproj" TmcFilePath="plcProg\plcProg.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{DDE65352-64F5-67DD-F411-D140E72A177F}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{7603F17A-F9EA-1FD5-6720-69F4E93EFE51}">
 					<Name>plcProg Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">

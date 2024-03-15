@@ -31,16 +31,23 @@ VAR
 	bigOutputTimer : TON := (PT := T#3S); 
 	superStrongOutputTimer : TON := (PT := T#4S);
 	
-	doublePressTimer : TON := (PT := T#1000MS);
-	inactivityTimeout : TP := (PT := T#500MS);
+	doublePressTimer : TON := (PT := T#2000MS);
+	inactivityTimeout : TP := (PT := T#1500MS);
 	
+	pressedTimer : TON := (PT := T#10S);
+	pressedTimeMiliseconds : INT := 0;
+	firstLongPress : BOOL := FALSE;
 	initialized : BOOL := FALSE;
 	isOn : BOOL := FALSE;
-		
+	turnedOnStrongest : BOOL := FALSE;
+	turnedOnLongSelector : BOOL := FALSE;
+	
 	smallOutputsSet : BOOL := FALSE;
 	mediumOutputsSet : BOOL := FALSE;
 	bigOutputsSet: BOOL := FALSE;
 	superStrongOutputsSet: BOOL := FALSE;
+	
+
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -51,6 +58,15 @@ END_IF
 
 ]]></ST>
     </Implementation>
+    <Method Name="isTurnedOnLongSelector" Id="{7bae46af-3a44-48ea-bbd6-f40ab3340ff2}">
+      <Declaration><![CDATA[METHOD isTurnedOnLongSelector : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[isTurnedOnLongSelector := smallOutputsSet OR mediumOutputsSet OR bigOutputsSet OR superStrongOutputsSet;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="listen" Id="{8ef97f03-9ee7-4fed-a21d-d7d2049ac2bc}">
       <Declaration><![CDATA[METHOD listen
 VAR_INPUT
@@ -69,6 +85,8 @@ bigOutputTimer(IN := digitalInput);
 superStrongOutputTimer(IN := digitalInput);
 doublePressTimer(IN := digitalInput);
 inactivityTimeout(IN := digitalInput);
+pressedTimer(IN := digitalInput);
+turnedOnLongSelector := isTurnedOnLongSelector();
 
 HMI.led1_1 := MAIN.arr1[1];
 HMI.led2_1 := MAIN.arr2[1]; 
@@ -76,38 +94,66 @@ HMI.led2_2 := MAIN.arr2[2];
 HMI.led3 := MAIN.arr3[1];
 HMI.led4_1 := MAIN.arr4[1]; 
 HMI.led4_2 := MAIN.arr4[2]; 
-HMI.led4_3 := MAIN.arr4[3];
-			
+HMI.led4_3 := MAIN.arr4[3];		
+
+IF NOT inactivityTimeout.Q THEN
+	firstLongPress := FALSE;	
+	turnedOnStrongest := FALSE;
+END_IF
+
+IF digitalInput THEN
+	IF TIME_TO_INT(pressedTimer.ET) <> 0 THEN
+		pressedTimeMiliseconds := TIME_TO_INT(pressedTimer.ET);
+	END_IF
+END_IF
+
 IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
+	print(str1:='activity timeout', str2:= '');
 	wasRecentlyActive := FALSE;
 	smallOutputsSet := FALSE;
 	mediumOutputsSet := FALSE;
 	bigOutputsSet := FALSE;
 	superStrongOutputsSet := FALSE;
-	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'activity timeout',strArg := '');
 END_IF
 
 IF press.Q THEN
-	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'button pressed',strArg := '');
-	IF wasRecentlyActive THEN
-		ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON strongest as double press',strArg := '');
+	print(str1:='button pressed', str2:= '');
+	IF firstLongPress THEN
+		print(str1:='turn ON strongest as double press', str2:= '');
 		turnOnStrongestOutput();
-	ELSE
-		IF isON THEN
-			ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'lights turned off',strArg := '');
-			turnOff();
-		ELSE
-			turnOnDefault();
-		END_IF
+		JMP _ret;
 	END_IF
-	wasRecentlyActive := TRUE;
 END_IF
 
 IF release.Q THEN
-	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'button released',strArg := '');
+	print(str1:='Released after %s', str2:= TO_STRING(pressedTimeMiliseconds));
+	IF NOT wasRecentlyActive THEN
+		
+		IF isON AND NOT turnedOnLongSelector THEN
+			print(str1:='lights turned off', str2:= '');
+			turnOff();
+		ELSE
+			IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 250  THEN
+				print(str1:='quick press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
+				turnOnDefault();
+			END_IF
+			
+			IF pressedTimeMiliseconds > 250 THEN
+				print(str1:='long press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
+				firstLongPress := TRUE;
+			END_IF 
+		END_IF
+	END_IF	
+
+
+	wasRecentlyActive := TRUE;
+	pressedTimeMiliseconds := TIME_TO_INT(pressedTimer.ET);
 END_IF
 
-manageLongPress();]]></ST>
+
+manageLongPress();
+
+_ret :]]></ST>
       </Implementation>
     </Method>
     <Method Name="manageLongPress" Id="{9f04a0be-cdbd-4dba-be58-f2a3e3154f07}">
@@ -115,7 +161,7 @@ manageLongPress();]]></ST>
 VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF smallOutputTimer.Q THEN
+        <ST><![CDATA[IF TIME_TO_DWORD(pressedTimer.ET) >= 1000 THEN
 	IF NOT smallOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.small, state := TRUE);
 		smallOutputsSet := TRUE;
@@ -123,7 +169,7 @@ END_VAR]]></Declaration>
 	END_IF
 END_IF
 
-IF mediumOutputTimer.Q THEN
+IF TIME_TO_DWORD(pressedTimer.ET) >= 2000 THEN
 	IF NOT mediumOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.medium, state := TRUE);
 		mediumOutputsSet := TRUE;
@@ -131,7 +177,7 @@ IF mediumOutputTimer.Q THEN
 	END_IF
 END_IF
 
-IF bigOutputTimer.Q THEN
+IF TIME_TO_DWORD(pressedTimer.ET) >= 3000 THEN
 	IF NOT bigOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.big, state := TRUE);
 		bigOutputsSet := TRUE;
@@ -139,15 +185,25 @@ IF bigOutputTimer.Q THEN
 	END_IF
 END_IF
 
-IF superStrongOutputTimer.Q THEN
+IF TIME_TO_DWORD(pressedTimer.ET) >= 4000 THEN
 	IF NOT superStrongOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.superstrong, state := TRUE);
 		superStrongOutputsSet := TRUE;
 		isOn := TRUE;
 	END_IF
 END_IF
-
 ]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="print" Id="{287da7bd-5655-405b-bd79-4e59ca6d7cd7}">
+      <Declaration><![CDATA[METHOD print : BOOL
+VAR_INPUT
+	str1 : STRING;
+	str2 : STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := str1, strArg := str2);]]></ST>
       </Implementation>
     </Method>
     <Method Name="setOutputs" Id="{98f0d494-d3da-4ed5-b4b3-67a830019a2c}">
@@ -260,18 +316,30 @@ END_VAR]]></Declaration>
         <ST><![CDATA[CASE levelsManaged OF
 	1:
 		setOutputs(outputLevel := E_OutputLevel.small, state := TRUE);
-		
+		setOutputs(outputLevel := E_OutputLevel.medium, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.big, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.superstrong, state := FALSE);
 	2:
+		setOutputs(outputLevel := E_OutputLevel.medium, state := FALSE);
 		setOutputs(outputLevel := E_OutputLevel.medium, state := TRUE);
+		setOutputs(outputLevel := E_OutputLevel.big, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.superstrong, state := FALSE);
 		
 	3:
+		setOutputs(outputLevel := E_OutputLevel.big, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.medium, state := FALSE);
 		setOutputs(outputLevel := E_OutputLevel.big, state := TRUE);
+		setOutputs(outputLevel := E_OutputLevel.superstrong, state := FALSE);
 		
 	4:
+		setOutputs(outputLevel := E_OutputLevel.superstrong, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.medium, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.big, state := FALSE);
 		setOutputs(outputLevel := E_OutputLevel.superstrong, state := TRUE);
 		
 END_CASE
 
+turnedOnStrongest := TRUE;
 isOn := TRUE;]]></ST>
       </Implementation>
     </Method>
@@ -283,55 +351,69 @@ isOn := TRUE;]]></ST>
       <LineId Id="208" Count="0" />
       <LineId Id="195" Count="0" />
     </LineIds>
+    <LineIds Name="Button.isTurnedOnLongSelector">
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="Button.listen">
       <LineId Id="44" Count="0" />
       <LineId Id="74" Count="0" />
       <LineId Id="45" Count="4" />
       <LineId Id="89" Count="0" />
-      <LineId Id="111" Count="6" />
+      <LineId Id="193" Count="0" />
+      <LineId Id="293" Count="0" />
+      <LineId Id="175" Count="0" />
+      <LineId Id="112" Count="5" />
       <LineId Id="42" Count="0" />
-      <LineId Id="118" Count="0" />
-      <LineId Id="6" Count="1" />
+      <LineId Id="199" Count="0" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="228" Count="0" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="213" Count="0" />
+      <LineId Id="202" Count="0" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="214" Count="0" />
+      <LineId Id="218" Count="0" />
+      <LineId Id="215" Count="1" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="212" Count="0" />
+      <LineId Id="7" Count="0" />
       <LineId Id="85" Count="3" />
-      <LineId Id="32" Count="0" />
       <LineId Id="8" Count="2" />
-      <LineId Id="131" Count="0" />
+      <LineId Id="206" Count="0" />
       <LineId Id="126" Count="0" />
-      <LineId Id="141" Count="0" />
+      <LineId Id="207" Count="0" />
       <LineId Id="130" Count="0" />
-      <LineId Id="127" Count="0" />
-      <LineId Id="142" Count="0" />
-      <LineId Id="157" Count="0" />
-      <LineId Id="152" Count="0" />
-      <LineId Id="154" Count="0" />
-      <LineId Id="156" Count="0" />
-      <LineId Id="153" Count="0" />
+      <LineId Id="227" Count="0" />
       <LineId Id="132" Count="0" />
-      <LineId Id="11" Count="1" />
+      <LineId Id="12" Count="0" />
       <LineId Id="80" Count="0" />
       <LineId Id="76" Count="0" />
-      <LineId Id="78" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="254" Count="1" />
+      <LineId Id="275" Count="3" />
+      <LineId Id="280" Count="4" />
+      <LineId Id="286" Count="3" />
+      <LineId Id="292" Count="0" />
+      <LineId Id="290" Count="0" />
+      <LineId Id="203" Count="1" />
+      <LineId Id="181" Count="0" />
+      <LineId Id="219" Count="0" />
       <LineId Id="13" Count="0" />
+      <LineId Id="198" Count="0" />
       <LineId Id="79" Count="0" />
       <LineId Id="19" Count="0" />
+      <LineId Id="226" Count="0" />
+      <LineId Id="225" Count="0" />
     </LineIds>
     <LineIds Name="Button.manageLongPress">
-      <LineId Id="92" Count="1" />
-      <LineId Id="149" Count="0" />
-      <LineId Id="96" Count="0" />
-      <LineId Id="154" Count="0" />
-      <LineId Id="98" Count="4" />
-      <LineId Id="104" Count="1" />
-      <LineId Id="155" Count="0" />
-      <LineId Id="106" Count="4" />
-      <LineId Id="112" Count="1" />
-      <LineId Id="156" Count="0" />
-      <LineId Id="114" Count="4" />
-      <LineId Id="120" Count="1" />
-      <LineId Id="157" Count="0" />
-      <LineId Id="122" Count="1" />
-      <LineId Id="153" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="167" Count="28" />
+      <LineId Id="163" Count="0" />
       <LineId Id="152" Count="0" />
+    </LineIds>
+    <LineIds Name="Button.print">
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="Button.setOutputs">
       <LineId Id="46" Count="0" />
@@ -384,16 +466,24 @@ isOn := TRUE;]]></ST>
       <LineId Id="5" Count="1" />
       <LineId Id="30" Count="0" />
       <LineId Id="14" Count="0" />
+      <LineId Id="50" Count="1" />
       <LineId Id="17" Count="0" />
       <LineId Id="31" Count="0" />
+      <LineId Id="53" Count="1" />
+      <LineId Id="52" Count="0" />
       <LineId Id="20" Count="0" />
       <LineId Id="22" Count="0" />
       <LineId Id="32" Count="0" />
+      <LineId Id="56" Count="1" />
+      <LineId Id="55" Count="0" />
       <LineId Id="25" Count="0" />
       <LineId Id="27" Count="0" />
       <LineId Id="33" Count="0" />
+      <LineId Id="59" Count="1" />
+      <LineId Id="58" Count="0" />
       <LineId Id="16" Count="0" />
       <LineId Id="7" Count="0" />
+      <LineId Id="67" Count="0" />
       <LineId Id="41" Count="0" />
       <LineId Id="40" Count="0" />
     </LineIds>
