@@ -10,7 +10,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{A14C7FBD-5B32-49C5-96AB-4C1D0189B914}" Name="plcProg" PrjFilePath="plcProg\plcProg.plcproj" TmcFilePath="plcProg\plcProg.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{7603F17A-F9EA-1FD5-6720-69F4E93EFE51}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{47F28FF8-43C3-EB45-1963-B4AF424E4888}">
 					<Name>plcProg Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
@@ -29,6 +29,10 @@
 						</Var>
 						<Var>
 							<Name>GVL.b_button_4</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.b_button_5</Name>
 							<Type>BOOL</Type>
 						</Var>
 					</Vars>
@@ -461,6 +465,7 @@ Bit 15 = Acyc. Function atcive (e.g. K-Bus Reset)
 				<Link VarA="PlcTask Inputs^GVL.b_button_2" VarB="Term 3 (KL1809)^Channel 2^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.b_button_3" VarB="Term 3 (KL1809)^Channel 3^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.b_button_4" VarB="Term 3 (KL1809)^Channel 4^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.b_button_5" VarB="Term 3 (KL1809)^Channel 5^Input"/>
 				<Link VarA="PlcTask Outputs^GVL.b_led_1" VarB="Term 2 (KL2809)^Channel 1^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.b_led_2" VarB="Term 2 (KL2809)^Channel 2^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.b_led_3" VarB="Term 2 (KL2809)^Channel 3^Output"/>

@@ -29,6 +29,7 @@ VAR
 	testBool : BOOL := FALSE;
 	
 	isDay : BOOL := TRUE;
+	minimumLogSeverity : TcEventSeverity := TcEventSeverity.Verbose;
 END_VAR
 
 VAR_IN_OUT
@@ -86,7 +87,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[button1(digitalInput := HMI.btn,
+        <ST><![CDATA[button1(digitalInput := GVL.b_button_1,//HMI.btn,
 	small_outputs := arr1,
 	medium_outputs := arr2,
 	big_outputs := arr3,

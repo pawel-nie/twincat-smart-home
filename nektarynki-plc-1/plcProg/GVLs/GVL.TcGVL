@@ -7,6 +7,7 @@ VAR_GLOBAL
 	b_button_2 AT %I* : BOOL;
 	b_button_3 AT %I* : BOOL;
 	b_button_4 AT %I* : BOOL;
+	b_button_5 AT %I* : BOOL;
 	
 	b_led_1 AT %Q* : BOOL;
 	b_led_2 AT %Q* : BOOL;	

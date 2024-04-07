@@ -58,6 +58,7 @@ END_IF
 
 ]]></ST>
     </Implementation>
+    <Folder Name="logging" Id="{863f0790-67e2-4cc6-8b30-85c6b211446d}" />
     <Method Name="isTurnedOnLongSelector" Id="{7bae46af-3a44-48ea-bbd6-f40ab3340ff2}">
       <Declaration><![CDATA[METHOD isTurnedOnLongSelector : BOOL
 VAR_INPUT
@@ -88,13 +89,10 @@ inactivityTimeout(IN := digitalInput);
 pressedTimer(IN := digitalInput);
 turnedOnLongSelector := isTurnedOnLongSelector();
 
-HMI.led1_1 := MAIN.arr1[1];
-HMI.led2_1 := MAIN.arr2[1]; 
-HMI.led2_2 := MAIN.arr2[2];
-HMI.led3 := MAIN.arr3[1];
-HMI.led4_1 := MAIN.arr4[1]; 
-HMI.led4_2 := MAIN.arr4[2]; 
-HMI.led4_3 := MAIN.arr4[3];		
+HMI.led1_1 := MAIN.arr1[1]; HMI.led2_1 := MAIN.arr2[1]; HMI.led2_2 := MAIN.arr2[2]; HMI.led3 := MAIN.arr3[1]; HMI.led4_1 := MAIN.arr4[1]; HMI.led4_2 := MAIN.arr4[2]; HMI.led4_3 := MAIN.arr4[3];		
+
+
+
 
 IF NOT inactivityTimeout.Q THEN
 	firstLongPress := FALSE;	
@@ -108,7 +106,7 @@ IF digitalInput THEN
 END_IF
 
 IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
-	print(str1:='activity timeout', str2:= '');
+	print1(level:= TcEventSeverity.Verbose, str1:='Activity timeout');
 	wasRecentlyActive := FALSE;
 	smallOutputsSet := FALSE;
 	mediumOutputsSet := FALSE;
@@ -117,29 +115,29 @@ IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
 END_IF
 
 IF press.Q THEN
-	print(str1:='button pressed', str2:= '');
+	print1(level:=TcEventSeverity.Info, str1:='Button pressed');
 	IF firstLongPress THEN
-		print(str1:='turn ON strongest as double press', str2:= '');
+		print1(level:=TcEventSeverity.Verbose, str1:='Turn ON strongest as double press');
 		turnOnStrongestOutput();
 		JMP _ret;
 	END_IF
 END_IF
 
 IF release.Q THEN
-	print(str1:='Released after %s', str2:= TO_STRING(pressedTimeMiliseconds));
+	print2(level:=TcEventSeverity.Verbose, str1:='Released after %s', str2:= TO_STRING(pressedTimeMiliseconds));
 	IF NOT wasRecentlyActive THEN
 		
 		IF isON AND NOT turnedOnLongSelector THEN
-			print(str1:='lights turned off', str2:= '');
+			print1(level:=TcEventSeverity.Info, str1:='Lights turned off');
 			turnOff();
 		ELSE
-			IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 250  THEN
-				print(str1:='quick press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
+			IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 500  THEN
+				print2(level:=TcEventSeverity.Verbose, str1:='Quick press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
 				turnOnDefault();
 			END_IF
 			
-			IF pressedTimeMiliseconds > 250 THEN
-				print(str1:='long press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
+			IF pressedTimeMiliseconds > 500 THEN
+				print2(level:=TcEventSeverity.Verbose, str1:='Long press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
 				firstLongPress := TRUE;
 			END_IF 
 		END_IF
@@ -195,15 +193,37 @@ END_IF
 ]]></ST>
       </Implementation>
     </Method>
-    <Method Name="print" Id="{287da7bd-5655-405b-bd79-4e59ca6d7cd7}">
-      <Declaration><![CDATA[METHOD print : BOOL
+    <Method Name="print1" Id="{7f43a41b-9e98-4aa2-a748-dcf5656a0706}" FolderPath="logging\">
+      <Declaration><![CDATA[METHOD print1 : BOOL
 VAR_INPUT
+	level : TcEventSeverity;
+	str1 : STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR, 
+              msgFmtStr := CONCAT(STR1:=TO_STRING(level), STR2:=str1), 
+              strArg := '');
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="print2" Id="{287da7bd-5655-405b-bd79-4e59ca6d7cd7}" FolderPath="logging\">
+      <Declaration><![CDATA[METHOD print2 : BOOL
+VAR_INPUT
+	level : TcEventSeverity;
 	str1 : STRING;
 	str2 : STRING;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := str1, strArg := str2);]]></ST>
+        <ST><![CDATA[IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
+	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR, 
+			  msgFmtStr := CONCAT(STR1:=TO_STRING(level), STR2:=str1), 
+			  strArg := str2);
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="setOutputs" Id="{98f0d494-d3da-4ed5-b4b3-67a830019a2c}">
@@ -219,7 +239,7 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[levelAsText := TO_STRING(outputLevel);
-ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON %s',strArg := levelAsText);
+print2(level:=TcEventSeverity.Info, str1:='turn ON %s', str2:= levelAsText);
 
 CASE outputLevel OF
 	
@@ -294,10 +314,10 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF MAIN.isDay THEN
-	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON default: %s for day', strArg := TO_STRING(defaultDayOutput));
+	print2(level:=TcEventSeverity.Verbose, str1:='turn ON default: %s for day', str2:= TO_STRING(defaultDayOutput));
 	setOutputs(outputLevel := defaultDayOutput, state := TRUE);
 ELSE
-	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR OR ADSLOG_MSGTYPE_LOG,msgFmtStr := 'turn ON default: %s for night', strArg := TO_STRING(defaultNightOutput));
+	print2(level:=TcEventSeverity.Verbose, str1:='turn ON default: %s for night', str2:= TO_STRING(defaultNightOutput));
 	setOutputs(outputLevel := defaultNightOutput, state := TRUE);
 END_IF
 
@@ -355,55 +375,11 @@ isOn := TRUE;]]></ST>
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="Button.listen">
-      <LineId Id="44" Count="0" />
-      <LineId Id="74" Count="0" />
-      <LineId Id="45" Count="4" />
-      <LineId Id="89" Count="0" />
-      <LineId Id="193" Count="0" />
-      <LineId Id="293" Count="0" />
-      <LineId Id="175" Count="0" />
-      <LineId Id="112" Count="5" />
-      <LineId Id="42" Count="0" />
-      <LineId Id="199" Count="0" />
-      <LineId Id="192" Count="0" />
-      <LineId Id="200" Count="0" />
-      <LineId Id="228" Count="0" />
-      <LineId Id="201" Count="0" />
-      <LineId Id="213" Count="0" />
-      <LineId Id="202" Count="0" />
-      <LineId Id="217" Count="0" />
-      <LineId Id="214" Count="0" />
-      <LineId Id="218" Count="0" />
-      <LineId Id="215" Count="1" />
-      <LineId Id="6" Count="0" />
-      <LineId Id="212" Count="0" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="85" Count="3" />
-      <LineId Id="8" Count="2" />
-      <LineId Id="206" Count="0" />
-      <LineId Id="126" Count="0" />
-      <LineId Id="207" Count="0" />
-      <LineId Id="130" Count="0" />
-      <LineId Id="227" Count="0" />
-      <LineId Id="132" Count="0" />
-      <LineId Id="12" Count="0" />
-      <LineId Id="80" Count="0" />
-      <LineId Id="76" Count="0" />
-      <LineId Id="208" Count="0" />
-      <LineId Id="254" Count="1" />
-      <LineId Id="275" Count="3" />
-      <LineId Id="280" Count="4" />
-      <LineId Id="286" Count="3" />
-      <LineId Id="292" Count="0" />
-      <LineId Id="290" Count="0" />
-      <LineId Id="203" Count="1" />
-      <LineId Id="181" Count="0" />
-      <LineId Id="219" Count="0" />
-      <LineId Id="13" Count="0" />
-      <LineId Id="198" Count="0" />
-      <LineId Id="79" Count="0" />
-      <LineId Id="19" Count="0" />
-      <LineId Id="226" Count="0" />
+      <LineId Id="301" Count="11" />
+      <LineId Id="384" Count="2" />
+      <LineId Id="319" Count="34" />
+      <LineId Id="387" Count="0" />
+      <LineId Id="355" Count="21" />
       <LineId Id="225" Count="0" />
     </LineIds>
     <LineIds Name="Button.manageLongPress">
@@ -412,12 +388,22 @@ isOn := TRUE;]]></ST>
       <LineId Id="163" Count="0" />
       <LineId Id="152" Count="0" />
     </LineIds>
-    <LineIds Name="Button.print">
+    <LineIds Name="Button.print1">
+      <LineId Id="17" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="18" Count="0" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="Button.print2">
+      <LineId Id="13" Count="1" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="Button.setOutputs">
       <LineId Id="46" Count="0" />
-      <LineId Id="44" Count="0" />
+      <LineId Id="56" Count="0" />
       <LineId Id="42" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="18" Count="0" />
@@ -453,10 +439,10 @@ isOn := TRUE;]]></ST>
     </LineIds>
     <LineIds Name="Button.turnOnDefault">
       <LineId Id="6" Count="0" />
-      <LineId Id="14" Count="0" />
+      <LineId Id="19" Count="0" />
       <LineId Id="8" Count="0" />
       <LineId Id="10" Count="0" />
-      <LineId Id="15" Count="0" />
+      <LineId Id="20" Count="0" />
       <LineId Id="11" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="7" Count="0" />
