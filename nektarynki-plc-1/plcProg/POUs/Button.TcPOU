@@ -116,7 +116,7 @@ END_IF
 
 IF press.Q THEN
 	print1(level:=TcEventSeverity.Info, str1:='Button pressed');
-	IF firstLongPress THEN
+	IF NOT isON AND firstLongPress THEN
 		print1(level:=TcEventSeverity.Verbose, str1:='Turn ON strongest as double press');
 		turnOnStrongestOutput();
 		JMP _ret;
@@ -124,13 +124,13 @@ IF press.Q THEN
 END_IF
 
 IF release.Q THEN
-	print2(level:=TcEventSeverity.Verbose, str1:='Released after %s', str2:= TO_STRING(pressedTimeMiliseconds));
-	IF NOT wasRecentlyActive THEN
-		
-		IF isON AND NOT turnedOnLongSelector THEN
-			print1(level:=TcEventSeverity.Info, str1:='Lights turned off');
-			turnOff();
-		ELSE
+	print2(level:=TcEventSeverity.Info, str1:='Released after %s', str2:= TO_STRING(pressedTimeMiliseconds));
+	
+	IF isON AND NOT turnedOnLongSelector AND NOT firstLongPress THEN
+		print1(level:=TcEventSeverity.Info, str1:='Lights turned off');
+		turnOff();
+	ELSE		
+		IF NOT wasRecentlyActive THEN
 			IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 500  THEN
 				print2(level:=TcEventSeverity.Verbose, str1:='Quick press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
 				turnOnDefault();
@@ -140,8 +140,10 @@ IF release.Q THEN
 				print2(level:=TcEventSeverity.Verbose, str1:='Long press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
 				firstLongPress := TRUE;
 			END_IF 
-		END_IF
-	END_IF	
+		END_IF	
+	END_IF
+	
+	
 
 
 	wasRecentlyActive := TRUE;
@@ -164,6 +166,7 @@ END_VAR]]></Declaration>
 		setOutputs(outputLevel := E_OutputLevel.small, state := TRUE);
 		smallOutputsSet := TRUE;
 		isOn := TRUE;
+		print1(level:=TcEventSeverity.Verbose, str1:='Turn on small output as long press');
 	END_IF
 END_IF
 
@@ -172,6 +175,7 @@ IF TIME_TO_DWORD(pressedTimer.ET) >= 2000 THEN
 		setOutputs(outputLevel := E_OutputLevel.medium, state := TRUE);
 		mediumOutputsSet := TRUE;
 		isOn := TRUE;
+		print1(level:=TcEventSeverity.Verbose, str1:='Turn on medium output as long press');
 	END_IF
 END_IF
 
@@ -180,6 +184,7 @@ IF TIME_TO_DWORD(pressedTimer.ET) >= 3000 THEN
 		setOutputs(outputLevel := E_OutputLevel.big, state := TRUE);
 		bigOutputsSet := TRUE;
 		isOn := TRUE;
+		print1(level:=TcEventSeverity.Verbose, str1:='Turn on big output as long press');
 	END_IF
 END_IF
 
@@ -188,6 +193,7 @@ IF TIME_TO_DWORD(pressedTimer.ET) >= 4000 THEN
 		setOutputs(outputLevel := E_OutputLevel.superstrong, state := TRUE);
 		superStrongOutputsSet := TRUE;
 		isOn := TRUE;
+		print1(level:=TcEventSeverity.Verbose, str1:='Turn on superstrong output as long press');
 	END_IF
 END_IF
 ]]></ST>
@@ -199,12 +205,17 @@ VAR_INPUT
 	level : TcEventSeverity;
 	str1 : STRING;
 END_VAR
-]]></Declaration>
+
+VAR
+	level_as_text : STRING;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
-	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR, 
-              msgFmtStr := CONCAT(STR1:=TO_STRING(level), STR2:=str1), 
-              strArg := '');
+        <ST><![CDATA[level_as_text := CONCAT('[', TO_STRING(level));
+level_as_text := CONCAT(level_as_text, '] ');
+IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
+	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
+              CONCAT(level_as_text, str1), 
+              '');
 END_IF
 
 ]]></ST>
@@ -217,12 +228,17 @@ VAR_INPUT
 	str1 : STRING;
 	str2 : STRING;
 END_VAR
-]]></Declaration>
+
+VAR
+	level_as_text: STRING(255);
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
-	ADSLOGSTR(msgCtrlMask := ADSLOG_MSGTYPE_ERROR, 
-			  msgFmtStr := CONCAT(STR1:=TO_STRING(level), STR2:=str1), 
-			  strArg := str2);
+        <ST><![CDATA[level_as_text := CONCAT('[', TO_STRING(level));
+level_as_text := CONCAT(level_as_text, '] ');
+IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
+	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
+			  CONCAT(level_as_text, str1), 
+			  str2);
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -377,18 +393,33 @@ isOn := TRUE;]]></ST>
     <LineIds Name="Button.listen">
       <LineId Id="301" Count="11" />
       <LineId Id="384" Count="2" />
-      <LineId Id="319" Count="34" />
-      <LineId Id="387" Count="0" />
-      <LineId Id="355" Count="21" />
+      <LineId Id="319" Count="31" />
+      <LineId Id="395" Count="0" />
+      <LineId Id="397" Count="1" />
+      <LineId Id="396" Count="0" />
+      <LineId Id="401" Count="0" />
+      <LineId Id="405" Count="9" />
+      <LineId Id="404" Count="0" />
+      <LineId Id="399" Count="1" />
+      <LineId Id="367" Count="9" />
       <LineId Id="225" Count="0" />
     </LineIds>
     <LineIds Name="Button.manageLongPress">
       <LineId Id="160" Count="0" />
-      <LineId Id="167" Count="28" />
+      <LineId Id="167" Count="3" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="171" Count="7" />
+      <LineId Id="199" Count="0" />
+      <LineId Id="179" Count="7" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="187" Count="7" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="195" Count="0" />
       <LineId Id="163" Count="0" />
       <LineId Id="152" Count="0" />
     </LineIds>
     <LineIds Name="Button.print1">
+      <LineId Id="31" Count="1" />
       <LineId Id="17" Count="0" />
       <LineId Id="19" Count="0" />
       <LineId Id="21" Count="1" />
@@ -397,7 +428,10 @@ isOn := TRUE;]]></ST>
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="Button.print2">
-      <LineId Id="13" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="14" Count="0" />
       <LineId Id="16" Count="1" />
       <LineId Id="11" Count="0" />
     </LineIds>
