@@ -87,7 +87,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[button1(digitalInput := GVL.b_button_1,//HMI.btn,
+        <ST><![CDATA[button1(ID := 1,
+	digitalInput := GVL.b_button_1,//HMI.btn,
 	small_outputs := arr1,
 	medium_outputs := arr2,
 	big_outputs := arr3,
@@ -111,7 +112,9 @@ END_VAR
       <LineId Id="71" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.initButtons">
-      <LineId Id="6" Count="4" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="7" Count="3" />
       <LineId Id="5" Count="0" />
       <LineId Id="14" Count="1" />
     </LineIds>

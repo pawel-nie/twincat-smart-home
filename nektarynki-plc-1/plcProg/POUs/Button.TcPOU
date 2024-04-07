@@ -8,6 +8,7 @@ VAR CONSTANT
 END_VAR
 
 VAR_INPUT
+	ID : INT;
 	digitalInput : REFERENCE TO BOOL;
 	
 	small_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
@@ -31,8 +32,7 @@ VAR
 	bigOutputTimer : TON := (PT := T#3S); 
 	superStrongOutputTimer : TON := (PT := T#4S);
 	
-	doublePressTimer : TON := (PT := T#2000MS);
-	inactivityTimeout : TP := (PT := T#1500MS);
+	inactivityTimeout : TP := (PT := T#1100MS);
 	
 	pressedTimer : TON := (PT := T#10S);
 	pressedTimeMiliseconds : INT := 0;
@@ -46,7 +46,7 @@ VAR
 	mediumOutputsSet : BOOL := FALSE;
 	bigOutputsSet: BOOL := FALSE;
 	superStrongOutputsSet: BOOL := FALSE;
-	
+	consecutiveClicks : INT := 0;
 
 END_VAR
 ]]></Declaration>
@@ -59,6 +59,26 @@ END_IF
 ]]></ST>
     </Implementation>
     <Folder Name="logging" Id="{863f0790-67e2-4cc6-8b30-85c6b211446d}" />
+    <Method Name="doSpecialAction" Id="{6e16f68b-e074-467f-9286-070fb5400126}">
+      <Declaration><![CDATA[METHOD doSpecialAction : BOOL
+VAR_INPUT
+END_VAR
+
+VAR
+	i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE ID OF
+	
+	1:
+		print1(level:=TcEventSeverity.Info, str1:='Special action for button 1');
+		
+	2:
+		print1(level:=TcEventSeverity.Info, str1:='Special action for button 2');
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="isTurnedOnLongSelector" Id="{7bae46af-3a44-48ea-bbd6-f40ab3340ff2}">
       <Declaration><![CDATA[METHOD isTurnedOnLongSelector : BOOL
 VAR_INPUT
@@ -84,7 +104,6 @@ smallOutputTimer(IN := digitalInput);
 mediumOutputTimer(IN := digitalInput);
 bigOutputTimer(IN := digitalInput);
 superStrongOutputTimer(IN := digitalInput);
-doublePressTimer(IN := digitalInput);
 inactivityTimeout(IN := digitalInput);
 pressedTimer(IN := digitalInput);
 turnedOnLongSelector := isTurnedOnLongSelector();
@@ -105,8 +124,9 @@ IF digitalInput THEN
 	END_IF
 END_IF
 
-IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
+IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN	
 	print1(level:= TcEventSeverity.Verbose, str1:='Activity timeout');
+	consecutiveClicks := 0;
 	wasRecentlyActive := FALSE;
 	smallOutputsSet := FALSE;
 	mediumOutputsSet := FALSE;
@@ -116,6 +136,11 @@ END_IF
 
 IF press.Q THEN
 	print1(level:=TcEventSeverity.Info, str1:='Button pressed');
+	consecutiveClicks := consecutiveClicks + 1;
+	print2(level:=TcEventSeverity.Verbose, str1:='consecutiveClicks=%s', str2:= TO_STRING(consecutiveClicks));
+	print2(level:=TcEventSeverity.Verbose, str1:='isOn=%s', str2:= TO_STRING(isOn));
+	print2(level:=TcEventSeverity.Verbose, str1:='firstLongPress=%s', str2:= TO_STRING(firstLongPress));
+	
 	IF NOT isON AND firstLongPress THEN
 		print1(level:=TcEventSeverity.Verbose, str1:='Turn ON strongest as double press');
 		turnOnStrongestOutput();
@@ -125,31 +150,36 @@ END_IF
 
 IF release.Q THEN
 	print2(level:=TcEventSeverity.Info, str1:='Released after %s', str2:= TO_STRING(pressedTimeMiliseconds));
-	
+	print2(level:=TcEventSeverity.Verbose, str1:='isOn=%s', str2:= TO_STRING(isOn));
+	print2(level:=TcEventSeverity.Verbose, str1:='turnedOnLongSelector=%s', str2:= TO_STRING(turnedOnLongSelector));
+	print2(level:=TcEventSeverity.Verbose, str1:='firstLongPress=%s', str2:= TO_STRING(firstLongPress));	
 	IF isON AND NOT turnedOnLongSelector AND NOT firstLongPress THEN
 		print1(level:=TcEventSeverity.Info, str1:='Lights turned off');
 		turnOff();
 	ELSE		
-		IF NOT wasRecentlyActive THEN
-			IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 500  THEN
-				print2(level:=TcEventSeverity.Verbose, str1:='Quick press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
+		print2(level:=TcEventSeverity.Verbose, str1:='wasRecentlyActive=%s', str2:= TO_STRING(wasRecentlyActive));
+		IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 310  THEN
+			print2(level:=TcEventSeverity.Verbose, str1:='Quick press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
+			print2(level:=TcEventSeverity.Verbose, str1:='firstLongPress=%s', str2:= TO_STRING(firstLongPress));
+			IF NOT firstLongPress THEN
 				turnOnDefault();
 			END_IF
-			
-			IF pressedTimeMiliseconds > 500 THEN
+		ELSE 
+			IF pressedTimeMiliseconds > 310 THEN
 				print2(level:=TcEventSeverity.Verbose, str1:='Long press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
 				firstLongPress := TRUE;
 			END_IF 
-		END_IF	
+		END_IF
 	END_IF
 	
-	
-
-
 	wasRecentlyActive := TRUE;
 	pressedTimeMiliseconds := TIME_TO_INT(pressedTimer.ET);
 END_IF
 
+IF consecutiveClicks = 4 THEN
+	consecutiveClicks := 0;
+	doSpecialAction();
+END_IF
 
 manageLongPress();
 
@@ -273,30 +303,33 @@ END_VAR
 
 VAR
 	i : INT;
-	levelAsText : STRING := 'abc';
+	state_as_text : STRING := 'abc';
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[levelAsText := TO_STRING(outputLevel);
-print2(level:=TcEventSeverity.Info, str1:='turn ON %s', str2:= levelAsText);
+        <ST><![CDATA[state_as_text := TO_STRING(state);
 
 CASE outputLevel OF
 	
-	E_OutputLevel.small:
+	E_OutputLevel.SMALL:
+		print2(level:=TcEventSeverity.Info, str1:='set SMALL to: %s', str2:= state_as_text);
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			small_outputs[i] := state;
 		END_FOR
 		
-	E_OutputLevel.medium:
+	E_OutputLevel.MEDIUM:
+		print2(level:=TcEventSeverity.Info, str1:='set MEDIUM to: %s', str2:= state_as_text);	
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			medium_outputs[i] := state;
 		END_FOR
 		
-	E_OutputLevel.big:
+	E_OutputLevel.BIG:
+		print2(level:=TcEventSeverity.Info, str1:='set BIG to: %s', str2:= state_as_text);
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			big_outputs[i] := state;
 		END_FOR
 		
-	E_OutputLevel.superstrong:
+	E_OutputLevel.SUPERSTRONG:
+		print2(level:=TcEventSeverity.Info, str1:='set SUPERSTRONG to: %s', str2:= state_as_text);
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			superstrong_outputs[i] := state;
 		END_FOR
@@ -409,21 +442,48 @@ isOn := TRUE;]]></ST>
       <LineId Id="208" Count="0" />
       <LineId Id="195" Count="0" />
     </LineIds>
+    <LineIds Name="Button.doSpecialAction">
+      <LineId Id="7" Count="2" />
+      <LineId Id="12" Count="2" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="Button.isTurnedOnLongSelector">
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="Button.listen">
-      <LineId Id="301" Count="11" />
+      <LineId Id="301" Count="5" />
+      <LineId Id="308" Count="4" />
       <LineId Id="384" Count="2" />
-      <LineId Id="319" Count="31" />
-      <LineId Id="395" Count="0" />
+      <LineId Id="319" Count="10" />
+      <LineId Id="331" Count="0" />
+      <LineId Id="433" Count="0" />
+      <LineId Id="332" Count="0" />
+      <LineId Id="416" Count="0" />
+      <LineId Id="333" Count="8" />
+      <LineId Id="415" Count="0" />
+      <LineId Id="431" Count="0" />
+      <LineId Id="421" Count="1" />
+      <LineId Id="428" Count="0" />
+      <LineId Id="342" Count="8" />
+      <LineId Id="423" Count="0" />
+      <LineId Id="426" Count="1" />
       <LineId Id="397" Count="1" />
       <LineId Id="396" Count="0" />
       <LineId Id="401" Count="0" />
-      <LineId Id="405" Count="9" />
-      <LineId Id="404" Count="0" />
+      <LineId Id="430" Count="0" />
+      <LineId Id="447" Count="0" />
+      <LineId Id="437" Count="9" />
+      <LineId Id="435" Count="0" />
       <LineId Id="399" Count="1" />
-      <LineId Id="367" Count="9" />
+      <LineId Id="434" Count="0" />
+      <LineId Id="371" Count="3" />
+      <LineId Id="432" Count="0" />
+      <LineId Id="419" Count="0" />
+      <LineId Id="418" Count="0" />
+      <LineId Id="420" Count="0" />
+      <LineId Id="375" Count="1" />
       <LineId Id="225" Count="0" />
     </LineIds>
     <LineIds Name="Button.manageLongPress">
@@ -472,21 +532,27 @@ isOn := TRUE;]]></ST>
     </LineIds>
     <LineIds Name="Button.setOutputs">
       <LineId Id="46" Count="0" />
-      <LineId Id="56" Count="0" />
       <LineId Id="42" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="18" Count="0" />
       <LineId Id="10" Count="0" />
+      <LineId Id="66" Count="0" />
       <LineId Id="12" Count="1" />
       <LineId Id="11" Count="0" />
       <LineId Id="19" Count="0" />
-      <LineId Id="21" Count="2" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="22" Count="1" />
       <LineId Id="20" Count="0" />
       <LineId Id="24" Count="0" />
-      <LineId Id="26" Count="2" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="27" Count="1" />
       <LineId Id="25" Count="0" />
       <LineId Id="29" Count="0" />
-      <LineId Id="31" Count="2" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="32" Count="1" />
       <LineId Id="30" Count="0" />
       <LineId Id="17" Count="0" />
       <LineId Id="9" Count="0" />
