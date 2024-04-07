@@ -6,10 +6,10 @@
 {attribute 'to_string'}
 TYPE E_OutputLevel :
 (
-	small := 1,
-	medium := 2,
-	big := 3,
-	superstrong := 4	
+	SMALL := 1,
+	MEDIUM := 2,
+	BIG := 3,
+	SUPERSTRONG := 4	
 );
 END_TYPE
 ]]></Declaration>
