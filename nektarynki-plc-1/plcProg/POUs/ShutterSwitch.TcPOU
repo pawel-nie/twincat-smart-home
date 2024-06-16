@@ -1,0 +1,446 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="ShutterSwitch" Id="{ea3d4221-9f14-4b85-9e8e-0f11bb1f6816}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK ShutterSwitch
+
+VAR CONSTANT
+	MAX_OUTPUTS_PER_LEVEL : INT := 2;
+END_VAR
+
+VAR_INPUT
+	ID : INT;
+	digitalInputUp : REFERENCE TO BOOL;
+	digitalInputDown : REFERENCE TO BOOL;
+	up_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	down_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+END_VAR
+
+VAR_OUTPUT
+END_VAR
+
+VAR
+	isClosing : BOOL := FALSE;
+	isOpening : BOOL := FALSE;
+	
+    pressedUp : R_TRIG;
+	pressedDown : R_TRIG;
+	releasedUp : F_TRIG;
+	releasedDown : F_TRIG;
+	
+	pressedUpTimer : TON := (PT := T#10S);	
+	pressedDownTimer : TON := (PT := T#10S);
+	
+	shortDistanceUp : TP := (PT := T#200MS);
+	longDistanceUp : TP := (PT := T#60S);
+	shortDistanceDown : TP := (PT := T#200MS);
+	longDistanceDown : TP := (PT := T#60S);
+	
+	initialized : BOOL := FALSE;
+	
+	pressedUpMiliseconds : INT := 0;
+	pressedDownMiliseconds : INT := 0;	
+	
+	goUpRequested : BOOL := FALSE;
+	goDownRequested : BOOL := FALSE;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT initialized THEN
+	initialized := TRUE;	
+END_IF
+]]></ST>
+    </Implementation>
+    <Folder Name="logging" Id="{aecab8e3-5bb8-4dc4-ab9d-3dc7256dacab}" />
+    <Method Name="loop" Id="{9386c37e-49fd-4cf9-895c-78c751a8bca5}">
+      <Declaration><![CDATA[METHOD loop : BOOL
+VAR_INPUT
+END_VAR
+
+VAR
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pressedUp(CLK:= digitalInputUp);
+pressedDown(CLK:= digitalInputDown);
+releasedUp(CLK:= digitalInputUp);
+releasedDown(CLK:= digitalInputDown);
+pressedUpTimer(IN := digitalInputUp);
+pressedDownTimer(IN := digitalInputDown);
+
+//prevent both pressed
+IF digitalInputUp AND digitalInputDown THEN
+	stopAll();
+	pressedUpMiliseconds := 0;
+	pressedDownMiliseconds := 0;
+	JMP _ret;
+END_IF
+
+//moving any direction 
+IF isClosing OR isOpening THEN
+	IF pressedUp.Q OR pressedDown.Q THEN
+		stopAll();
+		JMP _ret;
+	END_IF
+END_IF
+
+goUpRequested := shortDistanceUp.Q OR longDistanceUp.Q;
+goDownRequested := shortDistanceDown.Q OR longDistanceDown.Q;
+IF goUpRequested AND NOT goDownRequested THEN
+	moveUp();
+ELSE 
+	stopUp();
+END_IF
+
+IF goDownRequested AND NOT goUpRequested THEN
+	moveDown();
+ELSE 
+	stopDown();
+END_IF
+
+IF goUpRequested OR goDownRequested THEN
+	print1(level:=TcEventSeverity.Info, str1:='Lights turned off');
+ELSE
+	shortDistanceUp(IN:=FALSE);
+END_IF 
+
+//long hold up
+IF digitalInputUp AND TIME_TO_INT(pressedUpTimer.ET) <> 0 THEN
+	pressedUpMiliseconds := TIME_TO_INT(pressedUpTimer.ET);
+END_IF
+
+//long hold downm
+IF digitalInputDown AND TIME_TO_INT(pressedDownTimer.ET) <> 0 THEN
+	pressedDownMiliseconds := TIME_TO_INT(pressedDownTimer.ET);
+END_IF
+
+IF releasedUp THEN
+	onReleasedUp();
+END_IF
+
+IF pressedUpMiliseconds >= 2000 THEN
+	moveUp();
+END_IF
+
+IF releasedDown THEN
+	onReleasedDown();
+END_IF
+
+IF pressedDownMiliseconds >= 2000 THEN
+	moveDown();
+END_IF
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_ret :
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="moveDown" Id="{70bfc2f0-2a45-495c-8a8c-08f2039c444b}">
+      <Declaration><![CDATA[METHOD moveDown : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[setOutputs(direction:=E_Direction.UP, state:=FALSE);
+setOutputs(direction:=E_Direction.DOWN, state:=TRUE);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="moveUp" Id="{be6ff087-74af-4f3e-8a6d-a69e0bda1f40}">
+      <Declaration><![CDATA[METHOD moveUp : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[setOutputs(direction:=E_Direction.DOWN, state:=FALSE);
+setOutputs(direction:=E_Direction.UP, state:=TRUE);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="onReleasedDown" Id="{d189a28a-8b68-42c4-b7ce-29fd95d074d7}">
+      <Declaration><![CDATA[METHOD onReleasedDown : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF pressedDownMiliseconds > 10 AND pressedDownMiliseconds < 500 THEN
+	//move a bit down
+	shortDistanceDown(IN:=TRUE);
+ELSIF pressedDownMiliseconds >= 500 AND pressedDownMiliseconds < 2000 THEN
+	//move max down
+	longDistanceDown(IN:=TRUE);
+ELSIF pressedDownMiliseconds >= 2000 THEN
+	//stop
+	stopAll();
+END_IF
+
+pressedDownMiliseconds := 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="onReleasedUp" Id="{18137760-a3db-4047-aa6a-2ed70d4a3ef6}">
+      <Declaration><![CDATA[METHOD onReleasedUp : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF pressedUpMiliseconds > 10 AND pressedUpMiliseconds < 500 THEN
+	//move a little bit up
+	shortDistanceUp(IN:=TRUE);
+ELSIF pressedUpMiliseconds >= 500 AND pressedUpMiliseconds < 2000 THEN
+	//move max up
+	longDistanceUp(IN:=TRUE);
+ELSIF pressedUpMiliseconds >= 2000 THEN
+	//stop
+	stopAll();
+END_IF
+
+pressedUpMiliseconds := 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="print1" Id="{f633e218-8ef9-4ab0-b627-23999c633b9c}" FolderPath="logging\">
+      <Declaration><![CDATA[METHOD print1 : BOOL
+VAR_INPUT
+	level : TcEventSeverity;
+	str1 : STRING;
+END_VAR
+
+VAR
+	enum_as_text : STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE level OF
+	TcEventSeverity.Critical:
+		enum_as_text := '[CRITICAL] ';
+	TcEventSeverity.Error:
+		enum_as_text := '[ERROR] ';
+	TcEventSeverity.Warning:
+		enum_as_text := '[WARNING] ';		
+	TcEventSeverity.Info:
+		enum_as_text := '        [INFO] ';
+	TcEventSeverity.Verbose:
+		enum_as_text := '                        [VERBOSE] ';
+END_CASE
+
+IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
+	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
+              CONCAT(enum_as_text, str1), 
+              '');
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="print2" Id="{f46e646f-ff0c-446b-8e18-fe0e8443856b}" FolderPath="logging\">
+      <Declaration><![CDATA[METHOD print2 : BOOL
+VAR_INPUT
+	level : TcEventSeverity;
+	str1 : STRING;
+	str2 : STRING;
+END_VAR
+
+VAR
+	enum_as_text : STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE level OF
+	TcEventSeverity.Critical:
+		enum_as_text := '[CRITICAL] ';
+	TcEventSeverity.Error:
+		enum_as_text := '[ERROR] ';
+	TcEventSeverity.Warning:
+		enum_as_text := '[WARNING] ';		
+	TcEventSeverity.Info:
+		enum_as_text := '        [INFO] ';
+	TcEventSeverity.Verbose:
+		enum_as_text := '                        [VERBOSE] ';
+END_CASE
+
+IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
+	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
+			  CONCAT(enum_as_text, str1), 
+			  str2);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="setOutputs" Id="{79b15e5b-fc69-4f91-8345-898161fcd2f3}">
+      <Declaration><![CDATA[METHOD setOutputs
+VAR_INPUT
+	direction : E_Direction;
+	state : BOOL;
+END_VAR
+
+VAR
+	i : INT;
+	state_as_text : STRING := 'abc';
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[state_as_text := TO_STRING(state);
+
+CASE direction OF
+	
+	E_Direction.UP:
+		print2(level:=TcEventSeverity.Info, str1:='set UP to: %s', str2:= state_as_text);
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			up_outputs[i] := state;
+		END_FOR
+		
+	E_Direction.DOWN:
+		print2(level:=TcEventSeverity.Info, str1:='set DOWN to: %s', str2:= state_as_text);	
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			down_outputs[i] := state;
+		END_FOR
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="stopAll" Id="{69f3a6d7-377a-4aed-9325-e1404881787f}">
+      <Declaration><![CDATA[METHOD stopAll : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stopDown();
+stopUp();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="stopDown" Id="{e9b25731-7d10-4d84-bd86-0f94bf8f47e3}">
+      <Declaration><![CDATA[METHOD stopDown : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[setOutputs(direction:=E_Direction.DOWN, state:=FALSE);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="stopUp" Id="{d5b93eb4-00aa-4364-a9b2-6f05420d9e05}">
+      <Declaration><![CDATA[METHOD stopUp : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[setOutputs(direction:=E_Direction.UP, state:=FALSE);]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="ShutterSwitch">
+      <LineId Id="31" Count="2" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.loop">
+      <LineId Id="136" Count="3" />
+      <LineId Id="141" Count="12" />
+      <LineId Id="155" Count="4" />
+      <LineId Id="236" Count="3" />
+      <LineId Id="241" Count="0" />
+      <LineId Id="246" Count="2" />
+      <LineId Id="250" Count="4" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="230" Count="0" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="231" Count="0" />
+      <LineId Id="234" Count="0" />
+      <LineId Id="232" Count="0" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="161" Count="1" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="168" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="171" Count="0" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="175" Count="3" />
+      <LineId Id="180" Count="1" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="183" Count="0" />
+      <LineId Id="185" Count="3" />
+      <LineId Id="190" Count="23" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.moveDown">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.moveUp">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.onReleasedDown">
+      <LineId Id="6" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="12" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.onReleasedUp">
+      <LineId Id="6" Count="1" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="11" Count="2" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.print1">
+      <LineId Id="33" Count="10" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.print2">
+      <LineId Id="31" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.setOutputs">
+      <LineId Id="88" Count="14" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.stopAll">
+      <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.stopDown">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.stopUp">
+      <LineId Id="6" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

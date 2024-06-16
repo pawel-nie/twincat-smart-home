@@ -24,6 +24,9 @@
     <Compile Include="DUTs\E_OutputLevel.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\E_Direction.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\ST_Event.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -41,7 +44,7 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\Button.TcPOU">
+    <Compile Include="POUs\LightSwitch.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\log_persistence\EventLogger.TcPOU">
@@ -57,6 +60,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\ShutterSwitch.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Visualization Manager.TcVMO">

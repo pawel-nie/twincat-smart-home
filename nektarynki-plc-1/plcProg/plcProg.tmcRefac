@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Refactors>
+  <Renames>
+    <RenamedType>
+      <Type guid="aec94d50-ff8e-4733-83a7-9ffb2f475799">BUTTON</Type>
+      <From>Button</From>
+      <To>LightSwitch</To>
+    </RenamedType>
+    <RenamedType>
+      <Type guid="8ef97f03-9ee7-4fed-a21d-d7d2049ac2bc">LISTEN</Type>
+      <From>listen</From>
+      <To>loop</To>
+    </RenamedType>
+    <RenamedType>
+      <Type guid="819ec583-5655-4fbe-94e1-919759458a46">E_OUTPUTLEVEL_1</Type>
+      <From>E_OutputLevel_1</From>
+      <To>E_Direction</To>
+    </RenamedType>
+    <RenamedSymbol>
+      <Type guid="79b15e5b-fc69-4f91-8345-898161fcd2f3">setOutputs</Type>
+      <From>outputLevel</From>
+      <To>direction</To>
+    </RenamedSymbol>
+    <RenamedType>
+      <Type guid="69f3a6d7-377a-4aed-9325-e1404881787f">STOP</Type>
+      <From>stop</From>
+      <To>stopAll</To>
+    </RenamedType>
+    <RenamedType>
+      <Type guid="70bfc2f0-2a45-495c-8a8c-08f2039c444b">GODOWN</Type>
+      <From>goDown</From>
+      <To>moveDown</To>
+    </RenamedType>
+  </Renames>
+</Refactors>

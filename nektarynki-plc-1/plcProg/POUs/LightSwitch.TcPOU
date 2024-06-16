@@ -1,0 +1,616 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="LightSwitch" Id="{aec94d50-ff8e-4733-83a7-9ffb2f475799}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK LightSwitch
+
+VAR CONSTANT
+	MAX_OUTPUTS_PER_LEVEL : INT := 3;
+END_VAR
+
+VAR_INPUT
+	ID : INT;
+	digitalInput : REFERENCE TO BOOL;
+	
+	small_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	medium_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	big_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	superstrong_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	levelsManaged : INT := 3;
+	
+	defaultDayOutput : E_OutputLevel;
+	defaultNightOutput : E_OutputLevel;
+END_VAR
+
+VAR
+	wasRecentlyActive : BOOL := FALSE;
+
+	press : R_TRIG;
+	release : F_TRIG;
+	smallOutputTimer : TON := (PT := T#1S);
+	mediumOutputTimer : TON := (PT := T#2S); 
+	bigOutputTimer : TON := (PT := T#3S); 
+	superStrongOutputTimer : TON := (PT := T#4S);
+	
+	inactivityTimeout : TP := (PT := T#1100MS);
+	
+	pressedTimer : TON := (PT := T#10S);
+	pressedTimeMiliseconds : INT := 0;
+	firstLongPress : BOOL := FALSE;
+	initialized : BOOL := FALSE;
+	isOn : BOOL := FALSE;
+	turnedOnStrongest : BOOL := FALSE;
+	turnedOnLongSelector : BOOL := FALSE;
+	
+	smallOutputsSet : BOOL := FALSE;
+	mediumOutputsSet : BOOL := FALSE;
+	bigOutputsSet: BOOL := FALSE;
+	superStrongOutputsSet: BOOL := FALSE;
+	consecutiveClicks : INT := 0;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT initialized THEN
+	initialized := TRUE;	
+END_IF
+
+
+]]></ST>
+    </Implementation>
+    <Folder Name="logging" Id="{863f0790-67e2-4cc6-8b30-85c6b211446d}" />
+    <Method Name="doSpecialAction" Id="{6e16f68b-e074-467f-9286-070fb5400126}">
+      <Declaration><![CDATA[METHOD doSpecialAction : BOOL
+VAR_INPUT
+END_VAR
+
+VAR
+	i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE ID OF
+	
+	1:
+		print1(level:=TcEventSeverity.Info, str1:='Special action for button 1');
+		//logic
+		
+	2:
+		print1(level:=TcEventSeverity.Info, str1:='Special action for button 2');
+		//logic
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="isTurnedOnLongSelector" Id="{7bae46af-3a44-48ea-bbd6-f40ab3340ff2}">
+      <Declaration><![CDATA[METHOD isTurnedOnLongSelector : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[isTurnedOnLongSelector := smallOutputsSet OR mediumOutputsSet OR bigOutputsSet OR superStrongOutputsSet;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="loop" Id="{8ef97f03-9ee7-4fed-a21d-d7d2049ac2bc}">
+      <Declaration><![CDATA[METHOD loop
+VAR_INPUT
+END_VAR
+
+VAR
+	number : DINT;
+	boool : BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[press(CLK:= digitalInput);
+release(CLK:= digitalInput);
+smallOutputTimer(IN := digitalInput);
+mediumOutputTimer(IN := digitalInput);
+bigOutputTimer(IN := digitalInput);
+superStrongOutputTimer(IN := digitalInput);
+inactivityTimeout(IN := digitalInput);
+pressedTimer(IN := digitalInput);
+turnedOnLongSelector := isTurnedOnLongSelector();
+
+HMI.led1_1 := MAIN.arr1[1]; HMI.led2_1 := MAIN.arr2[1]; HMI.led2_2 := MAIN.arr2[2]; HMI.led3 := MAIN.arr3[1]; HMI.led4_1 := MAIN.arr4[1]; HMI.led4_2 := MAIN.arr4[2]; HMI.led4_3 := MAIN.arr4[3];		
+
+
+
+
+IF NOT inactivityTimeout.Q THEN
+	firstLongPress := FALSE;	
+	turnedOnStrongest := FALSE;
+END_IF
+
+IF digitalInput THEN
+	IF TIME_TO_INT(pressedTimer.ET) <> 0 THEN
+		pressedTimeMiliseconds := TIME_TO_INT(pressedTimer.ET);
+	END_IF
+END_IF
+
+IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN	
+	print1(level:= TcEventSeverity.Verbose, str1:='Activity timeout');
+	consecutiveClicks := 0;
+	wasRecentlyActive := FALSE;
+	smallOutputsSet := FALSE;
+	mediumOutputsSet := FALSE;
+	bigOutputsSet := FALSE;
+	superStrongOutputsSet := FALSE;
+END_IF
+
+IF press.Q THEN
+	print1(level:=TcEventSeverity.Info, str1:='Button pressed');
+	consecutiveClicks := consecutiveClicks + 1;
+	print2(level:=TcEventSeverity.Verbose, str1:='consecutiveClicks=%s', str2:= TO_STRING(consecutiveClicks));
+	print2(level:=TcEventSeverity.Verbose, str1:='isOn=%s', str2:= TO_STRING(isOn));
+	print2(level:=TcEventSeverity.Verbose, str1:='firstLongPress=%s', str2:= TO_STRING(firstLongPress));
+	
+	IF NOT isON AND firstLongPress THEN
+		print1(level:=TcEventSeverity.Verbose, str1:='Turn ON strongest as double press');
+		turnOnStrongestOutput();
+		JMP _ret;
+	END_IF
+END_IF
+
+IF release.Q THEN
+	print2(level:=TcEventSeverity.Info, str1:='Released after %s', str2:= TO_STRING(pressedTimeMiliseconds));
+	print2(level:=TcEventSeverity.Verbose, str1:='isOn=%s', str2:= TO_STRING(isOn));
+	print2(level:=TcEventSeverity.Verbose, str1:='turnedOnLongSelector=%s', str2:= TO_STRING(turnedOnLongSelector));
+	print2(level:=TcEventSeverity.Verbose, str1:='firstLongPress=%s', str2:= TO_STRING(firstLongPress));	
+	IF isON AND NOT turnedOnLongSelector AND NOT firstLongPress THEN
+		print1(level:=TcEventSeverity.Info, str1:='Lights turned off');
+		turnOff();
+	ELSE		
+		print2(level:=TcEventSeverity.Verbose, str1:='wasRecentlyActive=%s', str2:= TO_STRING(wasRecentlyActive));
+		IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 310  THEN
+			print2(level:=TcEventSeverity.Verbose, str1:='Quick press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
+			print2(level:=TcEventSeverity.Verbose, str1:='firstLongPress=%s', str2:= TO_STRING(firstLongPress));
+			IF NOT firstLongPress THEN
+				turnOnDefault();
+			END_IF
+		ELSE 
+			IF pressedTimeMiliseconds > 310 THEN
+				print2(level:=TcEventSeverity.Verbose, str1:='Long press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
+				firstLongPress := TRUE;
+			END_IF 
+		END_IF
+	END_IF
+	
+	wasRecentlyActive := TRUE;
+	pressedTimeMiliseconds := TIME_TO_INT(pressedTimer.ET);
+END_IF
+
+IF consecutiveClicks = 4 THEN
+	consecutiveClicks := 0;
+	doSpecialAction();
+END_IF
+
+manageLongPress();
+
+_ret :]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="manageLongPress" Id="{9f04a0be-cdbd-4dba-be58-f2a3e3154f07}">
+      <Declaration><![CDATA[METHOD manageLongPress
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF TIME_TO_DWORD(pressedTimer.ET) >= 1000 THEN
+	IF NOT smallOutputsSet THEN
+		setOutputs(outputLevel := E_OutputLevel.SMALL, state := TRUE);
+		smallOutputsSet := TRUE;
+		isOn := TRUE;
+		print2(level:=TcEventSeverity.Verbose, str1:='Turn on %s output as long press', str2:=TO_STRING(E_OutputLevel.SMALL));
+	END_IF
+END_IF
+
+IF TIME_TO_DWORD(pressedTimer.ET) >= 2000 THEN
+	IF NOT mediumOutputsSet THEN
+		setOutputs(outputLevel := E_OutputLevel.MEDIUM, state := TRUE);
+		mediumOutputsSet := TRUE;
+		isOn := TRUE;
+		print2(level:=TcEventSeverity.Verbose, str1:='Turn on %s output as long press', str2:=TO_STRING(E_OutputLevel.SMALL));
+	END_IF
+END_IF
+
+IF TIME_TO_DWORD(pressedTimer.ET) >= 3000 THEN
+	IF NOT bigOutputsSet THEN
+		setOutputs(outputLevel := E_OutputLevel.BIG, state := TRUE);
+		bigOutputsSet := TRUE;
+		isOn := TRUE;
+		print2(level:=TcEventSeverity.Verbose, str1:='Turn on %s output as long press', str2:=TO_STRING(E_OutputLevel.SMALL));
+	END_IF
+END_IF
+
+IF TIME_TO_DWORD(pressedTimer.ET) >= 4000 THEN
+	IF NOT superStrongOutputsSet THEN
+		setOutputs(outputLevel := E_OutputLevel.SUPERSTRONG, state := TRUE);
+		superStrongOutputsSet := TRUE;
+		isOn := TRUE;
+		print2(level:=TcEventSeverity.Verbose, str1:='Turn on %s output as long press', str2:=TO_STRING(E_OutputLevel.SMALL));
+	END_IF
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="print1" Id="{7f43a41b-9e98-4aa2-a748-dcf5656a0706}" FolderPath="logging\">
+      <Declaration><![CDATA[METHOD print1 : BOOL
+VAR_INPUT
+	level : TcEventSeverity;
+	str1 : STRING;
+END_VAR
+
+VAR
+	enum_as_text : STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE level OF
+	TcEventSeverity.Critical:
+		enum_as_text := '[CRITICAL] ';
+	TcEventSeverity.Error:
+		enum_as_text := '[ERROR] ';
+	TcEventSeverity.Warning:
+		enum_as_text := '[WARNING] ';		
+	TcEventSeverity.Info:
+		enum_as_text := '        [INFO] ';
+	TcEventSeverity.Verbose:
+		enum_as_text := '                        [VERBOSE] ';
+END_CASE
+
+IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
+	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
+              CONCAT(enum_as_text, str1), 
+              '');
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="print2" Id="{287da7bd-5655-405b-bd79-4e59ca6d7cd7}" FolderPath="logging\">
+      <Declaration><![CDATA[METHOD print2 : BOOL
+VAR_INPUT
+	level : TcEventSeverity;
+	str1 : STRING;
+	str2 : STRING;
+END_VAR
+
+VAR
+	enum_as_text : STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE level OF
+	TcEventSeverity.Critical:
+		enum_as_text := '[CRITICAL] ';
+	TcEventSeverity.Error:
+		enum_as_text := '[ERROR] ';
+	TcEventSeverity.Warning:
+		enum_as_text := '[WARNING] ';		
+	TcEventSeverity.Info:
+		enum_as_text := '        [INFO] ';
+	TcEventSeverity.Verbose:
+		enum_as_text := '                        [VERBOSE] ';
+END_CASE
+
+IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
+	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
+			  CONCAT(enum_as_text, str1), 
+			  str2);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="setOutputs" Id="{98f0d494-d3da-4ed5-b4b3-67a830019a2c}">
+      <Declaration><![CDATA[METHOD setOutputs
+VAR_INPUT
+	outputLevel : E_OutputLevel;
+	state : BOOL;
+END_VAR
+
+VAR
+	i : INT;
+	state_as_text : STRING := 'abc';
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[state_as_text := TO_STRING(state);
+
+CASE outputLevel OF
+	
+	E_OutputLevel.SMALL:
+		print2(level:=TcEventSeverity.Info, str1:='set SMALL to: %s', str2:= state_as_text);
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := state;
+		END_FOR
+		
+	E_OutputLevel.MEDIUM:
+		print2(level:=TcEventSeverity.Info, str1:='set MEDIUM to: %s', str2:= state_as_text);	
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			medium_outputs[i] := state;
+		END_FOR
+		
+	E_OutputLevel.BIG:
+		print2(level:=TcEventSeverity.Info, str1:='set BIG to: %s', str2:= state_as_text);
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			big_outputs[i] := state;
+		END_FOR
+		
+	E_OutputLevel.SUPERSTRONG:
+		print2(level:=TcEventSeverity.Info, str1:='set SUPERSTRONG to: %s', str2:= state_as_text);
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			superstrong_outputs[i] := state;
+		END_FOR
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="turnOff" Id="{6af44e6f-dbfa-4c03-a237-33da5be5a32c}">
+      <Declaration><![CDATA[METHOD turnOff
+VAR_INPUT
+END_VAR
+
+VAR 
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE levelsManaged OF
+	1 :
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := FALSE;
+		END_FOR
+
+	2 :
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := FALSE;
+			medium_outputs[i] := FALSE;
+		END_FOR
+	
+	3 :
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := FALSE;
+			medium_outputs[i] := FALSE;
+			big_outputs[i] := FALSE;
+		END_FOR
+		
+	4 :
+		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+			small_outputs[i] := FALSE;
+			medium_outputs[i] := FALSE;
+			big_outputs[i] := FALSE;
+			superstrong_outputs[i] := FALSE;
+		END_FOR
+
+END_CASE
+
+isOn := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="turnOnDefault" Id="{0b29667d-d1f0-4d16-a335-62900f4a810a}">
+      <Declaration><![CDATA[METHOD turnOnDefault
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF MAIN.isDay THEN
+	print2(level:=TcEventSeverity.Verbose, str1:='turn ON default: %s for daytime', str2:= TO_STRING(defaultDayOutput));
+	setOutputs(outputLevel := defaultDayOutput, state := TRUE);
+ELSE
+	print2(level:=TcEventSeverity.Verbose, str1:='turn ON default: %s for nighttime', str2:= TO_STRING(defaultNightOutput));
+	setOutputs(outputLevel := defaultNightOutput, state := TRUE);
+END_IF
+
+isOn := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="turnOnStrongestOutput" Id="{3f4fabbe-4d13-4779-9909-6746b7be7f4d}">
+      <Declaration><![CDATA[METHOD turnOnStrongestOutput
+VAR_INPUT
+END_VAR
+
+VAR
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE levelsManaged OF
+	1:
+		setOutputs(outputLevel := E_OutputLevel.SMALL, state := TRUE);
+		setOutputs(outputLevel := E_OutputLevel.MEDIUM, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.BIG, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.SUPERSTRONG, state := FALSE);
+	2:
+		setOutputs(outputLevel := E_OutputLevel.SMALL, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.MEDIUM, state := TRUE);
+		setOutputs(outputLevel := E_OutputLevel.BIG, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.SUPERSTRONG, state := FALSE);
+		
+	3:
+		setOutputs(outputLevel := E_OutputLevel.SMALL, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.MEDIUM, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.BIG, state := TRUE);
+		setOutputs(outputLevel := E_OutputLevel.SUPERSTRONG, state := FALSE);
+		
+	4:
+		setOutputs(outputLevel := E_OutputLevel.SMALL, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.MEDIUM, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.BIG, state := FALSE);
+		setOutputs(outputLevel := E_OutputLevel.SUPERSTRONG, state := TRUE);
+		
+END_CASE
+
+turnedOnStrongest := TRUE;
+isOn := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="LightSwitch">
+      <LineId Id="179" Count="0" />
+      <LineId Id="182" Count="0" />
+      <LineId Id="181" Count="0" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="195" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.doSpecialAction">
+      <LineId Id="7" Count="2" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.isTurnedOnLongSelector">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.loop">
+      <LineId Id="301" Count="5" />
+      <LineId Id="308" Count="4" />
+      <LineId Id="384" Count="2" />
+      <LineId Id="319" Count="10" />
+      <LineId Id="331" Count="0" />
+      <LineId Id="433" Count="0" />
+      <LineId Id="332" Count="0" />
+      <LineId Id="416" Count="0" />
+      <LineId Id="333" Count="8" />
+      <LineId Id="415" Count="0" />
+      <LineId Id="431" Count="0" />
+      <LineId Id="421" Count="1" />
+      <LineId Id="428" Count="0" />
+      <LineId Id="342" Count="8" />
+      <LineId Id="423" Count="0" />
+      <LineId Id="426" Count="1" />
+      <LineId Id="397" Count="1" />
+      <LineId Id="396" Count="0" />
+      <LineId Id="401" Count="0" />
+      <LineId Id="430" Count="0" />
+      <LineId Id="447" Count="0" />
+      <LineId Id="437" Count="9" />
+      <LineId Id="435" Count="0" />
+      <LineId Id="399" Count="1" />
+      <LineId Id="434" Count="0" />
+      <LineId Id="371" Count="3" />
+      <LineId Id="432" Count="0" />
+      <LineId Id="419" Count="0" />
+      <LineId Id="418" Count="0" />
+      <LineId Id="420" Count="0" />
+      <LineId Id="375" Count="1" />
+      <LineId Id="225" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.manageLongPress">
+      <LineId Id="160" Count="0" />
+      <LineId Id="167" Count="3" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="171" Count="7" />
+      <LineId Id="199" Count="0" />
+      <LineId Id="179" Count="7" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="187" Count="7" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="152" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.print1">
+      <LineId Id="33" Count="10" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.print2">
+      <LineId Id="31" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.setOutputs">
+      <LineId Id="46" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="12" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="22" Count="1" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.turnOff">
+      <LineId Id="5" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="17" Count="6" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="25" Count="4" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="32" Count="5" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="44" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.turnOnDefault">
+      <LineId Id="6" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.turnOnStrongestOutput">
+      <LineId Id="5" Count="1" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="50" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="53" Count="1" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="56" Count="1" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="59" Count="1" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
