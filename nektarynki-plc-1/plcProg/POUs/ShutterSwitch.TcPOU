@@ -68,6 +68,7 @@ pressedDownTimer(IN := digitalInputDown);
 
 //prevent both pressed
 IF digitalInputUp AND digitalInputDown THEN
+	print1(level:=TcEventSeverity.Warning, str1:='Both button pressed');
 	stopAll();
 	pressedUpMiliseconds := 0;
 	pressedDownMiliseconds := 0;
@@ -77,6 +78,7 @@ END_IF
 //moving any direction 
 IF isClosing OR isOpening THEN
 	IF pressedUp.Q OR pressedDown.Q THEN
+		print1(level:=TcEventSeverity.Info, str1:='Button pressed during shutter move');
 		stopAll();
 		JMP _ret;
 	END_IF
@@ -95,12 +97,6 @@ IF goDownRequested AND NOT goUpRequested THEN
 ELSE 
 	stopDown();
 END_IF
-
-IF goUpRequested OR goDownRequested THEN
-	print1(level:=TcEventSeverity.Info, str1:='Lights turned off');
-ELSE
-	shortDistanceUp(IN:=FALSE);
-END_IF 
 
 //long hold up
 IF digitalInputUp AND TIME_TO_INT(pressedUpTimer.ET) <> 0 THEN
@@ -128,23 +124,6 @@ IF pressedDownMiliseconds >= 2000 THEN
 	moveDown();
 END_IF
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 _ret :
 
 ]]></ST>
@@ -156,7 +135,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[setOutputs(direction:=E_Direction.UP, state:=FALSE);
+        <ST><![CDATA[print1(level:=TcEventSeverity.Info, str1:='Roller shutter moving down');
+setOutputs(direction:=E_Direction.UP, state:=FALSE);
 setOutputs(direction:=E_Direction.DOWN, state:=TRUE);]]></ST>
       </Implementation>
     </Method>
@@ -166,7 +146,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[setOutputs(direction:=E_Direction.DOWN, state:=FALSE);
+        <ST><![CDATA[print1(level:=TcEventSeverity.Info, str1:='Roller shutter moving up');
+setOutputs(direction:=E_Direction.DOWN, state:=FALSE);
 setOutputs(direction:=E_Direction.UP, state:=TRUE);]]></ST>
       </Implementation>
     </Method>
@@ -176,7 +157,9 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF pressedDownMiliseconds > 10 AND pressedDownMiliseconds < 500 THEN
+        <ST><![CDATA[print2(level:=TcEventSeverity.Verbose, str1:='pressedDownMiliseconds=%s', str2:= TO_STRING(pressedDownMiliseconds));
+
+IF pressedDownMiliseconds > 10 AND pressedDownMiliseconds < 500 THEN
 	//move a bit down
 	shortDistanceDown(IN:=TRUE);
 ELSIF pressedDownMiliseconds >= 500 AND pressedDownMiliseconds < 2000 THEN
@@ -196,7 +179,9 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF pressedUpMiliseconds > 10 AND pressedUpMiliseconds < 500 THEN
+        <ST><![CDATA[print2(level:=TcEventSeverity.Verbose, str1:='pressedUpMiliseconds=%s', str2:= TO_STRING(pressedUpMiliseconds));
+
+IF pressedUpMiliseconds > 10 AND pressedUpMiliseconds < 500 THEN
 	//move a little bit up
 	shortDistanceUp(IN:=TRUE);
 ELSIF pressedUpMiliseconds >= 500 AND pressedUpMiliseconds < 2000 THEN
@@ -312,7 +297,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[stopDown();
+        <ST><![CDATA[print1(level:=TcEventSeverity.Info, str1:='Stopping roller shutter');
+stopDown();
 stopUp();]]></ST>
       </Implementation>
     </Method>
@@ -340,19 +326,17 @@ END_VAR
     </LineIds>
     <LineIds Name="ShutterSwitch.loop">
       <LineId Id="136" Count="3" />
-      <LineId Id="141" Count="12" />
-      <LineId Id="155" Count="4" />
+      <LineId Id="141" Count="4" />
+      <LineId Id="255" Count="0" />
+      <LineId Id="146" Count="7" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="256" Count="0" />
+      <LineId Id="156" Count="3" />
       <LineId Id="236" Count="3" />
       <LineId Id="241" Count="0" />
       <LineId Id="246" Count="2" />
       <LineId Id="250" Count="4" />
       <LineId Id="249" Count="0" />
-      <LineId Id="230" Count="0" />
-      <LineId Id="229" Count="0" />
-      <LineId Id="235" Count="0" />
-      <LineId Id="231" Count="0" />
-      <LineId Id="234" Count="0" />
-      <LineId Id="232" Count="0" />
       <LineId Id="222" Count="0" />
       <LineId Id="161" Count="1" />
       <LineId Id="164" Count="0" />
@@ -367,17 +351,21 @@ END_VAR
       <LineId Id="216" Count="0" />
       <LineId Id="183" Count="0" />
       <LineId Id="185" Count="3" />
-      <LineId Id="190" Count="23" />
+      <LineId Id="190" Count="3" />
+      <LineId Id="211" Count="2" />
       <LineId Id="7" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.moveDown">
       <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.moveUp">
+      <LineId Id="10" Count="0" />
       <LineId Id="5" Count="1" />
     </LineIds>
     <LineIds Name="ShutterSwitch.onReleasedDown">
+      <LineId Id="20" Count="1" />
       <LineId Id="6" Count="1" />
       <LineId Id="18" Count="0" />
       <LineId Id="8" Count="1" />
@@ -388,6 +376,8 @@ END_VAR
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.onReleasedUp">
+      <LineId Id="21" Count="0" />
+      <LineId Id="20" Count="0" />
       <LineId Id="6" Count="1" />
       <LineId Id="14" Count="0" />
       <LineId Id="8" Count="1" />
@@ -433,6 +423,7 @@ END_VAR
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.stopAll">
+      <LineId Id="11" Count="0" />
       <LineId Id="6" Count="0" />
       <LineId Id="10" Count="0" />
     </LineIds>
