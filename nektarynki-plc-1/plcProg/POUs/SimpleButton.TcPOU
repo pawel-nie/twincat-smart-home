@@ -22,7 +22,6 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Folder Name="logging" Id="{7af4acfc-6ff7-4e7d-be9d-ce2103ef0c28}" />
     <Method Name="loop" Id="{aa977121-eff7-4bf4-886a-ea3c6bcd0d1e}">
       <Declaration><![CDATA[METHOD loop : BOOL
 VAR_INPUT
@@ -43,71 +42,6 @@ END_IF
 ]]></ST>
       </Implementation>
     </Method>
-    <Method Name="print1" Id="{a2c306dc-c998-4f1b-bece-b1b36341cca5}" FolderPath="logging\">
-      <Declaration><![CDATA[METHOD print1 : BOOL
-VAR_INPUT
-	level : TcEventSeverity;
-	str1 : STRING;
-END_VAR
-
-VAR
-	enum_as_text : STRING;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[CASE level OF
-	TcEventSeverity.Critical:
-		enum_as_text := '[CRITICAL] ';
-	TcEventSeverity.Error:
-		enum_as_text := '[ERROR] ';
-	TcEventSeverity.Warning:
-		enum_as_text := '[WARNING] ';		
-	TcEventSeverity.Info:
-		enum_as_text := '        [INFO] ';
-	TcEventSeverity.Verbose:
-		enum_as_text := '                        [VERBOSE] ';
-END_CASE
-
-IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
-	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
-              CONCAT(enum_as_text, str1), 
-              '');
-END_IF
-
-]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="print2" Id="{4dba2315-a161-41c4-8f80-33e652be6241}" FolderPath="logging\">
-      <Declaration><![CDATA[METHOD print2 : BOOL
-VAR_INPUT
-	level : TcEventSeverity;
-	str1 : STRING;
-	str2 : STRING;
-END_VAR
-
-VAR
-	enum_as_text : STRING;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[CASE level OF
-	TcEventSeverity.Critical:
-		enum_as_text := '[CRITICAL] ';
-	TcEventSeverity.Error:
-		enum_as_text := '[ERROR] ';
-	TcEventSeverity.Warning:
-		enum_as_text := '[WARNING] ';		
-	TcEventSeverity.Info:
-		enum_as_text := '        [INFO] ';
-	TcEventSeverity.Verbose:
-		enum_as_text := '                        [VERBOSE] ';
-END_CASE
-
-IF (TO_SINT(level) >= MAIN.minimumLogSeverity) THEN
-	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
-			  CONCAT(enum_as_text, str1), 
-			  str2);
-END_IF]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="setOutputs" Id="{b4040e0f-b48f-4a91-a4d6-98420882822c}">
       <Declaration><![CDATA[METHOD setOutputs
 VAR_INPUT
@@ -121,9 +55,9 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[state_as_text := TO_STRING(state);
 
-print2(level:=TcEventSeverity.Info, str1:='set UP to: %s', str2:= state_as_text);
+GVL.EventLogger.print2(level:=TcEventSeverity.Info, str1:='set output to: %s', str2:= state_as_text);
 FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
-	up_outputs[i] := state;
+	outputs[i] := state;
 END_FOR
 ]]></ST>
       </Implementation>
@@ -141,36 +75,6 @@ END_FOR
       <LineId Id="17" Count="0" />
       <LineId Id="15" Count="0" />
       <LineId Id="10" Count="0" />
-    </LineIds>
-    <LineIds Name="SimpleButton.print1">
-      <LineId Id="33" Count="10" />
-      <LineId Id="32" Count="0" />
-      <LineId Id="44" Count="0" />
-      <LineId Id="17" Count="0" />
-      <LineId Id="19" Count="0" />
-      <LineId Id="21" Count="1" />
-      <LineId Id="20" Count="0" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="SimpleButton.print2">
-      <LineId Id="31" Count="0" />
-      <LineId Id="33" Count="0" />
-      <LineId Id="55" Count="0" />
-      <LineId Id="57" Count="0" />
-      <LineId Id="56" Count="0" />
-      <LineId Id="67" Count="0" />
-      <LineId Id="66" Count="0" />
-      <LineId Id="62" Count="0" />
-      <LineId Id="60" Count="0" />
-      <LineId Id="64" Count="0" />
-      <LineId Id="63" Count="0" />
-      <LineId Id="29" Count="0" />
-      <LineId Id="13" Count="0" />
-      <LineId Id="28" Count="0" />
-      <LineId Id="14" Count="0" />
-      <LineId Id="16" Count="1" />
-      <LineId Id="11" Count="0" />
     </LineIds>
     <LineIds Name="SimpleButton.setOutputs">
       <LineId Id="88" Count="0" />

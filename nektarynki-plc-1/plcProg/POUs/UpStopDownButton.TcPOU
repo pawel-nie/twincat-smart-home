@@ -2,17 +2,116 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="UpStopDownButton" Id="{c21751f0-94cd-4281-8a12-825434e0a956}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK UpStopDownButton
+
+VAR CONSTANT
+	MAX_OUTPUTS_PER_LEVEL : INT := 3;
+END_VAR
+
 VAR_INPUT
+	ID : INT;
+	digitalInput : REFERENCE TO BOOL;
+	outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	defaultFirstClickDirection : E_Direction;
 END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
+	pressed : R_TRIG;
+	state : E_Direction := E_Direction.STOP;
+    previousState : E_Direction := E_Direction.STOP;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Method Name="loop" Id="{861e1e23-302c-481b-b4f4-9dde532c9d09}">
+      <Declaration><![CDATA[METHOD loop : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pressed(CLK:= digitalInput);
+
+IF pressed.Q THEN
+	CASE state OF
+		E_Direction.STOP:
+			CASE previousState OF
+				E_Direction.STOP:
+					state := defaultFirstClickDirection;
+				E_Direction.DOWN:
+					state := E_Direction.UP;
+				E_Direction.UP:
+					state := E_Direction.DOWN;
+			END_CASE
+			previousState := E_Direction.STOP;
+			
+		E_Direction.DOWN:
+			state := E_Directiona.STOP;
+			previousState := E_Direction.DOWN;
+			
+		E_Direction.UP:
+			state := E_Direction.STOP;
+			previousState := E_Direction.UP;
+	END_CASE
+	
+	IF state = E_Direction.DOWN OR state = E_Direction.UP THEN
+		setOutputs(state:= TRUE);
+	ELSE
+		setOutputs(state:= FALSE);
+	END_IF
+ELSE
+	setOutputs(state:= FALSE);
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="setOutputs" Id="{7152aa92-f9b3-4e40-b832-8e5d45ddeec6}">
+      <Declaration><![CDATA[METHOD setOutputs
+VAR_INPUT
+	state : BOOL;
+END_VAR
+
+VAR
+	i : INT;
+	state_as_text : STRING := 'abc';
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[state_as_text := TO_STRING(state);
+
+GVL.EventLogger.print2(level:=TcEventSeverity.Info, str1:='set output to: %s', str2:= state_as_text);
+FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+	outputs[i] := state;
+END_FOR
+]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="UpStopDownButton">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="UpStopDownButton.loop">
+      <LineId Id="5" Count="0" />
+      <LineId Id="25" Count="1" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="33" Count="1" />
+      <LineId Id="36" Count="4" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="42" Count="1" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="44" Count="5" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="55" Count="2" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="UpStopDownButton.setOutputs">
+      <LineId Id="88" Count="0" />
+      <LineId Id="92" Count="4" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

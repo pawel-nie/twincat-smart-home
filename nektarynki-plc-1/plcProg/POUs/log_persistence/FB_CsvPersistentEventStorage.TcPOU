@@ -28,7 +28,7 @@ END_VAR
 		IF fbFileOpen.bError THEN
 			eWriteSTate := ERROR;
 		ELSIF NOT fbFileOpen.bBusy AND fbFileOpen.hFile <> 0 THEN
-			eWriteState := WAIT_FOR_eVENT;
+			eWriteState := WAIT_FOR_EVENT;
 		END_IF
 		
 	WAIT_FOR_EVENT:

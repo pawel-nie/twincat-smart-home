@@ -71,9 +71,6 @@
     <Compile Include="POUs\SimpleButton.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\SimpleButtonWithHold.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\UpStopDownButton.TcPOU">
       <SubType>Code</SubType>
     </Compile>
