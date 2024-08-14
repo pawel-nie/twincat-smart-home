@@ -44,9 +44,6 @@
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\GroupShutterSwitch.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\LightSwitch.TcPOU">
       <SubType>Code</SubType>
     </Compile>

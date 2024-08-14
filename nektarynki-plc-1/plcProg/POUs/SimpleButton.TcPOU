@@ -9,6 +9,7 @@ END_VAR
 
 VAR_INPUT
 	ID : INT;
+	name : STRING := "Simple button";
 	digitalInput : REFERENCE TO BOOL;
 	outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	runAsYouPress : BOOL := FALSE;

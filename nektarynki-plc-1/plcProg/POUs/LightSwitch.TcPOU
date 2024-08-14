@@ -9,8 +9,8 @@ END_VAR
 
 VAR_INPUT
 	ID : INT;
+	name : STRING := 'Light switch';
 	digitalInput : REFERENCE TO BOOL;
-	name : STRING;
 	
 	small_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	medium_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
@@ -71,14 +71,33 @@ END_VAR]]></Declaration>
         <ST><![CDATA[CASE ID OF
 	
 	1:
-		GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:='Special action for button 1');
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 1', str2:='', str3:=getSource());
 		//logic
 		
 	2:
-		GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:='Special action for button 2');
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2', str2:='', str3:=getSource());
 		//logic
 		
 END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getSource" Id="{aef894df-032e-4098-aeaf-85b387f704db}">
+      <Declaration><![CDATA[METHOD getSource : STRING
+VAR_INPUT
+END_VAR
+
+VAR
+	details : STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[details := CONCAT(STR1:=' - light switch, ID: ', STR2:=TO_STRING(ID));
+details := CONCAT(STR1:=details, STR2:=', digital input: ');
+details := CONCAT(STR1:=details, STR2:=TO_STRING(digitalInput));
+details := CONCAT(STR1:=details, STR2:=', name: ');
+details := CONCAT(STR1:=details, STR2:=name);
+
+
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="isTurnedOnLongSelector" Id="{7bae46af-3a44-48ea-bbd6-f40ab3340ff2}">
@@ -98,6 +117,7 @@ END_VAR
 VAR
 	number : DINT;
 	boool : BOOL;
+	str3: INT;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[pressed(CLK:= digitalInput);
@@ -124,7 +144,7 @@ IF digitalInput THEN
 END_IF
 
 IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN	
-	GVL.EventLogger.print1(level:= TcEventSeverity.Verbose, str1:='Activity timeout');
+	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Activity timeout', str2:= '', str3:=getSource());
 	consecutiveClicks := 0;
 	wasRecentlyActive := FALSE;
 	smallOutputsSet := FALSE;
@@ -134,38 +154,38 @@ IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
 END_IF
 
 IF pressed.Q THEN
-	GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:='Button pressed');
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button pressed', str2:= '', str3:=getSource());
 	consecutiveClicks := consecutiveClicks + 1;
-	GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='consecutiveClicks=%s', str2:= TO_STRING(consecutiveClicks));
-	GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='isOn=%s', str2:= TO_STRING(isOn));
-	GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='firstLongPress=%s', str2:= TO_STRING(firstLongPress));
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='consecutiveClicks=', str2:= TO_STRING(consecutiveClicks), str3:=getSource());
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='isOn=', str2:= TO_STRING(isOn), str3:=getSource());
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='firstLongPress=', str2:= TO_STRING(firstLongPress), str3:=getSource());
 	
 	IF NOT isON AND firstLongPress THEN
-		GVL.EventLogger.print1(level:=TcEventSeverity.Verbose, str1:='Turn ON strongest as double press');
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Turn ON strongest as double press', str2:= '', str3:=getSource());
 		turnOnStrongestOutput();
 		JMP _ret;
 	END_IF
 END_IF
 
 IF released.Q THEN
-	GVL.EventLogger.print2(level:=TcEventSeverity.Info, str1:='Released after %s', str2:= TO_STRING(pressedTimeMiliseconds));
-	GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='isOn=%s', str2:= TO_STRING(isOn));
-	GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='turnedOnLongSelector=%s', str2:= TO_STRING(turnedOnLongSelector));
-	GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='firstLongPress=%s', str2:= TO_STRING(firstLongPress));	
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Released after ', str2:= TO_STRING(pressedTimeMiliseconds), str3:=getSource());
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='isOn=', str2:= TO_STRING(isOn), str3:=getSource());
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='turnedOnLongSelector=', str2:= TO_STRING(turnedOnLongSelector), str3:=getSource());
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='firstLongPress=', str2:= TO_STRING(firstLongPress), str3:=getSource());	
 	IF isON AND NOT turnedOnLongSelector AND NOT firstLongPress THEN
-		GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:='Lights turned off');
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Lights turned off', str2:= '', str3:=getSource());
 		turnOff();
 	ELSE		
-		GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='wasRecentlyActive=%s', str2:= TO_STRING(wasRecentlyActive));
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='wasRecentlyActive=', str2:= TO_STRING(wasRecentlyActive), str3:=getSource());
 		IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 310  THEN
-			GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='Quick press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
-			GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='firstLongPress=%s', str2:= TO_STRING(firstLongPress));
+			GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Quick press released after ', str2:= TO_STRING(pressedTimeMiliseconds), str3:=getSource());
+			GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='firstLongPress=', str2:= TO_STRING(firstLongPress), str3:=getSource());
 			IF NOT firstLongPress THEN
 				turnOnDefault();
 			END_IF
 		ELSE 
 			IF pressedTimeMiliseconds > 310 THEN
-				GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='Long press released %s', str2:= TO_STRING(pressedTimeMiliseconds));
+				GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press released after ', str2:= TO_STRING(pressedTimeMiliseconds), str3:=getSource());
 				firstLongPress := TRUE;
 			END_IF 
 		END_IF
@@ -195,7 +215,7 @@ END_VAR]]></Declaration>
 		setOutputs(outputLevel := E_OutputLevel.SMALL, state := TRUE);
 		smallOutputsSet := TRUE;
 		isOn := TRUE;
-		GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='Turn on %s output as long press', str2:=TO_STRING(E_OutputLevel.SMALL));
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press turn on output ', str2:=TO_STRING(E_OutputLevel.SMALL), str3:=getSource());
 	END_IF
 END_IF
 
@@ -204,7 +224,7 @@ IF TIME_TO_DWORD(pressedTimer.ET) >= 2000 THEN
 		setOutputs(outputLevel := E_OutputLevel.MEDIUM, state := TRUE);
 		mediumOutputsSet := TRUE;
 		isOn := TRUE;
-		GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='Turn on %s output as long press', str2:=TO_STRING(E_OutputLevel.SMALL));
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press turn on output', str2:=TO_STRING(E_OutputLevel.SMALL), str3:=getSource());
 	END_IF
 END_IF
 
@@ -213,7 +233,7 @@ IF TIME_TO_DWORD(pressedTimer.ET) >= 3000 THEN
 		setOutputs(outputLevel := E_OutputLevel.BIG, state := TRUE);
 		bigOutputsSet := TRUE;
 		isOn := TRUE;
-		GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='Turn on %s output as long press', str2:=TO_STRING(E_OutputLevel.SMALL));
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press turn on output', str2:=TO_STRING(E_OutputLevel.SMALL), str3:=getSource());
 	END_IF
 END_IF
 
@@ -222,7 +242,7 @@ IF TIME_TO_DWORD(pressedTimer.ET) >= 4000 THEN
 		setOutputs(outputLevel := E_OutputLevel.SUPERSTRONG, state := TRUE);
 		superStrongOutputsSet := TRUE;
 		isOn := TRUE;
-		GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='Turn on %s output as long press', str2:=TO_STRING(E_OutputLevel.SMALL));
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press turn on output', str2:=TO_STRING(E_OutputLevel.SMALL), str3:=getSource());
 	END_IF
 END_IF
 ]]></ST>
@@ -245,25 +265,25 @@ END_VAR]]></Declaration>
 CASE outputLevel OF
 	
 	E_OutputLevel.SMALL:
-		GVL.EventLogger.print2(level:=TcEventSeverity.Info, str1:='set SMALL to: %s', str2:= state_as_text);
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Set SMALL outputs to: ', str2:= state_as_text, str3:=getSource());
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			small_outputs[i] := state;
 		END_FOR
 		
 	E_OutputLevel.MEDIUM:
-		GVL.EventLogger.print2(level:=TcEventSeverity.Info, str1:='set MEDIUM to: %s', str2:= state_as_text);	
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Set MEDIUM outputs to: ', str2:= state_as_text, str3:=getSource());	
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			medium_outputs[i] := state;
 		END_FOR
 		
 	E_OutputLevel.BIG:
-		GVL.EventLogger.print2(level:=TcEventSeverity.Info, str1:='set BIG to: %s', str2:= state_as_text);
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Set BIG outputs to: ', str2:= state_as_text, str3:=getSource());
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			big_outputs[i] := state;
 		END_FOR
 		
 	E_OutputLevel.SUPERSTRONG:
-		GVL.EventLogger.print2(level:=TcEventSeverity.Info, str1:='set SUPERSTRONG to: %s', str2:= state_as_text);
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Set SUPERSTRONG outputs to: ', str2:= state_as_text, str3:=getSource());
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			superstrong_outputs[i] := state;
 		END_FOR
@@ -319,10 +339,10 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF MAIN.isDay THEN
-	GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='turn ON default: %s for daytime', str2:= TO_STRING(defaultDayOutput));
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='turn ON default for daytime: ', str2:= TO_STRING(defaultDayOutput), str3:=getSource());
 	setOutputs(outputLevel := defaultDayOutput, state := TRUE);
 ELSE
-	GVL.EventLogger.print2(level:=TcEventSeverity.Verbose, str1:='turn ON default: %s for nighttime', str2:= TO_STRING(defaultNightOutput));
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='turn ON default for nighttime: ', str2:= TO_STRING(defaultNightOutput), str3:=getSource());
 	setOutputs(outputLevel := defaultNightOutput, state := TRUE);
 END_IF
 
@@ -385,6 +405,16 @@ isOn := TRUE;]]></ST>
       <LineId Id="36" Count="0" />
       <LineId Id="28" Count="0" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="LightSwitch.getSource">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="LightSwitch.isTurnedOnLongSelector">
       <LineId Id="5" Count="0" />

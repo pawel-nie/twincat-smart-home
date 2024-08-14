@@ -9,6 +9,7 @@ END_VAR
 
 VAR_INPUT
 	ID : INT;
+	name : STRING := "UpStopDown button";
 	digitalInput : REFERENCE TO BOOL;
 	outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	defaultFirstClickDirection : E_Direction;

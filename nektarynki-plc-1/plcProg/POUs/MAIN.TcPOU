@@ -70,7 +70,19 @@ END_VAR
 	superstrong_outputs := arr4,
 	levelsManaged := 4,
 	defaultDayOutput := E_OutputLevel.big,
-	defaultNightOutput := E_OutputLevel.small);]]></ST>
+	defaultNightOutput := E_OutputLevel.small);
+	
+	
+// init buttons
+//GVL.wlacznik_z_garazu_do_pralni := LightSwitch(ID := 1,
+//	digitalInput := GVL.b_button_1,//HMI.btn,
+//	small_outputs := arr1,
+//	medium_outputs := arr2,
+//	big_outputs := arr3,
+//	superstrong_outputs := arr4,
+//	levelsManaged := 4,
+//	defaultDayOutput := E_OutputLevel.big,
+//	defaultNightOutput := E_OutputLevel.small);]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
@@ -91,6 +103,9 @@ END_VAR
       <LineId Id="7" Count="3" />
       <LineId Id="5" Count="0" />
       <LineId Id="14" Count="1" />
+      <LineId Id="23" Count="2" />
+      <LineId Id="27" Count="7" />
+      <LineId Id="26" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>
