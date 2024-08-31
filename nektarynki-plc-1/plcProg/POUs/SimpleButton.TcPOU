@@ -9,7 +9,7 @@ END_VAR
 
 VAR_INPUT
 	ID : INT;
-	name : STRING := "Simple button";
+	name : STRING := 'Simple button';
 	digitalInput : REFERENCE TO BOOL;
 	outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	runAsYouPress : BOOL := FALSE;
@@ -17,12 +17,33 @@ END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
+	isOn : BOOL := FALSE;
+	printed : BOOL := FALSE;
 	pressed : R_TRIG;
+	released : F_TRIG;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Method Name="getSource" Id="{42d4478f-5eab-4e0e-be94-887f1ace45d6}">
+      <Declaration><![CDATA[METHOD getSource : STRING
+VAR_INPUT
+END_VAR
+
+VAR
+	details : STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[details := CONCAT(STR1:=' - simple button, ID: ', STR2:=TO_STRING(ID));
+details := CONCAT(STR1:=details, STR2:=', digital input: ');
+details := CONCAT(STR1:=details, STR2:=TO_STRING(digitalInput));
+details := CONCAT(STR1:=details, STR2:=', name: ');
+details := CONCAT(STR1:=details, STR2:=name);
+
+getSource := details;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="loop" Id="{aa977121-eff7-4bf4-886a-ea3c6bcd0d1e}">
       <Declaration><![CDATA[METHOD loop : BOOL
 VAR_INPUT
@@ -30,17 +51,30 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[pressed(CLK:= digitalInput);
+released(CLK:= digitalInput);
+
+IF pressed.Q OR released.Q THEN
+	printed := FALSE;
+END_IF
 
 IF runAsYouPress THEN
 	setOutputs(state:= digitalInput);
 ELSE
 	IF pressed.Q THEN
-		setOutputs(state:= TRUE);
-	ELSE
-		setOutputs(state:= FALSE);
+		GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Button pressed', str2:= '', str3:=getSource());
+		IF isOn THEN
+			setOutputs(state:= FALSE);
+			isOn := FALSE;
+		ELSE
+			setOutputs(state:= TRUE);
+			isOn := TRUE;
+		END_IF
 	END_IF
 END_IF
-]]></ST>
+
+IF released.Q THEN
+	GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Button released', str2:= '', str3:=getSource());
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="setOutputs" Id="{b4040e0f-b48f-4a91-a4d6-98420882822c}">
@@ -56,7 +90,10 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[state_as_text := TO_STRING(state);
 
-GVL.EventLogger.print2(level:=TcEventSeverity.Info, str1:='set output to: %s', str2:= state_as_text);
+IF NOT printed THEN
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Set outputs to: ', str2:= state_as_text, str3:=getSource());
+END_IF
+
 FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 	outputs[i] := state;
 END_FOR
@@ -66,20 +103,46 @@ END_FOR
     <LineIds Name="SimpleButton">
       <LineId Id="9" Count="0" />
     </LineIds>
+    <LineIds Name="SimpleButton.getSource">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
     <LineIds Name="SimpleButton.loop">
       <LineId Id="5" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="25" Count="0" />
       <LineId Id="13" Count="0" />
+      <LineId Id="26" Count="2" />
       <LineId Id="7" Count="0" />
       <LineId Id="14" Count="0" />
       <LineId Id="16" Count="0" />
-      <LineId Id="18" Count="3" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="29" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="31" Count="0" />
       <LineId Id="17" Count="0" />
       <LineId Id="15" Count="0" />
+      <LineId Id="35" Count="0" />
       <LineId Id="10" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="37" Count="0" />
     </LineIds>
     <LineIds Name="SimpleButton.setOutputs">
       <LineId Id="88" Count="0" />
-      <LineId Id="92" Count="4" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="94" Count="2" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

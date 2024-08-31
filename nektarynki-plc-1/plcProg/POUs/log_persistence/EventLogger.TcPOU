@@ -42,14 +42,14 @@ _PersistentEventStorage.StoreEvent(stEvent := EventBuffer[CurrentEventBufferInde
       </Implementation>
     </Method>
     <Method Name="appendStrings" Id="{5ea5d2f3-2e58-4789-8d28-5e4b0c5aaaa6}" FolderPath="logging\">
-      <Declaration><![CDATA[METHOD PUBLIC appendStrings : STRING
+      <Declaration><![CDATA[METHOD PUBLIC appendStrings : STRING(255)
 VAR_INPUT
-	str1 : STRING := '';
-	str2 : STRING := '';
-	str3 : STRING := '';
+	str1 : STRING(255) := '';
+	str2 : STRING(255) := '';
+	str3 : STRING(255) := '';
 END_VAR
 VAR
-	temp : STRING;
+	temp : STRING(255);
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[temp := CONCAT(STR1:=str1, STR2:=str2);
@@ -149,14 +149,14 @@ END_IF]]></ST>
       <Declaration><![CDATA[METHOD print3 : BOOL
 VAR_INPUT
 	level : TcEventSeverity;
-	str1 : STRING;
-	str2 : STRING;
-	str3 : STRING;
+	str1 : STRING(255);
+	str2 : STRING(255);
+	str3 : STRING(255);
 END_VAR
 
 VAR
-	enum_as_text : STRING;
-	val : STRING;
+	enum_as_text : STRING(255);
+	val : STRING(255);
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE level OF
@@ -167,9 +167,9 @@ END_VAR]]></Declaration>
 	TcEventSeverity.Warning:
 		enum_as_text := '[WARNING] ';		
 	TcEventSeverity.Info:
-		enum_as_text := '        [INFO] ';
+		enum_as_text := '[INFO] ';
 	TcEventSeverity.Verbose:
-		enum_as_text := '                        [VERBOSE] ';
+		enum_as_text := '     [VERBOSE] ';
 END_CASE
 
 val := appendStrings(str1:= str1, str2:= str2, str3:= str3);

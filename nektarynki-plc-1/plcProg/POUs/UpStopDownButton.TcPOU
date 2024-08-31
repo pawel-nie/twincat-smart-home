@@ -9,10 +9,11 @@ END_VAR
 
 VAR_INPUT
 	ID : INT;
-	name : STRING := "UpStopDown button";
+	name : STRING := 'UpStopDown button';
 	digitalInput : REFERENCE TO BOOL;
 	outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	defaultFirstClickDirection : E_Direction;
+	withReturn : BOOL := FALSE;
 END_VAR
 VAR_OUTPUT
 END_VAR
@@ -20,11 +21,32 @@ VAR
 	pressed : R_TRIG;
 	state : E_Direction := E_Direction.STOP;
     previousState : E_Direction := E_Direction.STOP;
+	returnTimer : TP := (PT := T#500MS);
+	
+	readyToRelease : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Method Name="getSource" Id="{011f2438-7f45-4b2c-917a-d6c792813ebc}">
+      <Declaration><![CDATA[METHOD getSource : STRING
+VAR_INPUT
+END_VAR
+
+VAR
+	details : STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[details := CONCAT(STR1:=' - up-stop-down button, ID: ', STR2:=TO_STRING(ID));
+details := CONCAT(STR1:=details, STR2:=', digital input: ');
+details := CONCAT(STR1:=details, STR2:=TO_STRING(digitalInput));
+details := CONCAT(STR1:=details, STR2:=', name: ');
+details := CONCAT(STR1:=details, STR2:=name);
+
+getSource := details;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="loop" Id="{861e1e23-302c-481b-b4f4-9dde532c9d09}">
       <Declaration><![CDATA[METHOD loop : BOOL
 VAR_INPUT
@@ -32,8 +54,19 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[pressed(CLK:= digitalInput);
+returnTimer(IN:= pressed.Q);
+
+GVL.b_led_1 := MAIN.arr1[1]; GVL.b_led_2 := MAIN.arr2[1]; GVL.b_led_10 := MAIN.arr2[2]; GVL.b_led_3 := MAIN.arr3[1]; GVL.b_led_4 := MAIN.arr4[1]; GVL.b_led_12 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
+ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
+			  '1111111111111112222222222222222223333333333333333344444444444444444555555555555555555555666666666666666666667777777777777777777787888888888888888899999999999999999', 
+			  '');
 
 IF pressed.Q THEN
+	readyToRelease := TRUE;
+	
+	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Previous state=', str2:= TO_STRING(previousState), str3:=getSource());
+	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Current state=', str2:=TO_STRING(state), str3:=getSource());
+	GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Pressed button=', str2:='', str3:=getSource());
 	CASE state OF
 		E_Direction.STOP:
 			CASE previousState OF
@@ -47,7 +80,7 @@ IF pressed.Q THEN
 			previousState := E_Direction.STOP;
 			
 		E_Direction.DOWN:
-			state := E_Directiona.STOP;
+			state := E_Direction.STOP;
 			previousState := E_Direction.DOWN;
 			
 		E_Direction.UP:
@@ -55,15 +88,21 @@ IF pressed.Q THEN
 			previousState := E_Direction.UP;
 	END_CASE
 	
+	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='After pressing Previous state=', str2:= TO_STRING(previousState), str3:=getSource());
+	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='After pressing Current state=', str2:=TO_STRING(state), str3:=getSource());
+
 	IF state = E_Direction.DOWN OR state = E_Direction.UP THEN
 		setOutputs(state:= TRUE);
 	ELSE
 		setOutputs(state:= FALSE);
 	END_IF
-ELSE
-	setOutputs(state:= FALSE);
+
 END_IF
-]]></ST>
+
+IF NOT returnTimer.Q AND readyToRelease THEN
+	setOutputs(state:= FALSE);
+	readyToRelease := FALSE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="setOutputs" Id="{7152aa92-f9b3-4e40-b832-8e5d45ddeec6}">
@@ -79,7 +118,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[state_as_text := TO_STRING(state);
 
-GVL.EventLogger.print2(level:=TcEventSeverity.Info, str1:='set output to: %s', str2:= state_as_text);
+GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Set outputs to: ', str2:= state_as_text, str3:=getSource());
 FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 	outputs[i] := state;
 END_FOR
@@ -89,9 +128,25 @@ END_FOR
     <LineIds Name="UpStopDownButton">
       <LineId Id="9" Count="0" />
     </LineIds>
+    <LineIds Name="UpStopDownButton.getSource">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
     <LineIds Name="UpStopDownButton.loop">
       <LineId Id="5" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="80" Count="1" />
+      <LineId Id="64" Count="0" />
       <LineId Id="25" Count="1" />
+      <LineId Id="71" Count="2" />
+      <LineId Id="75" Count="1" />
       <LineId Id="29" Count="0" />
       <LineId Id="31" Count="0" />
       <LineId Id="33" Count="1" />
@@ -102,17 +157,23 @@ END_FOR
       <LineId Id="44" Count="5" />
       <LineId Id="32" Count="0" />
       <LineId Id="50" Count="0" />
+      <LineId Id="78" Count="1" />
+      <LineId Id="77" Count="0" />
       <LineId Id="52" Count="0" />
       <LineId Id="55" Count="2" />
       <LineId Id="54" Count="0" />
-      <LineId Id="51" Count="0" />
       <LineId Id="58" Count="0" />
       <LineId Id="30" Count="0" />
+      <LineId Id="66" Count="0" />
       <LineId Id="10" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="68" Count="0" />
     </LineIds>
     <LineIds Name="UpStopDownButton.setOutputs">
       <LineId Id="88" Count="0" />
-      <LineId Id="92" Count="4" />
+      <LineId Id="105" Count="1" />
+      <LineId Id="94" Count="2" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

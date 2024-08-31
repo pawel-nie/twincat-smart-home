@@ -24,25 +24,23 @@ VAR_INPUT
 END_VAR
 
 VAR	
-	wasRecentlyActive : BOOL := FALSE;
+	initialized : BOOL := FALSE;
+	isOn : BOOL := FALSE;
 	
+	wasRecentlyActive : BOOL := FALSE;
 	pressed : R_TRIG;
 	released : F_TRIG;
 	smallOutputTimer : TON := (PT := T#1S);
 	mediumOutputTimer : TON := (PT := T#2S); 
 	bigOutputTimer : TON := (PT := T#3S); 
 	superStrongOutputTimer : TON := (PT := T#4S);
-	
 	inactivityTimeout : TP := (PT := T#1100MS);
-	
 	pressedTimer : TON := (PT := T#10S);
 	pressedTimeMiliseconds : INT := 0;
 	firstLongPress : BOOL := FALSE;
-	initialized : BOOL := FALSE;
-	isOn : BOOL := FALSE;
+
 	turnedOnStrongest : BOOL := FALSE;
 	turnedOnLongSelector : BOOL := FALSE;
-	
 	smallOutputsSet : BOOL := FALSE;
 	mediumOutputsSet : BOOL := FALSE;
 	bigOutputsSet: BOOL := FALSE;
@@ -82,12 +80,12 @@ END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="getSource" Id="{aef894df-032e-4098-aeaf-85b387f704db}">
-      <Declaration><![CDATA[METHOD getSource : STRING
+      <Declaration><![CDATA[METHOD getSource : STRING(255)
 VAR_INPUT
 END_VAR
 
 VAR
-	details : STRING;
+	details : STRING(255);
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[details := CONCAT(STR1:=' - light switch, ID: ', STR2:=TO_STRING(ID));
@@ -96,7 +94,7 @@ details := CONCAT(STR1:=details, STR2:=TO_STRING(digitalInput));
 details := CONCAT(STR1:=details, STR2:=', name: ');
 details := CONCAT(STR1:=details, STR2:=name);
 
-
+getSource := details;
 ]]></ST>
       </Implementation>
     </Method>
@@ -130,7 +128,9 @@ inactivityTimeout(IN := digitalInput);
 pressedTimer(IN := digitalInput);
 turnedOnLongSelector := isTurnedOnLongSelector();
 
-						HMI.led1_1 := MAIN.arr1[1]; HMI.led2_1 := MAIN.arr2[1]; HMI.led2_2 := MAIN.arr2[2]; HMI.led3 := MAIN.arr3[1]; HMI.led4_1 := MAIN.arr4[1]; HMI.led4_2 := MAIN.arr4[2]; HMI.led4_3 := MAIN.arr4[3];		
+					//	HMI.led1_1 := MAIN.arr1[1]; HMI.led2_1 := MAIN.arr2[1]; HMI.led2_2 := MAIN.arr2[2]; HMI.led3 := MAIN.arr3[1]; HMI.led4_1 := MAIN.arr4[1]; HMI.led4_2 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
+
+GVL.b_led_1 := MAIN.arr1[1]; GVL.b_led_2 := MAIN.arr2[1]; GVL.b_led_10 := MAIN.arr2[2]; GVL.b_led_3 := MAIN.arr3[1]; GVL.b_led_4 := MAIN.arr4[1]; GVL.b_led_12 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
 
 IF NOT inactivityTimeout.Q THEN
 	firstLongPress := FALSE;	
@@ -160,11 +160,6 @@ IF pressed.Q THEN
 	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='isOn=', str2:= TO_STRING(isOn), str3:=getSource());
 	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='firstLongPress=', str2:= TO_STRING(firstLongPress), str3:=getSource());
 	
-	IF NOT isON AND firstLongPress THEN
-		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Turn ON strongest as double press', str2:= '', str3:=getSource());
-		turnOnStrongestOutput();
-		JMP _ret;
-	END_IF
 END_IF
 
 IF released.Q THEN
@@ -177,16 +172,17 @@ IF released.Q THEN
 		turnOff();
 	ELSE		
 		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='wasRecentlyActive=', str2:= TO_STRING(wasRecentlyActive), str3:=getSource());
-		IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 310  THEN
+		IF pressedTimeMiliseconds >= 0 AND pressedTimeMiliseconds <= 300  THEN
 			GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Quick press released after ', str2:= TO_STRING(pressedTimeMiliseconds), str3:=getSource());
 			GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='firstLongPress=', str2:= TO_STRING(firstLongPress), str3:=getSource());
 			IF NOT firstLongPress THEN
 				turnOnDefault();
 			END_IF
 		ELSE 
-			IF pressedTimeMiliseconds > 310 THEN
+			IF pressedTimeMiliseconds > 300 AND pressedTimeMiliseconds < 1000 THEN
 				GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press released after ', str2:= TO_STRING(pressedTimeMiliseconds), str3:=getSource());
-				firstLongPress := TRUE;
+				GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Turn ON strongest as long press', str2:= '', str3:=getSource());
+				turnOnStrongestOutput();
 			END_IF 
 		END_IF
 	END_IF
@@ -195,14 +191,13 @@ IF released.Q THEN
 	pressedTimeMiliseconds := TIME_TO_INT(pressedTimer.ET);
 END_IF
 
-IF consecutiveClicks = 4 THEN
+IF consecutiveClicks >= 4 THEN
 	consecutiveClicks := 0;
 	doSpecialAction();
 END_IF
 
 manageLongPress();
-
-_ret :]]></ST>
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="manageLongPress" Id="{9f04a0be-cdbd-4dba-be58-f2a3e3154f07}">
@@ -422,7 +417,10 @@ isOn := TRUE;]]></ST>
     <LineIds Name="LightSwitch.loop">
       <LineId Id="301" Count="5" />
       <LineId Id="308" Count="4" />
-      <LineId Id="319" Count="10" />
+      <LineId Id="456" Count="1" />
+      <LineId Id="319" Count="5" />
+      <LineId Id="471" Count="0" />
+      <LineId Id="326" Count="3" />
       <LineId Id="331" Count="0" />
       <LineId Id="433" Count="0" />
       <LineId Id="332" Count="0" />
@@ -432,7 +430,7 @@ isOn := TRUE;]]></ST>
       <LineId Id="431" Count="0" />
       <LineId Id="421" Count="1" />
       <LineId Id="428" Count="0" />
-      <LineId Id="342" Count="8" />
+      <LineId Id="347" Count="3" />
       <LineId Id="423" Count="0" />
       <LineId Id="426" Count="1" />
       <LineId Id="397" Count="1" />
@@ -440,7 +438,9 @@ isOn := TRUE;]]></ST>
       <LineId Id="401" Count="0" />
       <LineId Id="430" Count="0" />
       <LineId Id="447" Count="0" />
-      <LineId Id="437" Count="9" />
+      <LineId Id="437" Count="8" />
+      <LineId Id="468" Count="0" />
+      <LineId Id="446" Count="0" />
       <LineId Id="435" Count="0" />
       <LineId Id="399" Count="1" />
       <LineId Id="434" Count="0" />
@@ -449,7 +449,7 @@ isOn := TRUE;]]></ST>
       <LineId Id="419" Count="0" />
       <LineId Id="418" Count="0" />
       <LineId Id="420" Count="0" />
-      <LineId Id="375" Count="1" />
+      <LineId Id="375" Count="0" />
       <LineId Id="225" Count="0" />
     </LineIds>
     <LineIds Name="LightSwitch.manageLongPress">

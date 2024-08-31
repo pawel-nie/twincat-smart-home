@@ -15,8 +15,10 @@ VAR_GLOBAL
 	
 	b_led_1 AT %Q* : BOOL;
 	b_led_2 AT %Q* : BOOL;	
+	b_led_10 AT %Q* : BOOL;
 	b_led_3 AT %Q* : BOOL;
 	b_led_4 AT %Q* : BOOL;
+	b_led_12 AT %Q* : BOOL;
 	
 	
 	bDigital1 : BOOL;

@@ -23,7 +23,7 @@ VAR_GLOBAL
 	led4_1 : BOOL;
 	led4_2 : BOOL;
 	led4_3 : BOOL;
-	led4_4 : BOOL;
+	//led4_4 : BOOL;
 	
 	
 END_VAR]]></Declaration>
