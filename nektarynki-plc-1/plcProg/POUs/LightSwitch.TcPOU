@@ -130,7 +130,7 @@ turnedOnLongSelector := isTurnedOnLongSelector();
 
 					//	HMI.led1_1 := MAIN.arr1[1]; HMI.led2_1 := MAIN.arr2[1]; HMI.led2_2 := MAIN.arr2[2]; HMI.led3 := MAIN.arr3[1]; HMI.led4_1 := MAIN.arr4[1]; HMI.led4_2 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
 
-GVL.b_led_1 := MAIN.arr1[1]; GVL.b_led_2 := MAIN.arr2[1]; GVL.b_led_10 := MAIN.arr2[2]; GVL.b_led_3 := MAIN.arr3[1]; GVL.b_led_4 := MAIN.arr4[1]; GVL.b_led_12 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
+				GVL.b_led_1 := MAIN.arr1[1]; GVL.b_led_2 := MAIN.arr2[1]; GVL.b_led_10 := MAIN.arr2[2]; GVL.b_led_3 := MAIN.arr3[1]; GVL.b_led_4 := MAIN.arr4[1]; GVL.b_led_12 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
 
 IF NOT inactivityTimeout.Q THEN
 	firstLongPress := FALSE;	

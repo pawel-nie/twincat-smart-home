@@ -9,9 +9,10 @@ END_VAR
 
 VAR_INPUT
 	ID : INT;
-	name : STRING := "Shutter switch";
+	name : STRING := 'Shutter switch';
 	digitalInputUp : REFERENCE TO BOOL;
 	digitalInputDown : REFERENCE TO BOOL;
+	
 	up_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	down_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 END_VAR
@@ -20,6 +21,11 @@ VAR_OUTPUT
 END_VAR
 
 VAR
+	initialized : BOOL := FALSE;
+	canPrintGoUp : BOOL := TRUE;
+	canPrintGoDown : BOOL := TRUE;
+	suppressedByCooldown : BOOL := FALSE;
+	
 	isClosing : BOOL := FALSE;
 	isOpening : BOOL := FALSE;
 	
@@ -31,12 +37,12 @@ VAR
 	pressedUpTimer : TON := (PT := T#10S);	
 	pressedDownTimer : TON := (PT := T#10S);
 	
-	shortDistanceUp : TP := (PT := T#200MS);
-	longDistanceUp : TP := (PT := T#60S);
-	shortDistanceDown : TP := (PT := T#200MS);
-	longDistanceDown : TP := (PT := T#60S);
+	shortDistanceUp : TP := (PT := T#250MS);
+	longDistanceUp : TP := (PT := T#10S);//60
+	shortDistanceDown : TP := (PT := T#250MS);
+	longDistanceDown : TP := (PT := T#10S);//60
 	
-	initialized : BOOL := FALSE;
+	shutterCooldownTimer : TP := (PT := T#1500MS);
 	
 	pressedUpMiliseconds : INT := 0;
 	pressedDownMiliseconds : INT := 0;	
@@ -44,8 +50,7 @@ VAR
 	goUpRequested : BOOL := FALSE;
 	goDownRequested : BOOL := FALSE;
 	
-	canPrintGoUp : BOOL := TRUE;
-	canPrintGoDown : BOOL := TRUE;
+	manualControl : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -55,12 +60,12 @@ END_IF
 ]]></ST>
     </Implementation>
     <Method Name="getSource" Id="{3343044d-517d-47e0-899f-f77bf241ae33}">
-      <Declaration><![CDATA[METHOD getSource : STRING
+      <Declaration><![CDATA[METHOD getSource : STRING(255)
 VAR_INPUT
 END_VAR
 
 VAR
-	details : STRING;
+	details : STRING(255);
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[details := CONCAT(STR1:=' - shutter switch, ID: ', STR2:=TO_STRING(ID));
@@ -71,6 +76,7 @@ details := CONCAT(STR1:=details, STR2:=TO_STRING(digitalInputDown));
 details := CONCAT(STR1:=details, STR2:=', name: ');
 details := CONCAT(STR1:=details, STR2:=name);
 
+getSource := details;
 
 ]]></ST>
       </Implementation>
@@ -89,10 +95,17 @@ releasedUp(CLK:= digitalInputUp);
 releasedDown(CLK:= digitalInputDown);
 pressedUpTimer(IN := digitalInputUp);
 pressedDownTimer(IN := digitalInputDown);
+shortDistanceDown(IN:=FALSE);
+longDistanceDown(IN:=FALSE);
+shortDistanceUp(IN:=FALSE);
+longDistanceUp(IN:=FALSE);
+shutterCooldownTimer(IN:=FALSE);
 
+				GVL.b_led_1 := MAIN.arr5[1]; GVL.b_led_2 := MAIN.arr6[1];		
+				
 //prevent both pressed
 IF digitalInputUp AND digitalInputDown THEN
-	GVL.EventLogger.print3(level:=TcEventSeverity.Warning, str1:='Both button pressed', str2:='', str3:=getSource);
+	GVL.EventLogger.print3(level:=TcEventSeverity.Warning, str1:='Both button pressed', str2:='', str3:=getSource());
 	stopAll();
 	pressedUpMiliseconds := 0;
 	pressedDownMiliseconds := 0;
@@ -102,24 +115,46 @@ END_IF
 //moving any direction 
 IF isClosing OR isOpening THEN
 	IF pressedUp.Q OR pressedDown.Q THEN
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button pressed during shutter move', str2:='', str3:=getSource);
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button pressed during shutter move', str2:='', str3:=getSource());
 		stopAll();
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Starting cooldown before moving just stopped shutter', str2:='', str3:=getSource());
+		shutterCooldownTimer(IN:=TRUE);
 		JMP _ret;
 	END_IF
 END_IF
 
-goUpRequested := shortDistanceUp.Q OR longDistanceUp.Q;
-goDownRequested := shortDistanceDown.Q OR longDistanceDown.Q;
-IF goUpRequested AND NOT goDownRequested THEN
-	moveUp();
-ELSE 
-	stopUp();
+//just stopped cooldown still on
+IF shutterCooldownTimer.Q THEN
+	IF pressedDown.Q OR pressedUp.Q OR releasedDown.Q OR releasedUp.Q THEN
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Using shutter impossible during cooldown', str2:='', str3:=getSource());
+	END_IF
+	suppressedByCooldown := TRUE;
+	JMP _ret;
 END_IF
 
-IF goDownRequested AND NOT goUpRequested THEN
+goUpRequested := (shortDistanceUp.Q OR longDistanceUp.Q) AND NOT suppressedByCooldown;
+goDownRequested := (shortDistanceDown.Q OR longDistanceDown.Q) AND NOT suppressedByCooldown;
+
+IF goDownRequested AND NOT goUpRequested AND NOT isClosing THEN
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Go down requested', str2:='', str3:=getSource());
 	moveDown();
-ELSE 
-	stopDown();
+	stopUp(preventMoving := TRUE);
+ELSIF goUpRequested AND NOT goDownRequested AND NOT isOpening THEN
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Go up requested', str2:='', str3:=getSource());
+	moveUp();
+	stopDown(preventMoving := TRUE);
+END_IF
+
+//finished moving down
+IF isClosing AND NOT goDownRequested AND NOT pressedDown.Q AND NOT manualControl THEN 
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Finished moving down', str2:='', str3:=getSource());
+	stopDown(preventMoving := FALSE);
+END_IF
+
+//finished moving up
+IF isOpening AND NOT goUpRequested AND NOT pressedUp.Q AND NOT manualControl THEN 
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Finished moving up', str2:='', str3:=getSource());
+	stopUp(preventMoving := FALSE);
 END_IF
 
 //long hold up
@@ -132,22 +167,46 @@ IF digitalInputDown AND TIME_TO_INT(pressedDownTimer.ET) <> 0 THEN
 	pressedDownMiliseconds := TIME_TO_INT(pressedDownTimer.ET);
 END_IF
 
-IF releasedUp THEN
-	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Button up released after ', str2:=TO_STRING(pressedUpMiliseconds), str3:=getSource);
+IF releasedUp.Q THEN
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button up released after ', str2:=TO_STRING(pressedUpMiliseconds), str3:=getSource());
+	manualControl := FALSE;
 	onReleasedUp();
 END_IF
 
 IF pressedUpMiliseconds >= 2000 THEN
+	IF NOT manualControl THEN
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Start manual control by UP long press', str2:='', str3:=getSource());
+	END_IF
+	
 	moveUp();
+	manualControl := TRUE;
 END_IF
 
-IF releasedDown THEN
-	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Button down released after ', str2:=TO_STRING(pressedDownMiliseconds), str3:=getSource);
+IF releasedDown.Q THEN
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button down released after ', str2:=TO_STRING(pressedDownMiliseconds), str3:=getSource());
+	manualControl := FALSE;
 	onReleasedDown();
 END_IF
 
 IF pressedDownMiliseconds >= 2000 THEN
+	IF NOT manualControl THEN
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Start manual control by DOWN long press', str2:='', str3:=getSource());
+	END_IF
 	moveDown();
+	manualControl := TRUE;
+END_IF
+
+IF pressedDown.Q OR pressedUp.Q THEN
+	IF pressedDown.Q THEN
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Button down pressed', str2:='', str3:=getSource());
+	END_IF
+	IF pressedUp.Q THEN
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Button up pressed', str2:='', str3:=getSource());
+	END_IF
+	IF suppressedByCooldown THEN
+			GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Released suppression', str2:='', str3:=getSource());
+	suppressedByCooldown := FALSE;
+	END_IF
 END_IF
 
 _ret :
@@ -162,11 +221,13 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF canPrintGoDown THEN
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving down', str2:='', str3:=getSource);
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving down', str2:='', str3:=getSource());
 	canPrintGoDown := FALSE;
 END_IF
-setOutputs(direction:=E_Direction.UP, state:=FALSE);
-setOutputs(direction:=E_Direction.DOWN, state:=TRUE);]]></ST>
+
+//setOutputs(direction:=E_Direction.UP, state:=FALSE);
+setOutputs(direction:=E_Direction.DOWN, state:=TRUE);
+isClosing := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="moveUp" Id="{be6ff087-74af-4f3e-8a6d-a69e0bda1f40}">
@@ -176,12 +237,13 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF canPrintGoUp THEN
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving up', str2:='', str3:=getSource);
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving up', str2:='', str3:=getSource());
 	canPrintGoUp := FALSE;
 END_IF
 
-setOutputs(direction:=E_Direction.DOWN, state:=FALSE);
-setOutputs(direction:=E_Direction.UP, state:=TRUE);]]></ST>
+//setOutputs(direction:=E_Direction.DOWN, state:=FALSE);
+setOutputs(direction:=E_Direction.UP, state:=TRUE);
+isOpening := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="onReleasedDown" Id="{d189a28a-8b68-42c4-b7ce-29fd95d074d7}">
@@ -190,14 +252,16 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='pressedDownMiliseconds=', str2:= TO_STRING(pressedDownMiliseconds), str3:=getSource);
+        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='pressedDownMiliseconds=', str2:= TO_STRING(pressedDownMiliseconds), str3:=getSource());
 
 IF pressedDownMiliseconds > 10 AND pressedDownMiliseconds < 500 THEN
 	//move a bit down
-	shortDistanceDown(IN:=TRUE);
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move down a bit', str2:= '', str3:=getSource());
+	shortDistanceDown(IN:=releasedDown.Q);
 ELSIF pressedDownMiliseconds >= 500 AND pressedDownMiliseconds < 2000 THEN
 	//move max down
-	longDistanceDown(IN:=TRUE);
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move down a max', str2:= '', str3:=getSource());
+	longDistanceDown(IN:=releasedDown.Q);
 ELSIF pressedDownMiliseconds >= 2000 THEN
 	//stop
 	stopAll();
@@ -212,14 +276,16 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='pressedUpMiliseconds=', str2:= TO_STRING(pressedUpMiliseconds), str3:=getSource);
+        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='pressedUpMiliseconds=', str2:= TO_STRING(pressedUpMiliseconds), str3:=getSource());
 
 IF pressedUpMiliseconds > 10 AND pressedUpMiliseconds < 500 THEN
-	//move a little bit up
-	shortDistanceUp(IN:=TRUE);
+	//move a bit up
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move up a bit', str2:= '', str3:=getSource());
+	shortDistanceUp(IN:=releasedUp.Q);
 ELSIF pressedUpMiliseconds >= 500 AND pressedUpMiliseconds < 2000 THEN
-	//move max up
-	longDistanceUp(IN:=TRUE);
+	//move max down
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move up a max', str2:= '', str3:=getSource());
+	longDistanceUp(IN:=releasedUp.Q);
 ELSIF pressedUpMiliseconds >= 2000 THEN
 	//stop
 	stopAll();
@@ -240,23 +306,29 @@ VAR
 	state_as_text : STRING := 'abc';
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[state_as_text := TO_STRING(state);
+        <ST><![CDATA[IF manualControl THEN 
+	JMP _bypass;
+END_IF
+
+state_as_text := TO_STRING(state);
 
 CASE direction OF
 	
 	E_Direction.UP:
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='set UP to: ', str2:= state_as_text, str3:=getSource);
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='set UP to: ', str2:= state_as_text, str3:=getSource());
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			up_outputs[i] := state;
 		END_FOR
 		
 	E_Direction.DOWN:
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='set DOWN to: ', str2:= state_as_text, str3:=getSource);	
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='set DOWN to: ', str2:= state_as_text, str3:=getSource());	
 		FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
 			down_outputs[i] := state;
 		END_FOR
 		
-END_CASE]]></ST>
+END_CASE
+
+_bypass :]]></ST>
       </Implementation>
     </Method>
     <Method Name="stopAll" Id="{69f3a6d7-377a-4aed-9325-e1404881787f}">
@@ -265,31 +337,45 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Stopping roller shutter', str2:='', str3:=getSource);
-stopDown();
-stopUp();]]></ST>
+        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Stopping roller shutter', str2:='', str3:=getSource());
+stopDown(preventMoving := FALSE);
+stopUp(preventMoving := FALSE);]]></ST>
       </Implementation>
     </Method>
     <Method Name="stopDown" Id="{e9b25731-7d10-4d84-bd86-0f94bf8f47e3}">
       <Declaration><![CDATA[METHOD stopDown : BOOL
 VAR_INPUT
+	preventMoving : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving down stopped', str2:='', str3:=getSource);
+        <ST><![CDATA[IF preventMoving THEN
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Roller shutter moving down prevented', str2:='', str3:=getSource());
+ELSE
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving down stopped', str2:='', str3:=getSource());
+END_IF
+
 canPrintGoDown := TRUE;
-setOutputs(direction:=E_Direction.DOWN, state:=FALSE);]]></ST>
+setOutputs(direction:=E_Direction.DOWN, state:=FALSE);
+isClosing := FALSE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="stopUp" Id="{d5b93eb4-00aa-4364-a9b2-6f05420d9e05}">
       <Declaration><![CDATA[METHOD stopUp : BOOL
 VAR_INPUT
+	preventMoving : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving up stopped', str2:='', str3:=getSource);
+        <ST><![CDATA[IF preventMoving THEN
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Roller shutter moving up prevented', str2:='', str3:=getSource());
+ELSE
+	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving up stopped', str2:='', str3:=getSource());
+END_IF
+
 canPrintGoUp := TRUE;
-setOutputs(direction:=E_Direction.UP, state:=FALSE);]]></ST>
+setOutputs(direction:=E_Direction.UP, state:=FALSE);
+isOpening:= FALSE;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="ShutterSwitch">
@@ -303,24 +389,56 @@ setOutputs(direction:=E_Direction.UP, state:=FALSE);]]></ST>
       <LineId Id="24" Count="1" />
       <LineId Id="17" Count="0" />
       <LineId Id="15" Count="0" />
+      <LineId Id="32" Count="0" />
       <LineId Id="14" Count="0" />
       <LineId Id="13" Count="0" />
       <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.loop">
       <LineId Id="136" Count="3" />
-      <LineId Id="141" Count="4" />
+      <LineId Id="141" Count="1" />
+      <LineId Id="269" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="287" Count="1" />
+      <LineId Id="295" Count="0" />
+      <LineId Id="297" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="301" Count="0" />
+      <LineId Id="144" Count="1" />
       <LineId Id="255" Count="0" />
       <LineId Id="146" Count="7" />
       <LineId Id="155" Count="0" />
       <LineId Id="256" Count="0" />
-      <LineId Id="156" Count="3" />
-      <LineId Id="236" Count="3" />
-      <LineId Id="241" Count="0" />
-      <LineId Id="246" Count="2" />
-      <LineId Id="250" Count="4" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="296" Count="0" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="298" Count="0" />
+      <LineId Id="158" Count="1" />
+      <LineId Id="302" Count="4" />
+      <LineId Id="308" Count="0" />
+      <LineId Id="323" Count="0" />
+      <LineId Id="322" Count="0" />
+      <LineId Id="236" Count="0" />
+      <LineId Id="320" Count="1" />
+      <LineId Id="318" Count="0" />
+      <LineId Id="250" Count="1" />
+      <LineId Id="273" Count="0" />
+      <LineId Id="252" Count="0" />
+      <LineId Id="271" Count="0" />
+      <LineId Id="253" Count="0" />
+      <LineId Id="274" Count="0" />
+      <LineId Id="272" Count="0" />
+      <LineId Id="254" Count="0" />
       <LineId Id="249" Count="0" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="275" Count="0" />
       <LineId Id="222" Count="0" />
+      <LineId Id="276" Count="0" />
+      <LineId Id="279" Count="0" />
+      <LineId Id="277" Count="0" />
+      <LineId Id="282" Count="4" />
+      <LineId Id="281" Count="0" />
+      <LineId Id="278" Count="0" />
       <LineId Id="161" Count="1" />
       <LineId Id="164" Count="0" />
       <LineId Id="166" Count="0" />
@@ -331,22 +449,44 @@ setOutputs(direction:=E_Direction.UP, state:=FALSE);]]></ST>
       <LineId Id="173" Count="0" />
       <LineId Id="175" Count="1" />
       <LineId Id="262" Count="0" />
-      <LineId Id="177" Count="1" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="342" Count="0" />
+      <LineId Id="178" Count="0" />
       <LineId Id="180" Count="1" />
+      <LineId Id="346" Count="3" />
       <LineId Id="216" Count="0" />
+      <LineId Id="345" Count="0" />
       <LineId Id="183" Count="0" />
       <LineId Id="185" Count="1" />
       <LineId Id="263" Count="0" />
-      <LineId Id="187" Count="1" />
-      <LineId Id="190" Count="3" />
+      <LineId Id="187" Count="0" />
+      <LineId Id="343" Count="0" />
+      <LineId Id="188" Count="0" />
+      <LineId Id="190" Count="1" />
+      <LineId Id="351" Count="1" />
+      <LineId Id="350" Count="0" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="344" Count="0" />
+      <LineId Id="193" Count="0" />
+      <LineId Id="325" Count="0" />
+      <LineId Id="324" Count="0" />
+      <LineId Id="334" Count="0" />
+      <LineId Id="336" Count="3" />
+      <LineId Id="335" Count="0" />
+      <LineId Id="329" Count="1" />
+      <LineId Id="333" Count="0" />
+      <LineId Id="331" Count="0" />
+      <LineId Id="327" Count="0" />
       <LineId Id="211" Count="2" />
       <LineId Id="7" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.moveDown">
       <LineId Id="14" Count="2" />
       <LineId Id="6" Count="0" />
+      <LineId Id="21" Count="0" />
       <LineId Id="10" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="20" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.moveUp">
       <LineId Id="14" Count="1" />
@@ -354,12 +494,15 @@ setOutputs(direction:=E_Direction.UP, state:=FALSE);]]></ST>
       <LineId Id="16" Count="0" />
       <LineId Id="10" Count="0" />
       <LineId Id="5" Count="1" />
+      <LineId Id="21" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.onReleasedDown">
       <LineId Id="20" Count="1" />
       <LineId Id="6" Count="1" />
+      <LineId Id="25" Count="0" />
       <LineId Id="18" Count="0" />
       <LineId Id="8" Count="1" />
+      <LineId Id="29" Count="0" />
       <LineId Id="19" Count="0" />
       <LineId Id="10" Count="1" />
       <LineId Id="17" Count="0" />
@@ -369,19 +512,18 @@ setOutputs(direction:=E_Direction.UP, state:=FALSE);]]></ST>
     <LineIds Name="ShutterSwitch.onReleasedUp">
       <LineId Id="25" Count="0" />
       <LineId Id="20" Count="0" />
-      <LineId Id="6" Count="1" />
-      <LineId Id="14" Count="0" />
-      <LineId Id="8" Count="1" />
-      <LineId Id="19" Count="0" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="11" Count="2" />
+      <LineId Id="43" Count="10" />
+      <LineId Id="12" Count="1" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.setOutputs">
+      <LineId Id="125" Count="2" />
+      <LineId Id="130" Count="0" />
       <LineId Id="88" Count="14" />
       <LineId Id="115" Count="0" />
       <LineId Id="9" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="128" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.stopAll">
       <LineId Id="11" Count="0" />
@@ -389,13 +531,22 @@ setOutputs(direction:=E_Direction.UP, state:=FALSE);]]></ST>
       <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.stopDown">
-      <LineId Id="10" Count="0" />
+      <LineId Id="20" Count="3" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="25" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="14" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.stopUp">
+      <LineId Id="22" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="24" Count="0" />
       <LineId Id="12" Count="1" />
       <LineId Id="6" Count="0" />
+      <LineId Id="17" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>
