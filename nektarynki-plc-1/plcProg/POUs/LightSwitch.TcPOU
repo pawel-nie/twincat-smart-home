@@ -4,7 +4,7 @@
     <Declaration><![CDATA[FUNCTION_BLOCK LightSwitch
 
 VAR CONSTANT
-	MAX_OUTPUTS_PER_LEVEL : INT := 3;
+	MAX_OUTPUTS_PER_LEVEL : INT := GVL.MAX_LIGHT_OUTPUTS_PER_LEVEL;
 END_VAR
 
 VAR_INPUT
@@ -80,7 +80,7 @@ END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="getSource" Id="{aef894df-032e-4098-aeaf-85b387f704db}">
-      <Declaration><![CDATA[METHOD getSource : STRING(255)
+      <Declaration><![CDATA[METHOD PRIVATE getSource : STRING(255)
 VAR_INPUT
 END_VAR
 
@@ -99,7 +99,7 @@ getSource := details;
       </Implementation>
     </Method>
     <Method Name="isTurnedOnLongSelector" Id="{7bae46af-3a44-48ea-bbd6-f40ab3340ff2}">
-      <Declaration><![CDATA[METHOD isTurnedOnLongSelector : BOOL
+      <Declaration><![CDATA[METHOD PRIVATE isTurnedOnLongSelector : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -201,7 +201,7 @@ manageLongPress();
       </Implementation>
     </Method>
     <Method Name="manageLongPress" Id="{9f04a0be-cdbd-4dba-be58-f2a3e3154f07}">
-      <Declaration><![CDATA[METHOD manageLongPress
+      <Declaration><![CDATA[METHOD PRIVATE manageLongPress
 VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
@@ -244,7 +244,7 @@ END_IF
       </Implementation>
     </Method>
     <Method Name="setOutputs" Id="{98f0d494-d3da-4ed5-b4b3-67a830019a2c}">
-      <Declaration><![CDATA[METHOD setOutputs
+      <Declaration><![CDATA[METHOD PRIVATE setOutputs
 VAR_INPUT
 	outputLevel : E_OutputLevel;
 	state : BOOL;

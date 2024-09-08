@@ -10,7 +10,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{A14C7FBD-5B32-49C5-96AB-4C1D0189B914}" Name="plcProg" PrjFilePath="plcProg\plcProg.plcproj" TmcFilePath="plcProg\plcProg.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{8E16CD69-C174-FA39-C7D2-B639F947FAF4}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{08843F06-2550-6B1D-C3AF-D27ADD177CA1}">
 					<Name>plcProg Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
@@ -116,10 +116,12 @@
 						</Var>
 						<Var>
 							<Name>GVL.din_20</Name>
+							<Comment><![CDATA[wlacznik zaluzji w pralni w gore]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL.din_21</Name>
+							<Comment><![CDATA[wlacznik zaluzji w pralni w dol]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -391,6 +393,109 @@
 						</Var>
 						<Var>
 							<Name>GVL.b_led_12</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_1_zaluzja_pralnia_w_gore</Name>
+							<Comment><![CDATA[-------------------------------------------------------------------------------------------------	
+OUTPUTS]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_2_zaluzja_pralnia_w_gol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_3_zaluzja_okno_narozne_kuchnia_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_5_zaluzja_wykusz_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_6_zaluzja_wykusz_w_gol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_7_zaluzja_slide_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_8_zaluzja_slide_w_gol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_9_zaluzja_gabinet_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_10_zaluzja_gabinet_w_gol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_11_zaluzja_balkon_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_12_zaluzja_balkon_w_dol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_13_zaluzja_nad_wykuszem_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_14_zaluzja_nad_wykuszem_w_dol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_15_zaluzja_bez_balkonu_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_16_zaluzja_bez_balkonu_w_gol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_17_roleta_kotlownia_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_18_roleta_kotlownia_w_dol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_19_roleta_warsztat_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_20_roleta_warsztat_w_dol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_21_roleta_kotlownia_w_gore</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_22_roleta_kotlownia_w_dol</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_23_swiatlo_w_pralni</Name>
+							<Comment><![CDATA[--]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_31_swiatlo_w_kuchni_sufit</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_32_swiatlo_w_kuchni_podszafkowe</Name>
 							<Type>BOOL</Type>
 						</Var>
 					</Vars>

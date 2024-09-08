@@ -15,6 +15,21 @@ VAR
 //	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
 //	EventLogger : EventLogger(CsvPersistentEventStorage);
 
+	wlaczniki_rolet_i_zaluzji : ARRAY[1..11] OF ShutterSwitch;
+	wlacznik_1_zaluzja_pralnia : ShutterSwitch();
+	wlacznik_2_zaluzje_kuchnia : ShutterSwitch();
+	wlacznik_3_zaluzje_wykusz : ShutterSwitch();
+	wlacznik_4_zaluzja_slide : ShutterSwitch();
+    wlacznik_5_zaluzja_gabinet : ShutterSwitch();
+    wlacznik_6_zaluzja_balkon : ShutterSwitch();
+    wlacznik_7_zaluzja_nad_tarasem : ShutterSwitch();
+	wlacznik_8_zaluzja_okno_bez_balkonu : ShutterSwitch();
+	wlacznik_9_roleta_kotlownia : ShutterSwitch();
+	wlacznik_10_roleta_warsztat : ShutterSwitch();
+    wlacznik_11_rolety_garaz : ShutterSwitch();
+	
+	
+	
 		arr1 : ARRAY[1..3] OF BOOL;
 		arr2 : ARRAY[1..3] OF BOOL;
 		arr3 : ARRAY[1..3] OF BOOL;
@@ -26,6 +41,13 @@ VAR
 		
 		//button1 : LightSwitch;//ShutterSwitch;//LightSwitch;//UpStopDownButton;// LightSwitch;	
 		button2 : ShutterSwitch;
+		
+		
+		
+		wlaczniki_swiatel : ARRAY[1..50] OF LightSwitch;
+		simpleButtons : ARRAY[1..10] OF SimpleButton;
+		upStopDownButtons : ARRAY[1..10] OF UpStopDownButton;
+		
 	isDay : BOOL := TRUE;
 	minimumLogSeverity : TcEventSeverity := TcEventSeverity.Verbose;
 END_VAR
@@ -37,8 +59,12 @@ END_VAR
 
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[IF NOT initialized THEN
+      <ST><![CDATA[systemService();
+
+IF NOT initialized THEN
 	GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:='PLC started');
+	
+	//todo print date, all inputs and outputs values 
 	initButtons();	
 
 			F_UpdateEventTimestampWithSystemTime(stEvent := stThisIsFirstInstanceOfAStructure);	
@@ -53,7 +79,11 @@ END_IF
 //CsvPersistentEventStorage();
 
 
-button2.loop();
+//button2.loop();
+
+inputsOutputsLoop();
+
+
 
 
 
@@ -83,9 +113,104 @@ END_VAR
 	]]></ST>
       </Implementation>
     </Method>
+    <Method Name="initializeButtons" Id="{8a6ffdb9-baa8-41fd-856d-9b1a94c3eee6}">
+      <Declaration><![CDATA[METHOD initializeButtons
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//TODO ATTENTION ponizsze DIN inputy sa niesprawdzone
+
+wlacznik_1_zaluzja_pralnia(ID:=1, name:='Włącznik żaluzji w pralni', 
+		digitalInputUp:=GVL.din_21, 
+		digitalInputDown:=GVL.din_22,
+		up_outputs:=GVL.douts_1_zaluzja_pralnia_w_gore, 
+		down_outputs:=GVL.douts_2_zaluzja_pralnia_w_dol, 
+		shortTime:=T#250MS, longTime:= T#30S);
+
+wlacznik_2_zaluzje_kuchnia(ID:=2, name:='Włącznik żaluzji okna narożnego w kuchni', 
+		digitalInputUp:=GVL.din_23, 
+		digitalInputDown:=GVL.din_23,
+		up_outputs:=GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore, 
+		down_outputs:=GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol, 
+		shortTime:=T#250MS, longTime:= T#30S);
+
+wlacznik_3_zaluzje_wykusz(ID:=3, name:='Włącznik żaluzji wykuszu w salonie', 
+		digitalInputUp:=GVL.din_24, 
+		digitalInputDown:=GVL.din_25,
+		up_outputs:=GVL.douts_5_zaluzja_wykusz_w_gore, 
+		down_outputs:=GVL.douts_6_zaluzja_wykusz_w_dol, 
+		shortTime:=T#250MS, longTime:= T#60S);		
+		
+wlacznik_4_zaluzja_slide(ID:=4, name:='Włącznik żaluzji slide tarasu', 
+		digitalInputUp:=GVL.din_26, 
+		digitalInputDown:=GVL.din_27,
+		up_outputs:=GVL.douts_7_zaluzja_slide_w_gore, 
+		down_outputs:=GVL.douts_8_zaluzja_slide_w_dol, 
+		shortTime:=T#250MS, longTime:= T#60S);				
+		
+
+		
+
+wlaczniki_rolet_i_zaluzji[1] := wlacznik_1_zaluzja_pralnia;
+wlaczniki_rolet_i_zaluzji[2] := wlacznik_2_zaluzje_kuchnia;
+wlaczniki_rolet_i_zaluzji[3] := wlacznik_3_zaluzje_wykusz;
+wlaczniki_rolet_i_zaluzji[4] := wlacznik_4_zaluzja_slide;
+//wlaczniki_rolet_i_zaluzji[5] := wlacznik_5_zaluzja_gabinet;
+//wlaczniki_rolet_i_zaluzji[6] := wlacznik_6_zaluzja_balkon;
+//wlaczniki_rolet_i_zaluzji[7] := wlacznik_7_zaluzja_nad_tarasem;
+//wlaczniki_rolet_i_zaluzji[8] := wlacznik_8_zaluzja_okno_bez_balkonu;
+//wlaczniki_rolet_i_zaluzji[9] := wlacznik_9_roleta_kotlownia;
+//wlaczniki_rolet_i_zaluzji[10] := wlacznik_10_roleta_warsztat;
+//wlaczniki_rolet_i_zaluzji[11] := wlacznik_11_rolety_garaz;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="inputsOutputsLoop" Id="{5ddbf680-25b6-4be3-b0a7-c03717331c9d}">
+      <Declaration><![CDATA[METHOD inputsOutputsLoop : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[wlacznik_1_zaluzja_pralnia.loop();
+	GVL.dout_1_zaluzja_pralnia_w_gore := GVL.douts_1_zaluzja_pralnia_w_gore[1];
+	GVL.dout_2_zaluzja_pralnia_w_dol := GVL.douts_2_zaluzja_pralnia_w_dol[1];
+	
+wlacznik_2_zaluzje_kuchnia.loop();
+	GVL.dout_3_zaluzja_okno_narozne_kuchnia_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
+	GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol := GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol[1];
+	
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="systemService" Id="{e4d1bead-f766-4caa-a18e-e267b07bd01c}">
+      <Declaration><![CDATA[METHOD systemService
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Device booted', '');
+
+IF GVL.din_82_service THEN
+	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode entered', '');
+	WHILE TRUE DO
+		initialized := FALSE;	
+		ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode test', ''); //do wywalenia docelowo
+		IF GVL.din_82_service AND GVL.din_81 THEN
+			ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Exiting service mode', '');
+			JMP _run;
+		END_IF
+	END_WHILE
+END_IF
+_run :
+ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode exited', '');]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="MAIN">
+      <LineId Id="431" Count="0" />
+      <LineId Id="420" Count="0" />
       <LineId Id="161" Count="0" />
       <LineId Id="316" Count="0" />
+      <LineId Id="382" Count="1" />
       <LineId Id="162" Count="0" />
       <LineId Id="172" Count="1" />
       <LineId Id="310" Count="0" />
@@ -93,7 +218,12 @@ END_VAR
       <LineId Id="190" Count="3" />
       <LineId Id="347" Count="0" />
       <LineId Id="346" Count="0" />
-      <LineId Id="200" Count="6" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="398" Count="0" />
+      <LineId Id="397" Count="0" />
+      <LineId Id="437" Count="0" />
+      <LineId Id="436" Count="0" />
+      <LineId Id="201" Count="5" />
       <LineId Id="194" Count="0" />
       <LineId Id="71" Count="0" />
     </LineIds>
@@ -108,6 +238,54 @@ END_VAR
       <LineId Id="48" Count="0" />
       <LineId Id="47" Count="0" />
       <LineId Id="49" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.initializeButtons">
+      <LineId Id="38" Count="1" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="35" Count="1" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="46" Count="5" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="33" Count="1" />
+    </LineIds>
+    <LineIds Name="MAIN.inputsOutputsLoop">
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="11" Count="5" />
+    </LineIds>
+    <LineIds Name="MAIN.systemService">
+      <LineId Id="20" Count="1" />
+      <LineId Id="6" Count="10" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="22" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

@@ -4,7 +4,7 @@
     <Declaration><![CDATA[FUNCTION_BLOCK ShutterSwitch
 
 VAR CONSTANT
-	MAX_OUTPUTS_PER_LEVEL : INT := 2;
+	MAX_OUTPUTS_PER_LEVEL : INT := GVL.MAX_SHUTTER_OUTPUTS_PER_LEVEL;
 END_VAR
 
 VAR_INPUT
@@ -15,6 +15,9 @@ VAR_INPUT
 	
 	up_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	down_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	shortTime : TIME := T#250MS;
+	longTime : TIME := T#60S;
 END_VAR
 
 VAR_OUTPUT
@@ -37,10 +40,10 @@ VAR
 	pressedUpTimer : TON := (PT := T#10S);	
 	pressedDownTimer : TON := (PT := T#10S);
 	
-	shortDistanceUp : TP := (PT := T#250MS);
-	longDistanceUp : TP := (PT := T#10S);//60
-	shortDistanceDown : TP := (PT := T#250MS);
-	longDistanceDown : TP := (PT := T#10S);//60
+	shortDistanceUp : TP := (PT := shortTime);
+	longDistanceUp : TP := (PT := longTime);
+	shortDistanceDown : TP := (PT := shortTime);
+	longDistanceDown : TP := (PT := longTime);
 	
 	shutterCooldownTimer : TP := (PT := T#1500MS);
 	
@@ -60,7 +63,7 @@ END_IF
 ]]></ST>
     </Implementation>
     <Method Name="getSource" Id="{3343044d-517d-47e0-899f-f77bf241ae33}">
-      <Declaration><![CDATA[METHOD getSource : STRING(255)
+      <Declaration><![CDATA[METHOD PRIVATE getSource : STRING(255)
 VAR_INPUT
 END_VAR
 
@@ -101,7 +104,7 @@ shortDistanceUp(IN:=FALSE);
 longDistanceUp(IN:=FALSE);
 shutterCooldownTimer(IN:=FALSE);
 
-				GVL.b_led_1 := MAIN.arr5[1]; GVL.b_led_2 := MAIN.arr6[1];		
+				//GVL.b_led_1 := MAIN.arr5[1]; GVL.b_led_2 := MAIN.arr6[1];		
 				
 //prevent both pressed
 IF digitalInputUp AND digitalInputDown THEN
@@ -215,7 +218,7 @@ _ret :
       </Implementation>
     </Method>
     <Method Name="moveDown" Id="{70bfc2f0-2a45-495c-8a8c-08f2039c444b}">
-      <Declaration><![CDATA[METHOD moveDown : BOOL
+      <Declaration><![CDATA[METHOD PRIVATE moveDown : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -230,8 +233,29 @@ setOutputs(direction:=E_Direction.DOWN, state:=TRUE);
 isClosing := TRUE;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="moveDownABit" Id="{93523c58-484f-4bd1-8031-7b4ea1567ce7}">
+      <Declaration><![CDATA[METHOD PUBLIC moveDownABit
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move down a bit', str2:= '', str3:=getSource());
+shortDistanceDown(IN:=releasedDown.Q);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="moveDownMax" Id="{ddc896d6-c531-4cf9-a48f-74ba97119115}">
+      <Declaration><![CDATA[METHOD PUBLIC moveDownMax
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move down max', str2:= '', str3:=getSource());
+longDistanceDown(IN:=releasedDown.Q);
+]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="moveUp" Id="{be6ff087-74af-4f3e-8a6d-a69e0bda1f40}">
-      <Declaration><![CDATA[METHOD moveUp : BOOL
+      <Declaration><![CDATA[METHOD PRIVATE moveUp : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -246,8 +270,28 @@ setOutputs(direction:=E_Direction.UP, state:=TRUE);
 isOpening := TRUE;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="moveUpABit" Id="{1c566862-7b2c-4a88-b130-c539e1f570e9}">
+      <Declaration><![CDATA[METHOD PUBLIC moveUpABit
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move up a bit', str2:= '', str3:=getSource());
+shortDistanceUp(IN:=releasedUp.Q);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="moveUpMax" Id="{300b4792-6d0d-41dc-949e-088c32ca7537}">
+      <Declaration><![CDATA[METHOD PUBLIC moveUpMax
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move up max', str2:= '', str3:=getSource());
+longDistanceUp(IN:=releasedUp.Q);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="onReleasedDown" Id="{d189a28a-8b68-42c4-b7ce-29fd95d074d7}">
-      <Declaration><![CDATA[METHOD onReleasedDown : BOOL
+      <Declaration><![CDATA[METHOD PRIVATE onReleasedDown : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -256,12 +300,10 @@ END_VAR
 
 IF pressedDownMiliseconds > 10 AND pressedDownMiliseconds < 500 THEN
 	//move a bit down
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move down a bit', str2:= '', str3:=getSource());
-	shortDistanceDown(IN:=releasedDown.Q);
+	moveDownABit();
 ELSIF pressedDownMiliseconds >= 500 AND pressedDownMiliseconds < 2000 THEN
 	//move max down
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move down a max', str2:= '', str3:=getSource());
-	longDistanceDown(IN:=releasedDown.Q);
+	moveDownMax();
 ELSIF pressedDownMiliseconds >= 2000 THEN
 	//stop
 	stopAll();
@@ -271,7 +313,7 @@ pressedDownMiliseconds := 0;]]></ST>
       </Implementation>
     </Method>
     <Method Name="onReleasedUp" Id="{18137760-a3db-4047-aa6a-2ed70d4a3ef6}">
-      <Declaration><![CDATA[METHOD onReleasedUp : BOOL
+      <Declaration><![CDATA[METHOD PRIVATE onReleasedUp : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -280,12 +322,10 @@ END_VAR
 
 IF pressedUpMiliseconds > 10 AND pressedUpMiliseconds < 500 THEN
 	//move a bit up
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move up a bit', str2:= '', str3:=getSource());
-	shortDistanceUp(IN:=releasedUp.Q);
+	moveUpABit();
 ELSIF pressedUpMiliseconds >= 500 AND pressedUpMiliseconds < 2000 THEN
 	//move max down
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move up a max', str2:= '', str3:=getSource());
-	longDistanceUp(IN:=releasedUp.Q);
+	moveUpMax();
 ELSIF pressedUpMiliseconds >= 2000 THEN
 	//stop
 	stopAll();
@@ -295,7 +335,7 @@ pressedUpMiliseconds := 0;]]></ST>
       </Implementation>
     </Method>
     <Method Name="setOutputs" Id="{79b15e5b-fc69-4f91-8345-898161fcd2f3}">
-      <Declaration><![CDATA[METHOD setOutputs
+      <Declaration><![CDATA[METHOD PRIVATE setOutputs
 VAR_INPUT
 	direction : E_Direction;
 	state : BOOL;
@@ -488,6 +528,14 @@ isOpening:= FALSE;]]></ST>
       <LineId Id="5" Count="0" />
       <LineId Id="20" Count="0" />
     </LineIds>
+    <LineIds Name="ShutterSwitch.moveDownABit">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.moveDownMax">
+      <LineId Id="6" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="ShutterSwitch.moveUp">
       <LineId Id="14" Count="1" />
       <LineId Id="17" Count="0" />
@@ -496,14 +544,20 @@ isOpening:= FALSE;]]></ST>
       <LineId Id="5" Count="1" />
       <LineId Id="21" Count="0" />
     </LineIds>
+    <LineIds Name="ShutterSwitch.moveUpABit">
+      <LineId Id="12" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.moveUpMax">
+      <LineId Id="11" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="ShutterSwitch.onReleasedDown">
       <LineId Id="20" Count="1" />
       <LineId Id="6" Count="1" />
       <LineId Id="25" Count="0" />
-      <LineId Id="18" Count="0" />
       <LineId Id="8" Count="1" />
       <LineId Id="29" Count="0" />
-      <LineId Id="19" Count="0" />
       <LineId Id="10" Count="1" />
       <LineId Id="17" Count="0" />
       <LineId Id="12" Count="1" />
@@ -512,7 +566,9 @@ isOpening:= FALSE;]]></ST>
     <LineIds Name="ShutterSwitch.onReleasedUp">
       <LineId Id="25" Count="0" />
       <LineId Id="20" Count="0" />
-      <LineId Id="43" Count="10" />
+      <LineId Id="43" Count="2" />
+      <LineId Id="47" Count="2" />
+      <LineId Id="51" Count="2" />
       <LineId Id="12" Count="1" />
       <LineId Id="5" Count="0" />
     </LineIds>

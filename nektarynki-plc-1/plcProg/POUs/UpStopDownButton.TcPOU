@@ -57,9 +57,6 @@ END_VAR
 returnTimer(IN:= pressed.Q);
 
 GVL.b_led_1 := MAIN.arr1[1]; GVL.b_led_2 := MAIN.arr2[1]; GVL.b_led_10 := MAIN.arr2[2]; GVL.b_led_3 := MAIN.arr3[1]; GVL.b_led_4 := MAIN.arr4[1]; GVL.b_led_12 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
-ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 
-			  '1111111111111112222222222222222223333333333333333344444444444444444555555555555555555555666666666666666666667777777777777777777787888888888888888899999999999999999', 
-			  '');
 
 IF pressed.Q THEN
 	readyToRelease := TRUE;
@@ -142,8 +139,6 @@ END_FOR
       <LineId Id="62" Count="0" />
       <LineId Id="65" Count="0" />
       <LineId Id="63" Count="0" />
-      <LineId Id="80" Count="1" />
-      <LineId Id="64" Count="0" />
       <LineId Id="25" Count="1" />
       <LineId Id="71" Count="2" />
       <LineId Id="75" Count="1" />

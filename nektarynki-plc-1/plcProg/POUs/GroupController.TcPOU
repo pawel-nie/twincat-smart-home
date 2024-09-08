@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="GroupController" Id="{9e2dea4c-15e9-4ccb-84f0-bf94eaeca36c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK GroupController
+VAR CONSTANT
+	MAX_SHUTTERS : INT := 11;
+	MAX_LIGHTS : INT := 50;
+END_VAR
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	shuttersCloseRequested : BOOL := FALSE;
+	shuttersOpenRequested : BOOL := FALSE;
+	
+	shutterMoveInterval : TP := (PT := T#10S);
+	currentShutterNumber : INT := 1;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="groupLightSwitch" Id="{825229c4-30cf-452b-a63c-6eb330c2cf9c}">
+      <Declaration><![CDATA[METHOD groupLightSwitch
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="groupShutterLoop" Id="{902b955c-86fb-4bb2-a5a6-c864a54d98be}">
+      <Declaration><![CDATA[METHOD PUBLIC groupShutterLoop
+
+VAR_INPUT
+	shutters : ARRAY[1..MAX_SHUTTERS] OF ShutterSwitch;
+END_VAR
+
+VAR
+
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT shuttersCloseRequested THEN
+	JMP _ret;
+END_IF
+
+shutterMoveInterval(IN:= FALSE);
+
+IF NOT shutterMoveInterval.Q THEN
+	shutterMoveInterval(IN:= TRUE);
+	shutters[currentShutterNumber].moveDownMax();
+	currentShutterNumber := currentShutterNumber + 1;
+END_IF
+
+IF currentShutterNumber > MAX_SHUTTERS THEN
+	shuttersCloseRequested := FALSE;
+	currentShutterNumber := 1;
+END_IF
+
+_ret :
+
+
+IF NOT shuttersOpenRequested THEN
+	JMP _ret2;
+END_IF
+
+shutterMoveInterval(IN:= FALSE);
+
+IF NOT shutterMoveInterval.Q THEN
+	shutterMoveInterval(IN:= TRUE);
+	shutters[currentShutterNumber].moveUpMax();
+	currentShutterNumber := currentShutterNumber + 1;
+END_IF
+
+IF currentShutterNumber > MAX_SHUTTERS THEN
+	shuttersOpenRequested := FALSE;
+	currentShutterNumber := 1;
+END_IF
+
+_ret2 :]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="requestLightsOff" Id="{985aeeea-4a3c-4846-a7a2-a8f187eeda96}">
+      <Declaration><![CDATA[METHOD requestLightsOff : BOOL
+VAR_INPUT
+	lights : ARRAY[1..MAX_LIGHTS] OF LightSwitch;
+END_VAR
+
+VAR
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i := 1 TO MAX_LIGHTS BY 1 DO
+	lights[i].turnOff();
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="requestLightsOnDefault" Id="{71279285-d9e5-48b2-ac31-d797ca22a13a}">
+      <Declaration><![CDATA[METHOD requestLightsOnDefault : BOOL
+VAR_INPUT
+	lights : ARRAY[1..MAX_LIGHTS] OF LightSwitch;
+END_VAR
+
+VAR
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i := 1 TO MAX_LIGHTS BY 1 DO
+	lights[i].turnOnDefault();
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="requestShuttersClose" Id="{f3fde636-7658-4863-a5d1-01bc94f61d8d}">
+      <Declaration><![CDATA[METHOD PUBLIC requestShuttersClose : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[shuttersCloseRequested := TRUE;
+shuttersOpenRequested := FALSE;
+currentShutterNumber := 1;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="requestShuttersOpen" Id="{a8b16986-9729-40f4-b5dc-f0d2780e881a}">
+      <Declaration><![CDATA[METHOD PUBLIC requestShuttersOpen : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[shuttersOpenRequested := TRUE;
+shuttersCloseRequested := FALSE;
+currentShutterNumber := 1;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="GroupController">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="GroupController.groupLightSwitch">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="GroupController.groupShutterLoop">
+      <LineId Id="12" Count="0" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="47" Count="1" />
+      <LineId Id="51" Count="1" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="58" Count="14" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="73" Count="1" />
+      <LineId Id="57" Count="0" />
+    </LineIds>
+    <LineIds Name="GroupController.requestLightsOff">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="1" />
+    </LineIds>
+    <LineIds Name="GroupController.requestLightsOnDefault">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="1" />
+    </LineIds>
+    <LineIds Name="GroupController.requestShuttersClose">
+      <LineId Id="5" Count="2" />
+    </LineIds>
+    <LineIds Name="GroupController.requestShuttersOpen">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

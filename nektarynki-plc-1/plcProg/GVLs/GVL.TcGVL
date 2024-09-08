@@ -2,6 +2,11 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <GVL Name="GVL" Id="{798ee332-7b17-4a9d-a450-87f1f742e8e3}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+    MAX_SHUTTER_OUTPUTS_PER_LEVEL : INT := 2;
+	MAX_LIGHT_OUTPUTS_PER_LEVEL : INT := 3;
+END_VAR
+
 VAR_GLOBAL
 	
 	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
@@ -19,6 +24,8 @@ VAR_GLOBAL
 	b_led_3 AT %Q* : BOOL;
 	b_led_4 AT %Q* : BOOL;
 	b_led_12 AT %Q* : BOOL;
+	
+	
 	
 	
 	bDigital1 : BOOL;
@@ -47,8 +54,8 @@ VAR_GLOBAL
 	din_17 AT %I* : BOOL;
 	din_18 AT %I* : BOOL;
 	din_19 AT %I* : BOOL;
-	din_20 AT %I* : BOOL;
-	din_21 AT %I* : BOOL;
+	din_20 AT %I* : BOOL; //wlacznik zaluzji w pralni w gore
+	din_21 AT %I* : BOOL; //wlacznik zaluzji w pralni w dol
 	din_22 AT %I* : BOOL;
 	din_23 AT %I* : BOOL;
 	din_24 AT %I* : BOOL;
@@ -109,8 +116,85 @@ VAR_GLOBAL
 	din_79 AT %I* : BOOL;
 	din_80 AT %I* : BOOL;
 	din_81 AT %I* : BOOL;
-	din_82 AT %I* : BOOL;
+	din_82_service AT %I* : BOOL;
 	wlacznik_z_garazu_do_pralni : LightSwitch;
+
+//-------------------------------------------------------------------------------------------------	
+//OUTPUTS
+	dout_1_zaluzja_pralnia_w_gore AT %Q* : BOOL;
+	douts_1_zaluzja_pralnia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 	
+	dout_2_zaluzja_pralnia_w_dol AT %Q* : BOOL;
+	douts_2_zaluzja_pralnia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_3_zaluzja_okno_narozne_kuchnia_w_gore AT %Q* : BOOL;
+	douts_3_zaluzja_okno_narozne_kuchnia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_4_zaluzja_okno_narozne_kuchnia_w_dol AT %Q* : BOOL;
+	douts_4_zaluzja_okno_narozne_kuchnia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_5_zaluzja_wykusz_w_gore AT %Q* : BOOL;	
+	douts_5_zaluzja_wykusz_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	dout_6_zaluzja_wykusz_w_gol AT %Q* : BOOL;
+	douts_6_zaluzja_wykusz_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_7_zaluzja_slide_w_gore AT %Q* : BOOL;	
+	douts_7_zaluzja_slide_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	dout_8_zaluzja_slide_w_gol AT %Q* : BOOL;
+	douts_8_zaluzja_slide_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_9_zaluzja_gabinet_w_gore AT %Q* : BOOL;	
+	douts_9_zaluzja_gabinet_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	dout_10_zaluzja_gabinet_w_gol AT %Q* : BOOL;
+	douts_10_zaluzja_gabinet_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_11_zaluzja_balkon_w_gore AT %Q* : BOOL;	
+	douts_11_zaluzja_balkon_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	dout_12_zaluzja_balkon_w_dol AT %Q* : BOOL;	
+	douts_12_zaluzja_balkon_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	
+	dout_13_zaluzja_nad_wykuszem_w_gore AT %Q* : BOOL;
+	douts_13_zaluzja_nad_wykuszem_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_14_zaluzja_nad_wykuszem_w_dol AT %Q* : BOOL;
+	douts_14_zaluzja_nad_wykuszem_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_15_zaluzja_okno_bez_balkonu_w_gore AT %Q* : BOOL;	
+	douts_15_zaluzja_okno_bez_balkonu_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	dout_16_zaluzja_okno_bez_balkonu_w_gol AT %Q* : BOOL;
+	douts_16_zaluzja_okno_bez_balkonu_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_17_roleta_kotlownia_w_gore AT %Q* : BOOL;	
+	douts_17_roleta_kotlownia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	dout_18_roleta_kotlownia_w_dol AT %Q* : BOOL;
+	douts_18_roleta_kotlownia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_19_roleta_warsztat_w_gore AT %Q* : BOOL;	
+	douts_19_roleta_warsztat_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	dout_20_roleta_warsztat_w_dol AT %Q* : BOOL;
+	douts_20_roleta_warsztat_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_21_roleta_kotlownia_w_gore AT %Q* : BOOL;	
+	douts_21_roleta_kotlownia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	dout_22_roleta_kotlownia_w_dol AT %Q* : BOOL;
+	douts_22_roleta_kotlownia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+//--
+	
+	dout_23_swiatlo_w_pralni AT %Q* : BOOL;
+	douts_23_swiatlo_w_pralni : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL; 
+
+	dout_31_swiatlo_w_kuchni_sufit AT %Q* : BOOL;
+	douts_31_swiatlo_w_kuchni_sufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	dout_32_swiatlo_w_kuchni_podszafkowe AT %Q* : BOOL;
+	douts_32_swiatlo_w_kuchni_posszafkowe : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	
+	
+	
+	
+	
+	
+	
+	
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>
