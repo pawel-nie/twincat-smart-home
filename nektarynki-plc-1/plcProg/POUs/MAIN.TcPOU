@@ -30,7 +30,7 @@ VAR
 	wlacznik_10_roleta_warsztat : ShutterSwitch();
     wlacznik_11_rolety_garaz : ShutterSwitch();
 	
-	
+	wlacznik_ogrzewania_lustra : SimpleButton();
 	
 		arr1 : ARRAY[1..3] OF BOOL;
 		arr2 : ARRAY[1..3] OF BOOL;
@@ -48,7 +48,7 @@ VAR
 		
 		
 		wlaczniki_swiatel : ARRAY[1..50] OF LightSwitch;
-		simpleButtons : ARRAY[1..10] OF SimpleButton;
+		//simpleButtons : ARRAY[1..10] OF SimpleButton;
 		upStopDownButtons : ARRAY[1..10] OF UpStopDownButton;
 		
 	isDay : BOOL := TRUE;
@@ -129,9 +129,12 @@ END_VAR
       <Implementation>
         <ST><![CDATA[//TODO ATTENTION ponizsze DIN inputy sa niesprawdzone
 
+wlacznik_ogrzewania_lustra(ID:= 99, name:= 'lustro', digitalInput:=GVL.din_21, holdTime:=T#8S, outputs:= GVL.douts_44_ogrzewanie_lustra,
+withHold:=TRUE, runAsYouPress := FALSE);
+
 wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji w pralni', 
-		digitalInputUp:=GVL.din_21, 
-		digitalInputDown:=GVL.din_22,
+		digitalInputUp:=GVL.din_71,//21 
+		digitalInputDown:=GVL.din_72,//22
 		up_outputs:=GVL.douts_1_zaluzja_pralnia_w_gore, 
 		down_outputs:=GVL.douts_2_zaluzja_pralnia_w_dol, 
 		shortTime:=T#250MS, longTime:= T#30S);
@@ -193,7 +196,13 @@ wlacznik_3_zaluzje_wykusz.loop();
 	
 wlacznik_4_zaluzja_slide.loop();
 	GVL.dout_7_zaluzja_slide_w_gore := GVL.douts_7_zaluzja_slide_w_gore[1];
-	GVL.dout_8_zaluzja_slide_w_dol := GVL.douts_8_zaluzja_slide_w_dol[1];]]></ST>
+	GVL.dout_8_zaluzja_slide_w_dol := GVL.douts_8_zaluzja_slide_w_dol[1];
+	
+
+wlacznik_ogrzewania_lustra.loop();
+				GVL.dout_1_zaluzja_pralnia_w_gore :=GVL.douts_44_ogrzewanie_lustra[1];
+
+	//GVL.dout_44_ogrzewanie_lustra := GVL.douts_44_ogrzewanie_lustra[1];]]></ST>
       </Implementation>
     </Method>
     <Method Name="systemService" Id="{e4d1bead-f766-4caa-a18e-e267b07bd01c}">
@@ -208,6 +217,10 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[neededHigh := GVL.din_21;//_1;
 neededLow := GVL.din_22;//_2;
+
+IF serviceMode THEN
+	JMP _wait_for_service_mode_exit;
+END_IF
 
 ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Device booted', '');
 ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'To enter service mode next time set DIGITAL INPUT 1 to TRUE and DIGITAL INPUT 2 to FALSE', '');
@@ -226,10 +239,14 @@ IF neededHigh AND NOT neededLow THEN
 END_IF
 //_run :
 
+_wait_for_service_mode_exit :
+
 IF neededLow THEN
 	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Exiting service mode', '');
 	serviceMode := FALSE;
-END_IF]]></ST>
+END_IF
+
+]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
@@ -271,7 +288,8 @@ END_IF]]></ST>
       <LineId Id="49" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.initializeButtons">
-      <LineId Id="38" Count="1" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="55" Count="3" />
       <LineId Id="6" Count="0" />
       <LineId Id="10" Count="0" />
       <LineId Id="40" Count="0" />
@@ -312,12 +330,21 @@ END_IF]]></ST>
       <LineId Id="9" Count="0" />
       <LineId Id="11" Count="5" />
       <LineId Id="20" Count="5" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="32" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.systemService">
       <LineId Id="29" Count="0" />
       <LineId Id="34" Count="0" />
+      <LineId Id="57" Count="1" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="60" Count="0" />
       <LineId Id="28" Count="0" />
-      <LineId Id="20" Count="1" />
+      <LineId Id="68" Count="1" />
       <LineId Id="6" Count="1" />
       <LineId Id="42" Count="1" />
       <LineId Id="8" Count="1" />
@@ -325,10 +352,14 @@ END_IF]]></ST>
       <LineId Id="26" Count="0" />
       <LineId Id="16" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="70" Count="0" />
       <LineId Id="45" Count="0" />
+      <LineId Id="71" Count="0" />
       <LineId Id="44" Count="0" />
       <LineId Id="49" Count="0" />
       <LineId Id="46" Count="1" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="61" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

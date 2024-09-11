@@ -189,7 +189,8 @@ VAR_GLOBAL
 	douts_32_swiatlo_w_kuchni_posszafkowe : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	
-	
+	dout_44_ogrzewanie_lustra AT %Q* : BOOL;
+	douts_44_ogrzewanie_lustra : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	
 	

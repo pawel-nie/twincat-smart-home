@@ -492,10 +492,12 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF preventMoving THEN
-	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Roller shutter moving down prevented', str2:='', str3:=getSource());
-ELSE
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving down stopped', str2:='', str3:=getSource());
+        <ST><![CDATA[IF canPrintGoUp THEN
+	IF preventMoving THEN
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Roller shutter moving down prevented', str2:='', str3:=getSource());
+	ELSE
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving down stopped', str2:='', str3:=getSource());
+	END_IF
 END_IF
 
 canPrintGoDown := TRUE;
@@ -510,11 +512,14 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF preventMoving THEN
-	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Roller shutter moving up prevented', str2:='', str3:=getSource());
-ELSE
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving up stopped', str2:='', str3:=getSource());
+        <ST><![CDATA[IF canPrintGoDown THEN
+	IF preventMoving THEN
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Roller shutter moving up prevented', str2:='', str3:=getSource());
+	ELSE
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Roller shutter moving up stopped', str2:='', str3:=getSource());
+	END_IF
 END_IF
+
 
 canPrintGoUp := TRUE;
 setOutputs(direction:=E_Direction.UP, state:=FALSE);
@@ -673,18 +678,18 @@ isOpening:= FALSE;]]></ST>
       <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.stopDown">
-      <LineId Id="20" Count="3" />
-      <LineId Id="19" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="3" />
+      <LineId Id="32" Count="1" />
       <LineId Id="25" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="14" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.stopUp">
-      <LineId Id="22" Count="0" />
-      <LineId Id="25" Count="0" />
-      <LineId Id="23" Count="0" />
-      <LineId Id="26" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="34" Count="3" />
+      <LineId Id="32" Count="1" />
       <LineId Id="24" Count="0" />
       <LineId Id="12" Count="1" />
       <LineId Id="6" Count="0" />

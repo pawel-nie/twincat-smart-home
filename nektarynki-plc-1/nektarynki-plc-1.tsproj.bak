@@ -10,7 +10,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{A14C7FBD-5B32-49C5-96AB-4C1D0189B914}" Name="plcProg" PrjFilePath="plcProg\plcProg.plcproj" TmcFilePath="plcProg\plcProg.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{BAB6EFE8-9208-D673-5CEF-5DCB5F0EAD6F}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{44F2DD64-4754-800A-13B6-5638350CDB8A}">
 					<Name>plcProg Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
@@ -496,6 +496,10 @@ OUTPUTS]]></Comment>
 						</Var>
 						<Var>
 							<Name>GVL.dout_32_swiatlo_w_kuchni_podszafkowe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_44_ogrzewanie_lustra</Name>
 							<Type>BOOL</Type>
 						</Var>
 					</Vars>
