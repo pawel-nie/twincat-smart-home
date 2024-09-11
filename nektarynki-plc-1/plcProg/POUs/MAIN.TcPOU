@@ -48,7 +48,7 @@ VAR
 		
 		
 		wlaczniki_swiatel : ARRAY[1..50] OF LightSwitch;
-		//simpleButtons : ARRAY[1..10] OF SimpleButton;
+		prosteWlaczniki : ARRAY[1..10] OF SimpleButton;
 		upStopDownButtons : ARRAY[1..10] OF UpStopDownButton;
 		
 	isDay : BOOL := TRUE;
@@ -130,7 +130,7 @@ END_VAR
         <ST><![CDATA[//TODO ATTENTION ponizsze DIN inputy sa niesprawdzone
 
 wlacznik_ogrzewania_lustra(ID:= 99, name:= 'lustro', digitalInput:=GVL.din_21, holdTime:=T#8S, outputs:= GVL.douts_44_ogrzewanie_lustra,
-withHold:=TRUE, runAsYouPress := FALSE);
+withHold:=FALSE, runAsYouPress := FALSE);
 
 wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji w pralni', 
 		digitalInputUp:=GVL.din_71,//21 
@@ -173,7 +173,9 @@ wlaczniki_rolet_i_zaluzji[4] := wlacznik_4_zaluzja_slide;
 //wlaczniki_rolet_i_zaluzji[8] := wlacznik_8_zaluzja_okno_bez_balkonu;
 //wlaczniki_rolet_i_zaluzji[9] := wlacznik_9_roleta_kotlownia;
 //wlaczniki_rolet_i_zaluzji[10] := wlacznik_10_roleta_warsztat;
-//wlaczniki_rolet_i_zaluzji[11] := wlacznik_11_rolety_garaz;]]></ST>
+//wlaczniki_rolet_i_zaluzji[11] := wlacznik_11_rolety_garaz;
+
+prosteWlaczniki[1] := wlacznik_ogrzewania_lustra; ]]></ST>
       </Implementation>
     </Method>
     <Method Name="inputsOutputsLoop" Id="{5ddbf680-25b6-4be3-b0a7-c03717331c9d}">
@@ -323,6 +325,8 @@ END_IF
       <LineId Id="28" Count="0" />
       <LineId Id="30" Count="0" />
       <LineId Id="33" Count="1" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="59" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.inputsOutputsLoop">
       <LineId Id="5" Count="0" />
