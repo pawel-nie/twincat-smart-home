@@ -5,6 +5,7 @@
 VAR_GLOBAL CONSTANT
     MAX_SHUTTER_OUTPUTS_PER_LEVEL : INT := 2;
 	MAX_LIGHT_OUTPUTS_PER_LEVEL : INT := 3;
+	MAX_SHUTTERS : INT := 4;//11;
 END_VAR
 
 VAR_GLOBAL
@@ -133,17 +134,17 @@ VAR_GLOBAL
 	
 	dout_5_zaluzja_wykusz_w_gore AT %Q* : BOOL;	
 	douts_5_zaluzja_wykusz_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
-	dout_6_zaluzja_wykusz_w_gol AT %Q* : BOOL;
+	dout_6_zaluzja_wykusz_w_dol AT %Q* : BOOL;
 	douts_6_zaluzja_wykusz_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	dout_7_zaluzja_slide_w_gore AT %Q* : BOOL;	
 	douts_7_zaluzja_slide_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
-	dout_8_zaluzja_slide_w_gol AT %Q* : BOOL;
+	dout_8_zaluzja_slide_w_dol AT %Q* : BOOL;
 	douts_8_zaluzja_slide_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	dout_9_zaluzja_gabinet_w_gore AT %Q* : BOOL;	
 	douts_9_zaluzja_gabinet_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
-	dout_10_zaluzja_gabinet_w_gol AT %Q* : BOOL;
+	dout_10_zaluzja_gabinet_w_dol AT %Q* : BOOL;
 	douts_10_zaluzja_gabinet_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	dout_11_zaluzja_balkon_w_gore AT %Q* : BOOL;	
@@ -158,7 +159,7 @@ VAR_GLOBAL
 	
 	dout_15_zaluzja_okno_bez_balkonu_w_gore AT %Q* : BOOL;	
 	douts_15_zaluzja_okno_bez_balkonu_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
-	dout_16_zaluzja_okno_bez_balkonu_w_gol AT %Q* : BOOL;
+	dout_16_zaluzja_okno_bez_balkonu_w_dol AT %Q* : BOOL;
 	douts_16_zaluzja_okno_bez_balkonu_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	dout_17_roleta_kotlownia_w_gore AT %Q* : BOOL;	

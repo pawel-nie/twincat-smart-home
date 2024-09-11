@@ -27,7 +27,10 @@ VAR
 	initialized : BOOL := FALSE;
 	canPrintGoUp : BOOL := TRUE;
 	canPrintGoDown : BOOL := TRUE;
+	longMoveAborted : BOOL := FALSE;
+	
 	suppressedByCooldown : BOOL := FALSE;
+	requestedByGroupController : BOOL := FALSE;
 	
 	isClosing : BOOL := FALSE;
 	isOpening : BOOL := FALSE;
@@ -54,6 +57,8 @@ VAR
 	goDownRequested : BOOL := FALSE;
 	
 	manualControl : BOOL := FALSE;
+	inactivityTimeout : TP := (PT := T#1100MS);
+	consecutiveClicks : INT := 0;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -62,6 +67,49 @@ END_VAR
 END_IF
 ]]></ST>
     </Implementation>
+    <Method Name="calculatePressedTimeMiliseconds" Id="{44f0f571-c10d-4674-88c2-d39b30eb8e2d}">
+      <Declaration><![CDATA[METHOD PRIVATE calculatePressedTimeMiliseconds
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//long hold up
+IF digitalInputUp AND TIME_TO_INT(pressedUpTimer.ET) <> 0 THEN
+	pressedUpMiliseconds := TIME_TO_INT(pressedUpTimer.ET);
+END_IF
+
+//long hold down
+IF digitalInputDown AND TIME_TO_INT(pressedDownTimer.ET) <> 0 THEN
+	pressedDownMiliseconds := TIME_TO_INT(pressedDownTimer.ET);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="doSpecialAction" Id="{5dfd22fb-b43b-4045-88fc-905a15a8fff2}">
+      <Declaration><![CDATA[METHOD doSpecialAction : BOOL
+VAR_INPUT
+END_VAR
+
+VAR
+	i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE ID OF
+	
+	3:
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 1 - ', str2:='turning off all lights', str3:=getSource());
+		MAIN.groupController.requestLightsOff(MAIN.wlaczniki_swiatel);
+		
+	2:
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2 - ', str2:='turning on all lights', str3:=getSource());
+		MAIN.groupController.requestLightsOnDefault(MAIN.wlaczniki_swiatel);
+		
+	1:
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 3 - ', str2:='closing all shutters', str3:=getSource());
+		MAIN.groupController.requestShuttersClose();
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="getSource" Id="{3343044d-517d-47e0-899f-f77bf241ae33}">
       <Declaration><![CDATA[METHOD PRIVATE getSource : STRING(255)
 VAR_INPUT
@@ -102,10 +150,10 @@ shortDistanceDown(IN:=FALSE);
 longDistanceDown(IN:=FALSE);
 shortDistanceUp(IN:=FALSE);
 longDistanceUp(IN:=FALSE);
-shutterCooldownTimer(IN:=FALSE);
-
-				//GVL.b_led_1 := MAIN.arr5[1]; GVL.b_led_2 := MAIN.arr6[1];		
+inactivityTimeout(IN:= FALSE);	
 				
+onAnyPressedDown();
+
 //prevent both pressed
 IF digitalInputUp AND digitalInputDown THEN
 	GVL.EventLogger.print3(level:=TcEventSeverity.Warning, str1:='Both button pressed', str2:='', str3:=getSource());
@@ -115,28 +163,25 @@ IF digitalInputUp AND digitalInputDown THEN
 	JMP _ret;
 END_IF
 
+manageConsecutiveClicks();
+
 //moving any direction 
 IF isClosing OR isOpening THEN
 	IF pressedUp.Q OR pressedDown.Q THEN
 		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button pressed during shutter move', str2:='', str3:=getSource());
 		stopAll();
 		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Starting cooldown before moving just stopped shutter', str2:='', str3:=getSource());
-		shutterCooldownTimer(IN:=TRUE);
+		
+		IF longDistanceUp.Q OR longDistanceDown.Q THEN
+			GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long move aborted', str2:='', str3:=getSource());
+			longMoveAborted := TRUE;
+		END_IF
 		JMP _ret;
 	END_IF
 END_IF
 
-//just stopped cooldown still on
-IF shutterCooldownTimer.Q THEN
-	IF pressedDown.Q OR pressedUp.Q OR releasedDown.Q OR releasedUp.Q THEN
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Using shutter impossible during cooldown', str2:='', str3:=getSource());
-	END_IF
-	suppressedByCooldown := TRUE;
-	JMP _ret;
-END_IF
-
-goUpRequested := (shortDistanceUp.Q OR longDistanceUp.Q) AND NOT suppressedByCooldown;
-goDownRequested := (shortDistanceDown.Q OR longDistanceDown.Q) AND NOT suppressedByCooldown;
+goUpRequested := (shortDistanceUp.Q OR longDistanceUp.Q) AND NOT longMoveAborted;
+goDownRequested := (shortDistanceDown.Q OR longDistanceDown.Q) AND NOT longMoveAborted;
 
 IF goDownRequested AND NOT goUpRequested AND NOT isClosing THEN
 	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Go down requested', str2:='', str3:=getSource());
@@ -160,61 +205,52 @@ IF isOpening AND NOT goUpRequested AND NOT pressedUp.Q AND NOT manualControl THE
 	stopUp(preventMoving := FALSE);
 END_IF
 
-//long hold up
-IF digitalInputUp AND TIME_TO_INT(pressedUpTimer.ET) <> 0 THEN
-	pressedUpMiliseconds := TIME_TO_INT(pressedUpTimer.ET);
-END_IF
-
-//long hold downm
-IF digitalInputDown AND TIME_TO_INT(pressedDownTimer.ET) <> 0 THEN
-	pressedDownMiliseconds := TIME_TO_INT(pressedDownTimer.ET);
-END_IF
+calculatePressedTimeMiliseconds();
 
 IF releasedUp.Q THEN
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button up released after ', str2:=TO_STRING(pressedUpMiliseconds), str3:=getSource());
-	manualControl := FALSE;
 	onReleasedUp();
 END_IF
 
 IF pressedUpMiliseconds >= 2000 THEN
-	IF NOT manualControl THEN
-		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Start manual control by UP long press', str2:='', str3:=getSource());
-	END_IF
-	
-	moveUp();
-	manualControl := TRUE;
+	onContinuousHoldUp();
 END_IF
 
 IF releasedDown.Q THEN
-	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button down released after ', str2:=TO_STRING(pressedDownMiliseconds), str3:=getSource());
-	manualControl := FALSE;
 	onReleasedDown();
 END_IF
 
 IF pressedDownMiliseconds >= 2000 THEN
-	IF NOT manualControl THEN
-		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Start manual control by DOWN long press', str2:='', str3:=getSource());
-	END_IF
-	moveDown();
-	manualControl := TRUE;
-END_IF
-
-IF pressedDown.Q OR pressedUp.Q THEN
-	IF pressedDown.Q THEN
-		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Button down pressed', str2:='', str3:=getSource());
-	END_IF
-	IF pressedUp.Q THEN
-		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Button up pressed', str2:='', str3:=getSource());
-	END_IF
-	IF suppressedByCooldown THEN
-			GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Released suppression', str2:='', str3:=getSource());
-	suppressedByCooldown := FALSE;
-	END_IF
+	onContinuousHoldDown();
 END_IF
 
 _ret :
 
 ]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="manageConsecutiveClicks" Id="{72d668eb-7c67-4ece-94b8-c543b9156834}">
+      <Declaration><![CDATA[METHOD PRIVATE manageConsecutiveClicks
+VAR_INPUT
+END_VAR
+
+VAR
+
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT inactivityTimeout.Q THEN
+	consecutiveClicks := 0;
+END_IF
+
+IF pressedDown.Q THEN
+	consecutiveClicks := consecutiveClicks + 1;
+	inactivityTimeout(IN:= TRUE);
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='consecutiveClicks=', str2:=TO_STRING(consecutiveClicks), str3:=getSource());
+END_IF
+
+IF consecutiveClicks >= 3 THEN
+	consecutiveClicks := 0;
+	doSpecialAction();
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="moveDown" Id="{70bfc2f0-2a45-495c-8a8c-08f2039c444b}">
@@ -236,21 +272,27 @@ isClosing := TRUE;]]></ST>
     <Method Name="moveDownABit" Id="{93523c58-484f-4bd1-8031-7b4ea1567ce7}">
       <Declaration><![CDATA[METHOD PUBLIC moveDownABit
 VAR_INPUT
+	requestedExternally : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move down a bit', str2:= '', str3:=getSource());
-shortDistanceDown(IN:=releasedDown.Q);]]></ST>
+//shortDistanceDown(IN:=releasedDown.Q);
+shortDistanceDown(IN:=TRUE);
+requestedByGroupController := requestedExternally;]]></ST>
       </Implementation>
     </Method>
     <Method Name="moveDownMax" Id="{ddc896d6-c531-4cf9-a48f-74ba97119115}">
       <Declaration><![CDATA[METHOD PUBLIC moveDownMax
 VAR_INPUT
+	requestedExternally : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move down max', str2:= '', str3:=getSource());
-longDistanceDown(IN:=releasedDown.Q);
+longDistanceDown(IN:=TRUE);
+requestedByGroupController := requestedExternally;
+//longDistanceDown(IN:=releasedDown.Q);
 ]]></ST>
       </Implementation>
     </Method>
@@ -273,21 +315,78 @@ isOpening := TRUE;]]></ST>
     <Method Name="moveUpABit" Id="{1c566862-7b2c-4a88-b130-c539e1f570e9}">
       <Declaration><![CDATA[METHOD PUBLIC moveUpABit
 VAR_INPUT
+	requestedExternally : BOOL := FALSE;	
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move up a bit', str2:= '', str3:=getSource());
-shortDistanceUp(IN:=releasedUp.Q);]]></ST>
+//shortDistanceUp(IN:=releasedUp.Q);
+shortDistanceUp(IN:=TRUE);
+requestedByGroupController := requestedExternally;]]></ST>
       </Implementation>
     </Method>
     <Method Name="moveUpMax" Id="{300b4792-6d0d-41dc-949e-088c32ca7537}">
       <Declaration><![CDATA[METHOD PUBLIC moveUpMax
 VAR_INPUT
+	requestedExternally : BOOL := FALSE;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Move up max', str2:= '', str3:=getSource());
-longDistanceUp(IN:=releasedUp.Q);]]></ST>
+//longDistanceUp(IN:=releasedUp.Q);
+longDistanceUp(IN:=TRUE);
+requestedByGroupController := requestedExternally;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="onAnyPressedDown" Id="{ffd5021c-7aaa-44a9-a50b-6794722f5252}">
+      <Declaration><![CDATA[METHOD onAnyPressedDown
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF pressedDown.Q OR pressedUp.Q THEN
+	IF pressedDown.Q THEN
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Button down pressed', str2:='', str3:=getSource());
+	END_IF
+	
+	IF pressedUp.Q THEN
+		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Button up pressed', str2:='', str3:=getSource());
+	END_IF
+	
+	longMoveAborted := FALSE;
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="onContinuousHoldDown" Id="{9ee82ccc-2a07-495a-ad3a-5e135f3561de}">
+      <Declaration><![CDATA[METHOD PRIVATE onContinuousHoldDown
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT manualControl THEN
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Start manual control by DOWN long press', str2:='', str3:=getSource());
+END_IF
+
+moveDown();
+stopUp(preventMoving := TRUE);
+manualControl := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="onContinuousHoldUp" Id="{b84053b3-5125-40c8-ab75-38f15a99f632}">
+      <Declaration><![CDATA[METHOD PRIVATE onContinuousHoldUp
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT manualControl THEN
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Start manual control by UP long press', str2:='', str3:=getSource());
+END_IF
+
+moveUp();
+stopDown(preventMoving := TRUE);
+manualControl := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="onReleasedDown" Id="{d189a28a-8b68-42c4-b7ce-29fd95d074d7}">
@@ -296,14 +395,16 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='pressedDownMiliseconds=', str2:= TO_STRING(pressedDownMiliseconds), str3:=getSource());
+        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button down released after ', str2:=TO_STRING(pressedDownMiliseconds), str3:=getSource());
+manualControl := FALSE;
+GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='pressedDownMiliseconds=', str2:= TO_STRING(pressedDownMiliseconds), str3:=getSource());
 
 IF pressedDownMiliseconds > 10 AND pressedDownMiliseconds < 500 THEN
 	//move a bit down
-	moveDownABit();
+	moveDownABit(requestedExternally:= FALSE);
 ELSIF pressedDownMiliseconds >= 500 AND pressedDownMiliseconds < 2000 THEN
 	//move max down
-	moveDownMax();
+	moveDownMax(requestedExternally:= FALSE);
 ELSIF pressedDownMiliseconds >= 2000 THEN
 	//stop
 	stopAll();
@@ -318,14 +419,16 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='pressedUpMiliseconds=', str2:= TO_STRING(pressedUpMiliseconds), str3:=getSource());
+        <ST><![CDATA[GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Button up released after ', str2:=TO_STRING(pressedUpMiliseconds), str3:=getSource());
+manualControl := FALSE;
+GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='pressedUpMiliseconds=', str2:= TO_STRING(pressedUpMiliseconds), str3:=getSource());
 
 IF pressedUpMiliseconds > 10 AND pressedUpMiliseconds < 500 THEN
 	//move a bit up
-	moveUpABit();
+	moveUpABit(requestedExternally:= FALSE);
 ELSIF pressedUpMiliseconds >= 500 AND pressedUpMiliseconds < 2000 THEN
 	//move max down
-	moveUpMax();
+	moveUpMax(requestedExternally:= FALSE);
 ELSIF pressedUpMiliseconds >= 2000 THEN
 	//stop
 	stopAll();
@@ -422,6 +525,23 @@ isOpening:= FALSE;]]></ST>
       <LineId Id="31" Count="2" />
       <LineId Id="9" Count="0" />
     </LineIds>
+    <LineIds Name="ShutterSwitch.calculatePressedTimeMiliseconds">
+      <LineId Id="6" Count="7" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.doSpecialAction">
+      <LineId Id="7" Count="2" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="45" Count="1" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="ShutterSwitch.getSource">
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="0" />
@@ -435,90 +555,23 @@ isOpening:= FALSE;]]></ST>
       <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.loop">
-      <LineId Id="136" Count="3" />
-      <LineId Id="141" Count="1" />
-      <LineId Id="269" Count="0" />
-      <LineId Id="294" Count="0" />
-      <LineId Id="287" Count="1" />
-      <LineId Id="295" Count="0" />
-      <LineId Id="297" Count="0" />
-      <LineId Id="143" Count="0" />
-      <LineId Id="301" Count="0" />
-      <LineId Id="144" Count="1" />
-      <LineId Id="255" Count="0" />
-      <LineId Id="146" Count="7" />
-      <LineId Id="155" Count="0" />
-      <LineId Id="256" Count="0" />
-      <LineId Id="156" Count="0" />
-      <LineId Id="296" Count="0" />
-      <LineId Id="157" Count="0" />
-      <LineId Id="298" Count="0" />
-      <LineId Id="158" Count="1" />
-      <LineId Id="302" Count="4" />
-      <LineId Id="308" Count="0" />
-      <LineId Id="323" Count="0" />
-      <LineId Id="322" Count="0" />
-      <LineId Id="236" Count="0" />
-      <LineId Id="320" Count="1" />
-      <LineId Id="318" Count="0" />
-      <LineId Id="250" Count="1" />
-      <LineId Id="273" Count="0" />
-      <LineId Id="252" Count="0" />
-      <LineId Id="271" Count="0" />
-      <LineId Id="253" Count="0" />
-      <LineId Id="274" Count="0" />
-      <LineId Id="272" Count="0" />
-      <LineId Id="254" Count="0" />
-      <LineId Id="249" Count="0" />
-      <LineId Id="280" Count="0" />
-      <LineId Id="275" Count="0" />
-      <LineId Id="222" Count="0" />
-      <LineId Id="276" Count="0" />
-      <LineId Id="279" Count="0" />
-      <LineId Id="277" Count="0" />
-      <LineId Id="282" Count="4" />
-      <LineId Id="281" Count="0" />
-      <LineId Id="278" Count="0" />
-      <LineId Id="161" Count="1" />
-      <LineId Id="164" Count="0" />
-      <LineId Id="166" Count="0" />
-      <LineId Id="223" Count="0" />
-      <LineId Id="168" Count="0" />
-      <LineId Id="215" Count="0" />
-      <LineId Id="171" Count="0" />
-      <LineId Id="173" Count="0" />
-      <LineId Id="175" Count="1" />
-      <LineId Id="262" Count="0" />
-      <LineId Id="177" Count="0" />
-      <LineId Id="342" Count="0" />
-      <LineId Id="178" Count="0" />
-      <LineId Id="180" Count="1" />
-      <LineId Id="346" Count="3" />
-      <LineId Id="216" Count="0" />
-      <LineId Id="345" Count="0" />
-      <LineId Id="183" Count="0" />
-      <LineId Id="185" Count="1" />
-      <LineId Id="263" Count="0" />
-      <LineId Id="187" Count="0" />
-      <LineId Id="343" Count="0" />
-      <LineId Id="188" Count="0" />
-      <LineId Id="190" Count="1" />
-      <LineId Id="351" Count="1" />
-      <LineId Id="350" Count="0" />
-      <LineId Id="192" Count="0" />
-      <LineId Id="344" Count="0" />
-      <LineId Id="193" Count="0" />
-      <LineId Id="325" Count="0" />
-      <LineId Id="324" Count="0" />
-      <LineId Id="334" Count="0" />
-      <LineId Id="336" Count="3" />
-      <LineId Id="335" Count="0" />
-      <LineId Id="329" Count="1" />
-      <LineId Id="333" Count="0" />
-      <LineId Id="331" Count="0" />
-      <LineId Id="327" Count="0" />
-      <LineId Id="211" Count="2" />
+      <LineId Id="407" Count="10" />
+      <LineId Id="419" Count="0" />
+      <LineId Id="498" Count="1" />
+      <LineId Id="420" Count="17" />
+      <LineId Id="494" Count="0" />
+      <LineId Id="497" Count="0" />
+      <LineId Id="495" Count="1" />
+      <LineId Id="493" Count="0" />
+      <LineId Id="438" Count="42" />
+      <LineId Id="492" Count="0" />
+      <LineId Id="486" Count="0" />
+      <LineId Id="489" Count="2" />
       <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.manageConsecutiveClicks">
+      <LineId Id="45" Count="12" />
+      <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.moveDown">
       <LineId Id="14" Count="2" />
@@ -531,9 +584,13 @@ isOpening:= FALSE;]]></ST>
     <LineIds Name="ShutterSwitch.moveDownABit">
       <LineId Id="8" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="14" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.moveDownMax">
       <LineId Id="6" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="11" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.moveUp">
@@ -547,13 +604,40 @@ isOpening:= FALSE;]]></ST>
     <LineIds Name="ShutterSwitch.moveUpABit">
       <LineId Id="12" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="18" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.moveUpMax">
       <LineId Id="11" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="17" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.onAnyPressedDown">
+      <LineId Id="7" Count="4" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="12" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.onContinuousHoldDown">
+      <LineId Id="14" Count="2" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="ShutterSwitch.onContinuousHoldUp">
+      <LineId Id="6" Count="6" />
     </LineIds>
     <LineIds Name="ShutterSwitch.onReleasedDown">
-      <LineId Id="20" Count="1" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="21" Count="0" />
       <LineId Id="6" Count="1" />
       <LineId Id="25" Count="0" />
       <LineId Id="8" Count="1" />
@@ -564,7 +648,9 @@ isOpening:= FALSE;]]></ST>
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.onReleasedUp">
+      <LineId Id="57" Count="0" />
       <LineId Id="25" Count="0" />
+      <LineId Id="58" Count="0" />
       <LineId Id="20" Count="0" />
       <LineId Id="43" Count="2" />
       <LineId Id="47" Count="2" />

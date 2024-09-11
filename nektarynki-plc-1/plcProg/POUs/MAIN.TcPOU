@@ -4,7 +4,7 @@
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
 	initialized : BOOL := FALSE;
-	
+	serviceMode : BOOL := FALSE;
 	stThisIsFirstInstanceOfAStructure : ST_Event;
 
 	eEventType : E_EventType := E_EventType.Alarm;
@@ -12,10 +12,12 @@ VAR
 	nEventIdentity : UDINT := 44444;
 	sEventText : STRING(255) := 'Some informational event';
 	
+	groupController : GroupController;
+	
 //	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
 //	EventLogger : EventLogger(CsvPersistentEventStorage);
 
-	wlaczniki_rolet_i_zaluzji : ARRAY[1..11] OF ShutterSwitch;
+	wlaczniki_rolet_i_zaluzji : ARRAY[1..GVL.MAX_SHUTTERS] OF ShutterSwitch;
 	wlacznik_1_zaluzja_pralnia : ShutterSwitch();
 	wlacznik_2_zaluzje_kuchnia : ShutterSwitch();
 	wlacznik_3_zaluzje_wykusz : ShutterSwitch();
@@ -41,6 +43,7 @@ VAR
 		
 		//button1 : LightSwitch;//ShutterSwitch;//LightSwitch;//UpStopDownButton;// LightSwitch;	
 		button2 : ShutterSwitch;
+		buttontest : ShutterSwitch;
 		
 		
 		
@@ -59,18 +62,22 @@ END_VAR
 
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[systemService();
-
-IF NOT initialized THEN
+      <ST><![CDATA[IF NOT initialized THEN
+	systemService();
+	IF serviceMode THEN
+		JMP _programBypass;
+	END_IF
 	GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:='PLC started');
 	
 	//todo print date, all inputs and outputs values 
-	initButtons();	
-
+			//initButtons();	
+	
+	initializeButtons();
 			F_UpdateEventTimestampWithSystemTime(stEvent := stThisIsFirstInstanceOfAStructure);	
 			GVL.EventLogger.AddEvent(eEventType, eEventSeverity, nEventIdentity, sEventText);
 			
 	initialized := TRUE;
+	groupController();
 END_IF
 
 
@@ -79,12 +86,13 @@ END_IF
 //CsvPersistentEventStorage();
 
 
-//button2.loop();
+//buttontest.loop();
 
 inputsOutputsLoop();
+groupController.groupShutterLoop(shutters:= wlaczniki_rolet_i_zaluzji);
 
 
-
+_programBypass :
 
 
 
@@ -121,30 +129,30 @@ END_VAR
       <Implementation>
         <ST><![CDATA[//TODO ATTENTION ponizsze DIN inputy sa niesprawdzone
 
-wlacznik_1_zaluzja_pralnia(ID:=1, name:='Włącznik żaluzji w pralni', 
+wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji w pralni', 
 		digitalInputUp:=GVL.din_21, 
 		digitalInputDown:=GVL.din_22,
 		up_outputs:=GVL.douts_1_zaluzja_pralnia_w_gore, 
 		down_outputs:=GVL.douts_2_zaluzja_pralnia_w_dol, 
 		shortTime:=T#250MS, longTime:= T#30S);
 
-wlacznik_2_zaluzje_kuchnia(ID:=2, name:='Włącznik żaluzji okna narożnego w kuchni', 
+wlacznik_2_zaluzje_kuchnia(ID:=2, name:='Wlacznik zaluzji okna naroznego w kuchni', 
 		digitalInputUp:=GVL.din_23, 
-		digitalInputDown:=GVL.din_23,
+		digitalInputDown:=GVL.din_24,
 		up_outputs:=GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore, 
 		down_outputs:=GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol, 
 		shortTime:=T#250MS, longTime:= T#30S);
 
-wlacznik_3_zaluzje_wykusz(ID:=3, name:='Włącznik żaluzji wykuszu w salonie', 
-		digitalInputUp:=GVL.din_24, 
-		digitalInputDown:=GVL.din_25,
+wlacznik_3_zaluzje_wykusz(ID:=3, name:='Wlacznik zaluzji wykuszu w salonie', 
+		digitalInputUp:=GVL.din_25, 
+		digitalInputDown:=GVL.din_26,
 		up_outputs:=GVL.douts_5_zaluzja_wykusz_w_gore, 
 		down_outputs:=GVL.douts_6_zaluzja_wykusz_w_dol, 
 		shortTime:=T#250MS, longTime:= T#60S);		
 		
-wlacznik_4_zaluzja_slide(ID:=4, name:='Włącznik żaluzji slide tarasu', 
-		digitalInputUp:=GVL.din_26, 
-		digitalInputDown:=GVL.din_27,
+wlacznik_4_zaluzja_slide(ID:=4, name:='Wlacznik zaluzji slide tarasu', 
+		digitalInputUp:=GVL.din_27, 
+		digitalInputDown:=GVL.din_28,
 		up_outputs:=GVL.douts_7_zaluzja_slide_w_gore, 
 		down_outputs:=GVL.douts_8_zaluzja_slide_w_dol, 
 		shortTime:=T#250MS, longTime:= T#60S);				
@@ -179,42 +187,64 @@ wlacznik_2_zaluzje_kuchnia.loop();
 	GVL.dout_3_zaluzja_okno_narozne_kuchnia_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
 	GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol := GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol[1];
 	
-]]></ST>
+wlacznik_3_zaluzje_wykusz.loop();
+	GVL.dout_5_zaluzja_wykusz_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
+	GVL.dout_6_zaluzja_wykusz_w_dol := GVL.douts_6_zaluzja_wykusz_w_dol[1];
+	
+wlacznik_4_zaluzja_slide.loop();
+	GVL.dout_7_zaluzja_slide_w_gore := GVL.douts_7_zaluzja_slide_w_gore[1];
+	GVL.dout_8_zaluzja_slide_w_dol := GVL.douts_8_zaluzja_slide_w_dol[1];]]></ST>
       </Implementation>
     </Method>
     <Method Name="systemService" Id="{e4d1bead-f766-4caa-a18e-e267b07bd01c}">
       <Declaration><![CDATA[METHOD systemService
 VAR_INPUT
 END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Device booted', '');
 
-IF GVL.din_82_service THEN
+VAR
+	neededHigh : BOOL := FALSE;
+	neededLow : BOOL := TRUE;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[neededHigh := GVL.din_21;//_1;
+neededLow := GVL.din_22;//_2;
+
+ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Device booted', '');
+ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'To enter service mode next time set DIGITAL INPUT 1 to TRUE and DIGITAL INPUT 2 to FALSE', '');
+IF neededHigh AND NOT neededLow THEN
 	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode entered', '');
-	WHILE TRUE DO
-		initialized := FALSE;	
-		ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode test', ''); //do wywalenia docelowo
-		IF GVL.din_82_service AND GVL.din_81 THEN
-			ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Exiting service mode', '');
-			JMP _run;
-		END_IF
-	END_WHILE
+	serviceMode := TRUE;
+	
+//	WHILE TRUE DO
+//		initialized := FALSE;	
+//		IF neededLow THEN
+//			ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Exiting service mode', '');
+//			JMP _run;
+//		END_IF
+//	END_WHILE
+//	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode exited', '');
 END_IF
-_run :
-ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode exited', '');]]></ST>
+//_run :
+
+IF neededLow THEN
+	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Exiting service mode', '');
+	serviceMode := FALSE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
-      <LineId Id="431" Count="0" />
-      <LineId Id="420" Count="0" />
       <LineId Id="161" Count="0" />
+      <LineId Id="494" Count="0" />
+      <LineId Id="668" Count="2" />
       <LineId Id="316" Count="0" />
       <LineId Id="382" Count="1" />
       <LineId Id="162" Count="0" />
+      <LineId Id="552" Count="0" />
       <LineId Id="172" Count="1" />
       <LineId Id="310" Count="0" />
-      <LineId Id="184" Count="3" />
+      <LineId Id="184" Count="1" />
+      <LineId Id="730" Count="0" />
+      <LineId Id="186" Count="1" />
       <LineId Id="190" Count="3" />
       <LineId Id="347" Count="0" />
       <LineId Id="346" Count="0" />
@@ -223,6 +253,7 @@ ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode exited', '');]]></ST>
       <LineId Id="397" Count="0" />
       <LineId Id="437" Count="0" />
       <LineId Id="436" Count="0" />
+      <LineId Id="610" Count="0" />
       <LineId Id="201" Count="5" />
       <LineId Id="194" Count="0" />
       <LineId Id="71" Count="0" />
@@ -280,12 +311,24 @@ ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode exited', '');]]></ST>
       <LineId Id="10" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="11" Count="5" />
+      <LineId Id="20" Count="5" />
     </LineIds>
     <LineIds Name="MAIN.systemService">
+      <LineId Id="29" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="28" Count="0" />
       <LineId Id="20" Count="1" />
-      <LineId Id="6" Count="10" />
+      <LineId Id="6" Count="1" />
+      <LineId Id="42" Count="1" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="11" Count="4" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="16" Count="0" />
       <LineId Id="5" Count="0" />
-      <LineId Id="22" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="46" Count="1" />
     </LineIds>
   </POU>
 </TcPlcObject>

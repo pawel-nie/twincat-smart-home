@@ -64,17 +64,22 @@ END_VAR
 
 VAR
 	i: INT;
+	groupController : GroupController;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE ID OF
 	
 	1:
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 1', str2:='', str3:=getSource());
-		//logic
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 1 - ', str2:='turning off all lights', str3:=getSource());
+		groupController.requestLightsOff(MAIN.wlaczniki_swiatel);
 		
 	2:
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2', str2:='', str3:=getSource());
-		//logic
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2 - ', str2:='turning on all lights', str3:=getSource());
+		groupController.requestLightsOnDefault(MAIN.wlaczniki_swiatel);
+		
+	3:
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 3 - ', str2:='closing all shutters', str3:=getSource());
+		groupController.requestShuttersClose();
 		
 END_CASE]]></ST>
       </Implementation>
@@ -398,6 +403,9 @@ isOn := TRUE;]]></ST>
       <LineId Id="13" Count="1" />
       <LineId Id="17" Count="0" />
       <LineId Id="36" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="45" Count="1" />
+      <LineId Id="44" Count="0" />
       <LineId Id="28" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>

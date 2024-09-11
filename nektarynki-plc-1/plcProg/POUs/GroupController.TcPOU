@@ -3,7 +3,6 @@
   <POU Name="GroupController" Id="{9e2dea4c-15e9-4ccb-84f0-bf94eaeca36c}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK GroupController
 VAR CONSTANT
-	MAX_SHUTTERS : INT := 11;
 	MAX_LIGHTS : INT := 50;
 END_VAR
 VAR_INPUT
@@ -21,20 +20,22 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Method Name="groupLightSwitch" Id="{825229c4-30cf-452b-a63c-6eb330c2cf9c}">
-      <Declaration><![CDATA[METHOD groupLightSwitch
+    <Method Name="getSource" Id="{fb3e8195-c629-4336-a586-72d85972302e}">
+      <Declaration><![CDATA[METHOD PRIVATE getSource : STRING
 VAR_INPUT
 END_VAR
-]]></Declaration>
+
+VAR
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[getSource := ' - Group controller';]]></ST>
       </Implementation>
     </Method>
     <Method Name="groupShutterLoop" Id="{902b955c-86fb-4bb2-a5a6-c864a54d98be}">
       <Declaration><![CDATA[METHOD PUBLIC groupShutterLoop
 
 VAR_INPUT
-	shutters : ARRAY[1..MAX_SHUTTERS] OF ShutterSwitch;
+	shutters : ARRAY[1..GVL.MAX_SHUTTERS] OF ShutterSwitch;
 END_VAR
 
 VAR
@@ -49,16 +50,18 @@ END_IF
 shutterMoveInterval(IN:= FALSE);
 
 IF NOT shutterMoveInterval.Q THEN
+	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Closing shutter number=', str2:= TO_STRING(currentShutterNumber), str3:=getSource());
 	shutterMoveInterval(IN:= TRUE);
-	shutters[currentShutterNumber].moveDownMax();
+	shutters[currentShutterNumber].moveDownMax(requestedExternally:= TRUE);
 	currentShutterNumber := currentShutterNumber + 1;
 END_IF
 
-IF currentShutterNumber > MAX_SHUTTERS THEN
+IF currentShutterNumber > GVL.MAX_SHUTTERS THEN
+	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Closing shutters finished, closed=', str2:= TO_STRING(currentShutterNumber-1), str3:=getSource());
 	shuttersCloseRequested := FALSE;
 	currentShutterNumber := 1;
 END_IF
-
+ 
 _ret :
 
 
@@ -69,12 +72,14 @@ END_IF
 shutterMoveInterval(IN:= FALSE);
 
 IF NOT shutterMoveInterval.Q THEN
+	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Opening shutter number=', str2:= TO_STRING(currentShutterNumber), str3:=getSource());
 	shutterMoveInterval(IN:= TRUE);
-	shutters[currentShutterNumber].moveUpMax();
+	shutters[currentShutterNumber].moveUpMax(requestedExternally:= TRUE);
 	currentShutterNumber := currentShutterNumber + 1;
 END_IF
 
-IF currentShutterNumber > MAX_SHUTTERS THEN
+IF currentShutterNumber > GVL.MAX_SHUTTERS THEN
+	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Opening shutters finished, closed=', str2:= TO_STRING(currentShutterNumber), str3:=getSource());
 	shuttersOpenRequested := FALSE;
 	currentShutterNumber := 1;
 END_IF
@@ -92,7 +97,9 @@ VAR
 	i : INT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR i := 1 TO MAX_LIGHTS BY 1 DO
+        <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Lights OFF requested', str2:= '', str3:=getSource());
+
+FOR i := 1 TO MAX_LIGHTS BY 1 DO
 	lights[i].turnOff();
 END_FOR]]></ST>
       </Implementation>
@@ -107,7 +114,9 @@ VAR
 	i : INT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR i := 1 TO MAX_LIGHTS BY 1 DO
+        <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Lights ON default requested', str2:= '', str3:=getSource());
+
+FOR i := 1 TO MAX_LIGHTS BY 1 DO
 	lights[i].turnOnDefault();
 END_FOR]]></ST>
       </Implementation>
@@ -118,7 +127,9 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[shuttersCloseRequested := TRUE;
+        <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Shutters CLOSE requested', str2:= '', str3:=getSource());
+
+shuttersCloseRequested := TRUE;
 shuttersOpenRequested := FALSE;
 currentShutterNumber := 1;]]></ST>
       </Implementation>
@@ -129,7 +140,9 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[shuttersOpenRequested := TRUE;
+        <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Shutters OPEN requested', str2:= '', str3:=getSource());
+
+shuttersOpenRequested := TRUE;
 shuttersCloseRequested := FALSE;
 currentShutterNumber := 1;]]></ST>
       </Implementation>
@@ -137,43 +150,56 @@ currentShutterNumber := 1;]]></ST>
     <LineIds Name="GroupController">
       <LineId Id="9" Count="0" />
     </LineIds>
-    <LineIds Name="GroupController.groupLightSwitch">
-      <LineId Id="5" Count="0" />
+    <LineIds Name="GroupController.getSource">
+      <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="GroupController.groupShutterLoop">
       <LineId Id="12" Count="0" />
       <LineId Id="24" Count="1" />
-      <LineId Id="46" Count="0" />
+      <LineId Id="87" Count="0" />
       <LineId Id="43" Count="0" />
       <LineId Id="50" Count="0" />
-      <LineId Id="47" Count="1" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="48" Count="0" />
       <LineId Id="51" Count="1" />
       <LineId Id="49" Count="0" />
       <LineId Id="54" Count="0" />
       <LineId Id="53" Count="0" />
+      <LineId Id="89" Count="0" />
       <LineId Id="55" Count="0" />
       <LineId Id="76" Count="0" />
       <LineId Id="56" Count="0" />
       <LineId Id="28" Count="0" />
       <LineId Id="26" Count="0" />
       <LineId Id="75" Count="0" />
-      <LineId Id="58" Count="14" />
+      <LineId Id="58" Count="6" />
+      <LineId Id="91" Count="1" />
+      <LineId Id="66" Count="5" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="72" Count="0" />
       <LineId Id="77" Count="0" />
       <LineId Id="73" Count="1" />
       <LineId Id="57" Count="0" />
     </LineIds>
     <LineIds Name="GroupController.requestLightsOff">
+      <LineId Id="19" Count="0" />
+      <LineId Id="18" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="1" />
     </LineIds>
     <LineIds Name="GroupController.requestLightsOnDefault">
+      <LineId Id="18" Count="1" />
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="1" />
     </LineIds>
     <LineIds Name="GroupController.requestShuttersClose">
+      <LineId Id="12" Count="0" />
+      <LineId Id="11" Count="0" />
       <LineId Id="5" Count="2" />
     </LineIds>
     <LineIds Name="GroupController.requestShuttersOpen">
+      <LineId Id="14" Count="1" />
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="1" />
     </LineIds>
