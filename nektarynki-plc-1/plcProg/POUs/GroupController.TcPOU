@@ -6,6 +6,7 @@ VAR CONSTANT
 	MAX_LIGHTS : INT := 50;
 END_VAR
 VAR_INPUT
+	shutters : ARRAY[1..GVL.MAX_SHUTTERS] OF POINTER TO ShutterSwitch;
 END_VAR
 VAR_OUTPUT
 END_VAR
@@ -18,7 +19,8 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:=TO_STRING(ADR(shutters)));
+GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:=TO_STRING(ADR(shutters[1])));]]></ST>
     </Implementation>
     <Method Name="getSource" Id="{fb3e8195-c629-4336-a586-72d85972302e}">
       <Declaration><![CDATA[METHOD PRIVATE getSource : STRING
@@ -35,7 +37,6 @@ END_VAR]]></Declaration>
       <Declaration><![CDATA[METHOD PUBLIC groupShutterLoop
 
 VAR_INPUT
-	shutters : ARRAY[1..GVL.MAX_SHUTTERS] OF ShutterSwitch;
 END_VAR
 
 VAR
@@ -52,7 +53,7 @@ shutterMoveInterval(IN:= FALSE);
 IF NOT shutterMoveInterval.Q THEN
 	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Closing shutter number=', str2:= TO_STRING(currentShutterNumber), str3:=getSource());
 	shutterMoveInterval(IN:= TRUE);
-	shutters[currentShutterNumber].moveDownMax(requestedExternally:= TRUE);
+	shutters[currentShutterNumber]^.moveDownMax(requestedExternally:= TRUE);
 	currentShutterNumber := currentShutterNumber + 1;
 END_IF
 
@@ -74,7 +75,7 @@ shutterMoveInterval(IN:= FALSE);
 IF NOT shutterMoveInterval.Q THEN
 	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Opening shutter number=', str2:= TO_STRING(currentShutterNumber), str3:=getSource());
 	shutterMoveInterval(IN:= TRUE);
-	shutters[currentShutterNumber].moveUpMax(requestedExternally:= TRUE);
+	shutters[currentShutterNumber]^.moveUpMax(requestedExternally:= TRUE);
 	currentShutterNumber := currentShutterNumber + 1;
 END_IF
 
@@ -149,6 +150,7 @@ currentShutterNumber := 1;]]></ST>
     </Method>
     <LineIds Name="GroupController">
       <LineId Id="9" Count="0" />
+      <LineId Id="26" Count="0" />
     </LineIds>
     <LineIds Name="GroupController.getSource">
       <LineId Id="10" Count="0" />

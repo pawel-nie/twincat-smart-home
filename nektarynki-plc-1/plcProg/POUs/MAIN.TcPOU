@@ -17,18 +17,18 @@ VAR
 //	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
 //	EventLogger : EventLogger(CsvPersistentEventStorage);
 
-	wlaczniki_rolet_i_zaluzji : ARRAY[1..GVL.MAX_SHUTTERS] OF ShutterSwitch;
+	wlaczniki_rolet_i_zaluzji : ARRAY[1..GVL.MAX_SHUTTERS] OF POINTER TO ShutterSwitch;
 	wlacznik_1_zaluzja_pralnia : ShutterSwitch();
-	wlacznik_2_zaluzje_kuchnia : ShutterSwitch();
-	wlacznik_3_zaluzje_wykusz : ShutterSwitch();
-	wlacznik_4_zaluzja_slide : ShutterSwitch();
-    wlacznik_5_zaluzja_gabinet : ShutterSwitch();
-    wlacznik_6_zaluzja_balkon : ShutterSwitch();
-    wlacznik_7_zaluzja_nad_tarasem : ShutterSwitch();
-	wlacznik_8_zaluzja_okno_bez_balkonu : ShutterSwitch();
-	wlacznik_9_roleta_kotlownia : ShutterSwitch();
-	wlacznik_10_roleta_warsztat : ShutterSwitch();
-    wlacznik_11_rolety_garaz : ShutterSwitch();
+//	wlacznik_2_zaluzje_kuchnia : ShutterSwitch();
+//	wlacznik_3_zaluzje_wykusz : ShutterSwitch();
+//	wlacznik_4_zaluzja_slide : ShutterSwitch();
+//    wlacznik_5_zaluzja_gabinet : ShutterSwitch();
+//    wlacznik_6_zaluzja_balkon : ShutterSwitch();
+//    wlacznik_7_zaluzja_nad_tarasem : ShutterSwitch();
+//	wlacznik_8_zaluzja_okno_bez_balkonu : ShutterSwitch();
+//	wlacznik_9_roleta_kotlownia : ShutterSwitch();
+//	wlacznik_10_roleta_warsztat : ShutterSwitch();
+//    wlacznik_11_rolety_garaz : ShutterSwitch();
 	
 	wlacznik_ogrzewania_lustra : SimpleButton();
 	
@@ -44,8 +44,8 @@ VAR
 		arr6 : ARRAY[1..2] OF BOOL;
 		
 		//button1 : LightSwitch;//ShutterSwitch;//LightSwitch;//UpStopDownButton;// LightSwitch;	
-		button2 : ShutterSwitch;
-		buttontest : ShutterSwitch;
+		//button2 : ShutterSwitch;
+		//buttontest : ShutterSwitch;
 		
 		
 		
@@ -79,7 +79,12 @@ END_VAR
 			GVL.EventLogger.AddEvent(eEventType, eEventSeverity, nEventIdentity, sEventText);
 			
 	initialized := TRUE;
-	groupController();
+	groupController(shutters:= wlaczniki_rolet_i_zaluzji);
+	
+	
+				GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:='MAIN:');
+			GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:=TO_STRING(ADR(wlaczniki_rolet_i_zaluzji)));
+			GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:=TO_STRING(ADR(wlaczniki_rolet_i_zaluzji[1])));
 END_IF
 
 
@@ -91,7 +96,7 @@ END_IF
 //buttontest.loop();
 
 inputsOutputsLoop();
-groupController.groupShutterLoop(shutters:= wlaczniki_rolet_i_zaluzji);
+groupController.groupShutterLoop();
 
 
 _programBypass :
@@ -109,7 +114,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[button2(ID:= 1,	digitalInputUp:= GVL.b_button_4,	digitalInputDown:= GVL.b_button_5,down_outputs:=arr5, up_outputs:=arr6); //shutter switch
+        <ST><![CDATA[//button2(ID:= 1,	digitalInputUp:= GVL.b_button_4,	digitalInputDown:= GVL.b_button_5,down_outputs:=arr5, up_outputs:=arr6); //shutter switch
  
 //button1(ID := 1, digitalInput := GVL.b_button_4, small_outputs := arr1,	medium_outputs := arr2,	big_outputs := arr3,
 //	superstrong_outputs := arr4, 	levelsManaged := 4,	defaultDayOutput := E_OutputLevel.big,	defaultNightOutput := E_OutputLevel.small); //light switch
@@ -134,32 +139,41 @@ END_VAR
 //wlacznik_ogrzewania_lustra(ID:= 99, name:= 'lustro', digitalInput:=GVL.din_21, holdTime:=T#8S, outputs:= GVL.douts_44_ogrzewanie_lustra,
 //withHold:=FALSE, runAsYouPress := FALSE);
 
-wlacznik_bramy_garazowej(ID:=123, defaultFirstClickDirection:=E_Direction.UP, digitalInput:=GVL.din_21, outputs:=GVL.douts_44_ogrzewanie_lustra, name:='brama garazowa', withReturn:=FALSE);
+//wlacznik_bramy_garazowej(ID:=123, defaultFirstClickDirection:=E_Direction.UP, digitalInput:=GVL.din_21, outputs:=GVL.douts_44_ogrzewanie_lustra, name:='brama garazowa', withReturn:=FALSE);
 	
 
-
-wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji w pralni', 
-		digitalInputUp:=GVL.din_71,//21 
-		digitalInputDown:=GVL.din_72,//22
+(* 
+wlaczniki_rolet_i_zaluzji[1](ID:=1, name:='Wlacznik zaluzji w pralni', 
+		digitalInputUp:=GVL.din_21,
+		digitalInputDown:=GVL.din_22,
 		up_outputs:=GVL.douts_1_zaluzja_pralnia_w_gore, 
 		down_outputs:=GVL.douts_2_zaluzja_pralnia_w_dol, 
 		shortTime:=T#250MS, longTime:= T#30S);
+*)
+wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji w pralni', 
+		digitalInputUp:=GVL.din_21,
+		digitalInputDown:=GVL.din_22,
+		up_outputs:=GVL.douts_1_zaluzja_pralnia_w_gore, 
+		down_outputs:=GVL.douts_2_zaluzja_pralnia_w_dol, 
+		shortTime:=T#250MS, longTime:= T#30S);
+wlaczniki_rolet_i_zaluzji[1] := ADR(wlacznik_1_zaluzja_pralnia);
 
-wlacznik_2_zaluzje_kuchnia(ID:=2, name:='Wlacznik zaluzji okna naroznego w kuchni', 
+(*
+wlaczniki_rolet_i_zaluzji[2](ID:=2, name:='Wlacznik zaluzji okna naroznego w kuchni', 
 		digitalInputUp:=GVL.din_23, 
 		digitalInputDown:=GVL.din_24,
 		up_outputs:=GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore, 
 		down_outputs:=GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol, 
 		shortTime:=T#250MS, longTime:= T#30S);
 
-wlacznik_3_zaluzje_wykusz(ID:=3, name:='Wlacznik zaluzji wykuszu w salonie', 
+wlaczniki_rolet_i_zaluzji[3](ID:=3, name:='Wlacznik zaluzji wykuszu w salonie', 
 		digitalInputUp:=GVL.din_25, 
 		digitalInputDown:=GVL.din_26,
 		up_outputs:=GVL.douts_5_zaluzja_wykusz_w_gore, 
 		down_outputs:=GVL.douts_6_zaluzja_wykusz_w_dol, 
 		shortTime:=T#250MS, longTime:= T#60S);		
 		
-wlacznik_4_zaluzja_slide(ID:=4, name:='Wlacznik zaluzji slide tarasu', 
+wlaczniki_rolet_i_zaluzji[4](ID:=4, name:='Wlacznik zaluzji slide tarasu', 
 		digitalInputUp:=GVL.din_27, 
 		digitalInputDown:=GVL.din_28,
 		up_outputs:=GVL.douts_7_zaluzja_slide_w_gore, 
@@ -167,12 +181,12 @@ wlacznik_4_zaluzja_slide(ID:=4, name:='Wlacznik zaluzji slide tarasu',
 		shortTime:=T#250MS, longTime:= T#60S);				
 		
 
-		
+*)	
 
-wlaczniki_rolet_i_zaluzji[1] := wlacznik_1_zaluzja_pralnia;
-wlaczniki_rolet_i_zaluzji[2] := wlacznik_2_zaluzje_kuchnia;
-wlaczniki_rolet_i_zaluzji[3] := wlacznik_3_zaluzje_wykusz;
-wlaczniki_rolet_i_zaluzji[4] := wlacznik_4_zaluzja_slide;
+//wlaczniki_rolet_i_zaluzji[1] := wlacznik_1_zaluzja_pralnia;
+//wlaczniki_rolet_i_zaluzji[2] := wlacznik_2_zaluzje_kuchnia;
+//wlaczniki_rolet_i_zaluzji[3] := wlacznik_3_zaluzje_wykusz;
+//wlaczniki_rolet_i_zaluzji[4] := wlacznik_4_zaluzja_slide;
 //wlaczniki_rolet_i_zaluzji[5] := wlacznik_5_zaluzja_gabinet;
 //wlaczniki_rolet_i_zaluzji[6] := wlacznik_6_zaluzja_balkon;
 //wlaczniki_rolet_i_zaluzji[7] := wlacznik_7_zaluzja_nad_tarasem;
@@ -183,7 +197,7 @@ wlaczniki_rolet_i_zaluzji[4] := wlacznik_4_zaluzja_slide;
 
 //prosteWlaczniki[1] := wlacznik_ogrzewania_lustra; 
 
-wlacznikiTrojpozycyjne[1] := wlacznik_bramy_garazowej;]]></ST>
+//wlacznikiTrojpozycyjne[1] := wlacznik_bramy_garazowej;]]></ST>
       </Implementation>
     </Method>
     <Method Name="inputsOutputsLoop" Id="{5ddbf680-25b6-4be3-b0a7-c03717331c9d}">
@@ -192,26 +206,27 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[wlacznik_1_zaluzja_pralnia.loop();
+        <ST><![CDATA[wlaczniki_rolet_i_zaluzji[1]^.loop();
 	GVL.dout_1_zaluzja_pralnia_w_gore := GVL.douts_1_zaluzja_pralnia_w_gore[1];
 	GVL.dout_2_zaluzja_pralnia_w_dol := GVL.douts_2_zaluzja_pralnia_w_dol[1];
 	
-wlacznik_2_zaluzje_kuchnia.loop();
+(*
+ wlaczniki_rolet_i_zaluzji[2].loop();
 	GVL.dout_3_zaluzja_okno_narozne_kuchnia_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
 	GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol := GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol[1];
 	
-wlacznik_3_zaluzje_wykusz.loop();
+wlaczniki_rolet_i_zaluzji[3].loop();
 	GVL.dout_5_zaluzja_wykusz_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
 	GVL.dout_6_zaluzja_wykusz_w_dol := GVL.douts_6_zaluzja_wykusz_w_dol[1];
 	
-wlacznik_4_zaluzja_slide.loop();
+wlaczniki_rolet_i_zaluzji[4].loop();
 	GVL.dout_7_zaluzja_slide_w_gore := GVL.douts_7_zaluzja_slide_w_gore[1];
 	GVL.dout_8_zaluzja_slide_w_dol := GVL.douts_8_zaluzja_slide_w_dol[1];
-	
+*)
 
 //wlacznik_ogrzewania_lustra.loop();
-wlacznik_bramy_garazowej.loop();
-				GVL.dout_1_zaluzja_pralnia_w_gore :=GVL.douts_44_ogrzewanie_lustra[1];
+//wlacznik_bramy_garazowej.loop();
+//				GVL.dout_1_zaluzja_pralnia_w_gore :=GVL.douts_44_ogrzewanie_lustra[1];
 
 	//GVL.dout_44_ogrzewanie_lustra := GVL.douts_44_ogrzewanie_lustra[1];]]></ST>
       </Implementation>
@@ -272,6 +287,11 @@ END_IF
       <LineId Id="310" Count="0" />
       <LineId Id="184" Count="1" />
       <LineId Id="730" Count="0" />
+      <LineId Id="796" Count="0" />
+      <LineId Id="792" Count="0" />
+      <LineId Id="798" Count="0" />
+      <LineId Id="793" Count="0" />
+      <LineId Id="797" Count="0" />
       <LineId Id="186" Count="1" />
       <LineId Id="190" Count="3" />
       <LineId Id="347" Count="0" />
@@ -304,14 +324,18 @@ END_IF
       <LineId Id="63" Count="0" />
       <LineId Id="58" Count="0" />
       <LineId Id="64" Count="0" />
-      <LineId Id="66" Count="0" />
+      <LineId Id="66" Count="1" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="68" Count="3" />
       <LineId Id="65" Count="0" />
+      <LineId Id="77" Count="0" />
       <LineId Id="6" Count="0" />
       <LineId Id="10" Count="0" />
       <LineId Id="40" Count="0" />
       <LineId Id="11" Count="0" />
       <LineId Id="41" Count="0" />
       <LineId Id="12" Count="0" />
+      <LineId Id="78" Count="1" />
       <LineId Id="7" Count="0" />
       <LineId Id="13" Count="1" />
       <LineId Id="43" Count="0" />
@@ -319,7 +343,8 @@ END_IF
       <LineId Id="42" Count="0" />
       <LineId Id="8" Count="0" />
       <LineId Id="16" Count="0" />
-      <LineId Id="35" Count="1" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="72" Count="0" />
       <LineId Id="45" Count="0" />
       <LineId Id="37" Count="0" />
       <LineId Id="44" Count="0" />
@@ -348,7 +373,9 @@ END_IF
       <LineId Id="5" Count="0" />
       <LineId Id="10" Count="0" />
       <LineId Id="9" Count="0" />
-      <LineId Id="11" Count="5" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="13" Count="3" />
       <LineId Id="20" Count="5" />
       <LineId Id="29" Count="0" />
       <LineId Id="31" Count="0" />

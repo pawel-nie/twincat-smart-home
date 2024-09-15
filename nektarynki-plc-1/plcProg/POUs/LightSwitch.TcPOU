@@ -103,6 +103,23 @@ getSource := details;
 ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="inputsOutputsLoop" Id="{e8351a60-1cd2-41ed-9032-90cf759bb181}">
+      <Declaration><![CDATA[METHOD PRIVATE inputsOutputsLoop
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[pressed(CLK:= digitalInput);
+released(CLK:= digitalInput);
+smallOutputTimer(IN := digitalInput);
+mediumOutputTimer(IN := digitalInput);
+bigOutputTimer(IN := digitalInput);
+superStrongOutputTimer(IN := digitalInput);
+inactivityTimeout(IN := digitalInput);
+pressedTimer(IN := digitalInput);
+turnedOnLongSelector := isTurnedOnLongSelector();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="isTurnedOnLongSelector" Id="{7bae46af-3a44-48ea-bbd6-f40ab3340ff2}">
       <Declaration><![CDATA[METHOD PRIVATE isTurnedOnLongSelector : BOOL
 VAR_INPUT
@@ -123,15 +140,7 @@ VAR
 	str3: INT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[pressed(CLK:= digitalInput);
-released(CLK:= digitalInput);
-smallOutputTimer(IN := digitalInput);
-mediumOutputTimer(IN := digitalInput);
-bigOutputTimer(IN := digitalInput);
-superStrongOutputTimer(IN := digitalInput);
-inactivityTimeout(IN := digitalInput);
-pressedTimer(IN := digitalInput);
-turnedOnLongSelector := isTurnedOnLongSelector();
+        <ST><![CDATA[inputsOutputsLoop();
 
 					//	HMI.led1_1 := MAIN.arr1[1]; HMI.led2_1 := MAIN.arr2[1]; HMI.led2_2 := MAIN.arr2[2]; HMI.led3 := MAIN.arr3[1]; HMI.led4_1 := MAIN.arr4[1]; HMI.led4_2 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
 
@@ -419,12 +428,15 @@ isOn := TRUE;]]></ST>
       <LineId Id="13" Count="0" />
       <LineId Id="10" Count="0" />
     </LineIds>
+    <LineIds Name="LightSwitch.inputsOutputsLoop">
+      <LineId Id="6" Count="7" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="LightSwitch.isTurnedOnLongSelector">
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="LightSwitch.loop">
-      <LineId Id="301" Count="5" />
-      <LineId Id="308" Count="4" />
+      <LineId Id="310" Count="2" />
       <LineId Id="456" Count="1" />
       <LineId Id="319" Count="5" />
       <LineId Id="471" Count="0" />
