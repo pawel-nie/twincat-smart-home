@@ -24,8 +24,6 @@ VAR_OUTPUT
 END_VAR
 
 VAR
-    		test : BOOL := FALSE;	
-
 	initialized : BOOL := FALSE;
 	canPrintGoUp : BOOL := TRUE;
 	canPrintGoDown : BOOL := TRUE;
@@ -67,11 +65,11 @@ END_VAR
 	initialized := TRUE;	
 END_IF
 
-
 shortDistanceUp(PT := shortTime);
 longDistanceUp(PT := longTime);
 shortDistanceDown(PT := shortTime);
-longDistanceDown(PT := longTime);]]></ST>
+longDistanceDown(PT := longTime);
+]]></ST>
     </Implementation>
     <Method Name="calculatePressedTimeMiliseconds" Id="{44f0f571-c10d-4674-88c2-d39b30eb8e2d}">
       <Declaration><![CDATA[METHOD PRIVATE calculatePressedTimeMiliseconds
@@ -100,14 +98,14 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE ID OF
-	
-	3:
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 1 - ', str2:='turning off all lights', str3:=getSource());
-		MAIN.groupController.requestLightsOff(MAIN.wlaczniki_swiatel);
+	//TODO pamietac
+//	3:
+//		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 1 - ', str2:='turning off all lights', str3:=getSource());
+//		MAIN.groupController.requestLightsOff();
 		
 	2:
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2 - ', str2:='turning on all lights', str3:=getSource());
-		MAIN.groupController.requestLightsOnDefault(MAIN.wlaczniki_swiatel);
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2 - ', str2:='opening all shutterss', str3:=getSource());
+		MAIN.groupController.requestShuttersOpen();
 		
 	1:
 		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 3 - ', str2:='closing all shutters', str3:=getSource());
@@ -134,8 +132,6 @@ details := CONCAT(STR1:=details, STR2:=', request by group controller: ');
 details := CONCAT(STR1:=details, STR2:=TO_STRING(requestedByGroupController));
 details := CONCAT(STR1:=details, STR2:=', name: ');
 details := CONCAT(STR1:=details, STR2:=name);
-details := CONCAT(STR1:=details, STR2:=', test: ');
-details := CONCAT(STR1:=details, STR2:=TO_STRING(test));
 
 getSource := details;
 
@@ -327,7 +323,6 @@ END_VAR
 longDistanceDown(IN:=TRUE);
 requestedByGroupController := requestedExternally;
 //longDistanceDown(IN:=releasedDown.Q);
-test := TRUE;
 GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Move requested externally?=', str2:= TO_STRING(requestedExternally), str3:=getSource());
 
 ]]></ST>
@@ -594,8 +589,9 @@ longDistanceUp(PT := longTime);]]></ST>
     </Method>
     <LineIds Name="ShutterSwitch">
       <LineId Id="31" Count="2" />
-      <LineId Id="93" Count="4" />
+      <LineId Id="94" Count="3" />
       <LineId Id="9" Count="0" />
+      <LineId Id="158" Count="0" />
     </LineIds>
     <LineIds Name="ShutterSwitch.calculatePressedTimeMiliseconds">
       <LineId Id="6" Count="7" />
@@ -621,7 +617,7 @@ longDistanceUp(PT := longTime);]]></ST>
       <LineId Id="24" Count="1" />
       <LineId Id="40" Count="0" />
       <LineId Id="39" Count="0" />
-      <LineId Id="49" Count="3" />
+      <LineId Id="49" Count="1" />
       <LineId Id="32" Count="0" />
       <LineId Id="14" Count="0" />
       <LineId Id="13" Count="0" />
@@ -687,7 +683,6 @@ longDistanceUp(PT := longTime);]]></ST>
       <LineId Id="6" Count="1" />
       <LineId Id="13" Count="0" />
       <LineId Id="11" Count="0" />
-      <LineId Id="24" Count="0" />
       <LineId Id="18" Count="0" />
       <LineId Id="23" Count="0" />
       <LineId Id="5" Count="0" />

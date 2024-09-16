@@ -3,10 +3,10 @@
   <POU Name="GroupController" Id="{9e2dea4c-15e9-4ccb-84f0-bf94eaeca36c}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK GroupController
 VAR CONSTANT
-	MAX_LIGHTS : INT := 50;
 END_VAR
 VAR_INPUT
 	shutters : ARRAY[1..GVL.MAX_SHUTTERS] OF POINTER TO ShutterSwitch;
+	smartLights : ARRAY[1..GVL.MAX_LIGHTS] OF POINTER TO LightSwitch;
 END_VAR
 VAR_OUTPUT
 END_VAR
@@ -19,8 +19,7 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:=TO_STRING(ADR(shutters)));
-GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:=TO_STRING(ADR(shutters[1])));]]></ST>
+      <ST><![CDATA[]]></ST>
     </Implementation>
     <Method Name="getSource" Id="{fb3e8195-c629-4336-a586-72d85972302e}">
       <Declaration><![CDATA[METHOD PRIVATE getSource : STRING
@@ -91,24 +90,23 @@ _ret2 :]]></ST>
     <Method Name="requestLightsOff" Id="{985aeeea-4a3c-4846-a7a2-a8f187eeda96}">
       <Declaration><![CDATA[METHOD requestLightsOff : BOOL
 VAR_INPUT
-	lights : ARRAY[1..MAX_LIGHTS] OF LightSwitch;
 END_VAR
 
 VAR
 	i : INT;
+
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Lights OFF requested', str2:= '', str3:=getSource());
 
-FOR i := 1 TO MAX_LIGHTS BY 1 DO
-	lights[i].turnOff();
+FOR i := 1 TO GVL.MAX_LIGHTS BY 1 DO
+	smartLights[i]^.turnOff();
 END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="requestLightsOnDefault" Id="{71279285-d9e5-48b2-ac31-d797ca22a13a}">
       <Declaration><![CDATA[METHOD requestLightsOnDefault : BOOL
 VAR_INPUT
-	lights : ARRAY[1..MAX_LIGHTS] OF LightSwitch;
 END_VAR
 
 VAR
@@ -117,9 +115,10 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Lights ON default requested', str2:= '', str3:=getSource());
 
-FOR i := 1 TO MAX_LIGHTS BY 1 DO
-	lights[i].turnOnDefault();
-END_FOR]]></ST>
+FOR i := 1 TO GVL.MAX_LIGHTS BY 1 DO
+	smartLights[i]^.turnOnDefault();
+END_FOR
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="requestShuttersClose" Id="{f3fde636-7658-4863-a5d1-01bc94f61d8d}">
@@ -149,7 +148,6 @@ currentShutterNumber := 1;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="GroupController">
-      <LineId Id="9" Count="0" />
       <LineId Id="26" Count="0" />
     </LineIds>
     <LineIds Name="GroupController.getSource">
@@ -186,7 +184,7 @@ currentShutterNumber := 1;]]></ST>
     </LineIds>
     <LineIds Name="GroupController.requestLightsOff">
       <LineId Id="19" Count="0" />
-      <LineId Id="18" Count="0" />
+      <LineId Id="37" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="1" />
     </LineIds>
@@ -194,6 +192,7 @@ currentShutterNumber := 1;]]></ST>
       <LineId Id="18" Count="1" />
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="1" />
+      <LineId Id="35" Count="0" />
     </LineIds>
     <LineIds Name="GroupController.requestShuttersClose">
       <LineId Id="12" Count="0" />

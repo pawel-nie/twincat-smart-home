@@ -68,18 +68,18 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE ID OF
-	
-	1:
+		//TODO pamietac
+	12:
 		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 1 - ', str2:='turning off all lights', str3:=getSource());
-		groupController.requestLightsOff(MAIN.wlaczniki_swiatel);
+		MAIN.groupController.requestLightsOff();
 		
-	2:
+	17:
 		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2 - ', str2:='turning on all lights', str3:=getSource());
-		groupController.requestLightsOnDefault(MAIN.wlaczniki_swiatel);
+		MAIN.groupController.requestLightsOnDefault();
 		
-	3:
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 3 - ', str2:='closing all shutters', str3:=getSource());
-		groupController.requestShuttersClose();
+//	3:
+//		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 3 - ', str2:='closing all shutters', str3:=getSource());
+//		MAIN.groupController.requestShuttersClose();
 		
 END_CASE]]></ST>
       </Implementation>
@@ -144,7 +144,7 @@ END_VAR]]></Declaration>
 
 					//	HMI.led1_1 := MAIN.arr1[1]; HMI.led2_1 := MAIN.arr2[1]; HMI.led2_2 := MAIN.arr2[2]; HMI.led3 := MAIN.arr3[1]; HMI.led4_1 := MAIN.arr4[1]; HMI.led4_2 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
 
-				GVL.b_led_1 := MAIN.arr1[1]; GVL.b_led_2 := MAIN.arr2[1]; GVL.b_led_10 := MAIN.arr2[2]; GVL.b_led_3 := MAIN.arr3[1]; GVL.b_led_4 := MAIN.arr4[1]; GVL.b_led_12 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
+				//GVL.b_led_1 := MAIN.arr1[1]; GVL.b_led_2 := MAIN.arr2[1]; GVL.b_led_10 := MAIN.arr2[2]; GVL.b_led_3 := MAIN.arr3[1]; GVL.b_led_4 := MAIN.arr4[1]; GVL.b_led_12 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
 
 IF NOT inactivityTimeout.Q THEN
 	firstLongPress := FALSE;	
@@ -219,7 +219,7 @@ manageLongPress();
 VAR_INPUT
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF TIME_TO_DWORD(pressedTimer.ET) >= 1000 THEN
+        <ST><![CDATA[IF levelsManaged >= 1 AND TIME_TO_DWORD(pressedTimer.ET) >= 1000 THEN
 	IF NOT smallOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.SMALL, state := TRUE);
 		smallOutputsSet := TRUE;
@@ -228,7 +228,7 @@ END_VAR]]></Declaration>
 	END_IF
 END_IF
 
-IF TIME_TO_DWORD(pressedTimer.ET) >= 2000 THEN
+IF levelsManaged >= 2 AND TIME_TO_DWORD(pressedTimer.ET) >= 2000 THEN
 	IF NOT mediumOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.MEDIUM, state := TRUE);
 		mediumOutputsSet := TRUE;
@@ -237,7 +237,7 @@ IF TIME_TO_DWORD(pressedTimer.ET) >= 2000 THEN
 	END_IF
 END_IF
 
-IF TIME_TO_DWORD(pressedTimer.ET) >= 3000 THEN
+IF levelsManaged >= 3 AND TIME_TO_DWORD(pressedTimer.ET) >= 3000 THEN
 	IF NOT bigOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.BIG, state := TRUE);
 		bigOutputsSet := TRUE;
@@ -246,7 +246,7 @@ IF TIME_TO_DWORD(pressedTimer.ET) >= 3000 THEN
 	END_IF
 END_IF
 
-IF TIME_TO_DWORD(pressedTimer.ET) >= 4000 THEN
+IF levelsManaged >= 4 AND TIME_TO_DWORD(pressedTimer.ET) >= 4000 THEN
 	IF NOT superStrongOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.SUPERSTRONG, state := TRUE);
 		superStrongOutputsSet := TRUE;
@@ -301,7 +301,7 @@ END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="turnOff" Id="{6af44e6f-dbfa-4c03-a237-33da5be5a32c}">
-      <Declaration><![CDATA[METHOD turnOff
+      <Declaration><![CDATA[METHOD PUBLIC turnOff
 VAR_INPUT
 END_VAR
 
@@ -342,7 +342,7 @@ isOn := FALSE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="turnOnDefault" Id="{0b29667d-d1f0-4d16-a335-62900f4a810a}">
-      <Declaration><![CDATA[METHOD turnOnDefault
+      <Declaration><![CDATA[METHOD PUBLIC turnOnDefault
 VAR_INPUT
 END_VAR
 ]]></Declaration>

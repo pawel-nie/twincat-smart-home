@@ -19,20 +19,20 @@ VAR
 
 	wlaczniki_rolet_i_zaluzji : ARRAY[1..GVL.MAX_SHUTTERS] OF POINTER TO ShutterSwitch;
 	wlacznik_1_zaluzja_pralnia : ShutterSwitch();
-//	wlacznik_2_zaluzje_kuchnia : ShutterSwitch();
-//	wlacznik_3_zaluzje_wykusz : ShutterSwitch();
-//	wlacznik_4_zaluzja_slide : ShutterSwitch();
-//    wlacznik_5_zaluzja_gabinet : ShutterSwitch();
-//    wlacznik_6_zaluzja_balkon : ShutterSwitch();
-//    wlacznik_7_zaluzja_nad_tarasem : ShutterSwitch();
-//	wlacznik_8_zaluzja_okno_bez_balkonu : ShutterSwitch();
-//	wlacznik_9_roleta_kotlownia : ShutterSwitch();
-//	wlacznik_10_roleta_warsztat : ShutterSwitch();
-//    wlacznik_11_rolety_garaz : ShutterSwitch();
+	wlacznik_2_zaluzje_kuchnia : ShutterSwitch();
+	wlacznik_3_zaluzje_wykusz : ShutterSwitch();
+	wlacznik_4_zaluzja_slide : ShutterSwitch();
+    wlacznik_5_zaluzja_gabinet : ShutterSwitch();
+    wlacznik_6_zaluzja_balkon : ShutterSwitch();
+    wlacznik_7_zaluzja_nad_tarasem : ShutterSwitch();
+	wlacznik_8_zaluzja_okno_bez_balkonu : ShutterSwitch();
+	wlacznik_9_roleta_kotlownia : ShutterSwitch();
+	wlacznik_10_roleta_warsztat : ShutterSwitch();
+    wlacznik_11_rolety_garaz : ShutterSwitch();
 	
-	wlacznik_ogrzewania_lustra : SimpleButton();
-	
-	wlacznik_bramy_garazowej : UpStopDownButton();
+	wlaczniki_swiatel : ARRAY[1..GVL.MAX_LIGHTS] OF POINTER TO LightSwitch;
+	wlacznik_12_pralnia : LightSwitch();
+	wlacznik_17_schody : LightSwitch();
 	
 		arr1 : ARRAY[1..3] OF BOOL;
 		arr2 : ARRAY[1..3] OF BOOL;
@@ -49,7 +49,7 @@ VAR
 		
 		
 		
-		wlaczniki_swiatel : ARRAY[1..50] OF LightSwitch;
+
 		prosteWlaczniki : ARRAY[1..10] OF SimpleButton;
 		wlacznikiTrojpozycyjne : ARRAY[1..10] OF UpStopDownButton;
 		
@@ -79,12 +79,8 @@ END_VAR
 			GVL.EventLogger.AddEvent(eEventType, eEventSeverity, nEventIdentity, sEventText);
 			
 	initialized := TRUE;
-	groupController(shutters:= wlaczniki_rolet_i_zaluzji);
-	
-	
-				GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:='MAIN:');
-			GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:=TO_STRING(ADR(wlaczniki_rolet_i_zaluzji)));
-			GVL.EventLogger.print1(level:=TcEventSeverity.Info, str1:=TO_STRING(ADR(wlaczniki_rolet_i_zaluzji[1])));
+	groupController(shutters:= wlaczniki_rolet_i_zaluzji, smartLights:= wlaczniki_swiatel);
+
 END_IF
 
 
@@ -142,15 +138,22 @@ END_VAR
 //wlacznik_bramy_garazowej(ID:=123, defaultFirstClickDirection:=E_Direction.UP, digitalInput:=GVL.din_21, outputs:=GVL.douts_44_ogrzewanie_lustra, name:='brama garazowa', withReturn:=FALSE);
 	
 
-(* 
-wlaczniki_rolet_i_zaluzji[1](ID:=1, name:='Wlacznik zaluzji w pralni', 
-		digitalInputUp:=GVL.din_21,
-		digitalInputDown:=GVL.din_22,
-		up_outputs:=GVL.douts_1_zaluzja_pralnia_w_gore, 
-		down_outputs:=GVL.douts_2_zaluzja_pralnia_w_dol, 
-		shortTime:=T#250MS, longTime:= T#30S);
-*)
-wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji w pralni', 
+wlacznik_17_schody(ID:=17, name:='Wlacznik swiatla przy schodach', 
+		digitalInput:=GVL.din_22, small_outputs:= GVL.douts_ledy2, medium_outputs:= GVL.douts_ledy3,
+		levelsManaged:= 2, 
+		defaultDayOutput:=E_OutputLevel.MEDIUM, defaultNightOutput:=E_OutputLevel.SMALL);	
+wlaczniki_swiatel[1] := ADR(wlacznik_17_schody);
+
+wlacznik_12_pralnia(ID:=12, name:='Wlacznik swiatla w pralni', 
+		digitalInput:=GVL.din_21, small_outputs:= GVL.douts_ledy1,
+		levelsManaged:= 1, 
+		defaultDayOutput:=E_OutputLevel.SMALL, defaultNightOutput:=E_OutputLevel.SMALL);
+wlaczniki_swiatel[2] := ADR(wlacznik_12_pralnia);
+		
+
+(* ShutterSwitch - pozostalo odkomentowac i podpiąć odpowiednie we/wy
+
+wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji okna w pralni', 
 		digitalInputUp:=GVL.din_21,
 		digitalInputDown:=GVL.din_22,
 		up_outputs:=GVL.douts_1_zaluzja_pralnia_w_gore, 
@@ -158,42 +161,87 @@ wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji w pralni',
 		shortTime:=T#250MS, longTime:= T#30S);
 wlaczniki_rolet_i_zaluzji[1] := ADR(wlacznik_1_zaluzja_pralnia);
 
-(*
-wlaczniki_rolet_i_zaluzji[2](ID:=2, name:='Wlacznik zaluzji okna naroznego w kuchni', 
+wlacznik_2_zaluzje_kuchnia(ID:=2, name:='Wlacznik zaluzji okna naroznego w kuchni', 
 		digitalInputUp:=GVL.din_23, 
 		digitalInputDown:=GVL.din_24,
 		up_outputs:=GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore, 
 		down_outputs:=GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol, 
 		shortTime:=T#250MS, longTime:= T#30S);
+wlaczniki_rolet_i_zaluzji[2] := ADR(wlacznik_2_zaluzje_kuchnia);
 
-wlaczniki_rolet_i_zaluzji[3](ID:=3, name:='Wlacznik zaluzji wykuszu w salonie', 
+wlacznik_3_zaluzje_wykusz(ID:=3, name:='Wlacznik zaluzji przeszklenia wykuszu w salonie', 
 		digitalInputUp:=GVL.din_25, 
 		digitalInputDown:=GVL.din_26,
 		up_outputs:=GVL.douts_5_zaluzja_wykusz_w_gore, 
 		down_outputs:=GVL.douts_6_zaluzja_wykusz_w_dol, 
 		shortTime:=T#250MS, longTime:= T#60S);		
-		
-wlaczniki_rolet_i_zaluzji[4](ID:=4, name:='Wlacznik zaluzji slide tarasu', 
+wlaczniki_rolet_i_zaluzji[3] := ADR(wlacznik_3_zaluzje_wykusz);
+
+wlacznik_4_zaluzja_slide(ID:=4, name:='Wlacznik zaluzji drzwi slide na taras', 
 		digitalInputUp:=GVL.din_27, 
 		digitalInputDown:=GVL.din_28,
 		up_outputs:=GVL.douts_7_zaluzja_slide_w_gore, 
 		down_outputs:=GVL.douts_8_zaluzja_slide_w_dol, 
 		shortTime:=T#250MS, longTime:= T#60S);				
-		
+wlaczniki_rolet_i_zaluzji[4] := ADR(wlacznik_4_zaluzja_slide);	
 
-*)	
+wlacznik_5_zaluzja_gabinet(ID:=5, name:='Wlacznik zaluzji okna w gabinecie', 
+		digitalInputUp:=GVL.din_29,
+		digitalInputDown:=GVL.din_30,
+		up_outputs:=GVL.douts_9_zaluzja_gabinet_w_gore, 
+		down_outputs:=GVL.douts_10_zaluzja_gabinet_w_dol, 
+		shortTime:=T#250MS, longTime:= T#30S);
+wlaczniki_rolet_i_zaluzji[5] := ADR(wlacznik_5_zaluzja_gabinet);
 
-//wlaczniki_rolet_i_zaluzji[1] := wlacznik_1_zaluzja_pralnia;
-//wlaczniki_rolet_i_zaluzji[2] := wlacznik_2_zaluzje_kuchnia;
-//wlaczniki_rolet_i_zaluzji[3] := wlacznik_3_zaluzje_wykusz;
-//wlaczniki_rolet_i_zaluzji[4] := wlacznik_4_zaluzja_slide;
-//wlaczniki_rolet_i_zaluzji[5] := wlacznik_5_zaluzja_gabinet;
-//wlaczniki_rolet_i_zaluzji[6] := wlacznik_6_zaluzja_balkon;
-//wlaczniki_rolet_i_zaluzji[7] := wlacznik_7_zaluzja_nad_tarasem;
-//wlaczniki_rolet_i_zaluzji[8] := wlacznik_8_zaluzja_okno_bez_balkonu;
-//wlaczniki_rolet_i_zaluzji[9] := wlacznik_9_roleta_kotlownia;
-//wlaczniki_rolet_i_zaluzji[10] := wlacznik_10_roleta_warsztat;
-//wlaczniki_rolet_i_zaluzji[11] := wlacznik_11_rolety_garaz;
+wlacznik_6_zaluzja_balkon(ID:=6, name:='Wlacznik zaluzji drzwi sypialni z balkonem', 
+		digitalInputUp:=GVL.din_31,
+		digitalInputDown:=GVL.din_32,
+		up_outputs:=GVL.douts_11_zaluzja_balkon_w_gore, 
+		down_outputs:=GVL.douts_12_zaluzja_balkon_w_dol, 
+		shortTime:=T#250MS, longTime:= T#60S);
+wlaczniki_rolet_i_zaluzji[6] := ADR(wlacznik_6_zaluzja_balkon);
+
+wlacznik_7_zaluzja_nad_tarasem(ID:=7, name:='Wlacznik zaluzji drzwi w sypialni rodzicow', 
+		digitalInputUp:=GVL.din_33,
+		digitalInputDown:=GVL.din_34,
+		up_outputs:=GVL.douts_13_zaluzja_nad_wykuszem_w_gore, 
+		down_outputs:=GVL.douts_14_zaluzja_nad_wykuszem_w_dol, 
+		shortTime:=T#250MS, longTime:= T#60S);
+wlaczniki_rolet_i_zaluzji[7] := ADR(wlacznik_7_zaluzja_nad_tarasem);
+
+wlacznik_8_zaluzja_okno_bez_balkonu(ID:=8, name:='Wlacznik zaluzji okna w sypialni bez balkonu', 
+		digitalInputUp:=GVL.din_33,
+		digitalInputDown:=GVL.din_34,
+		up_outputs:=GVL.douts_15_zaluzja_okno_bez_balkonu_w_gore, 
+		down_outputs:=GVL.douts_16_zaluzja_okno_bez_balkonu_w_dol, 
+		shortTime:=T#250MS, longTime:= T#30S);
+wlaczniki_rolet_i_zaluzji[8] := ADR(wlacznik_8_zaluzja_okno_bez_balkonu);
+
+wlacznik_9_roleta_kotlownia(ID:=9, name:='Wlacznik rolety okna w kotlowni', 
+		digitalInputUp:=GVL.din_35,
+		digitalInputDown:=GVL.din_36,
+		up_outputs:=GVL.douts_17_roleta_kotlownia_w_gore, 
+		down_outputs:=GVL.douts_18_roleta_kotlownia_w_dol, 
+		shortTime:=T#250MS, longTime:= T#25S);
+wlaczniki_rolet_i_zaluzji[9] := ADR(wlacznik_9_roleta_kotlownia);
+
+wlacznik_10_roleta_warsztat(ID:=10, name:='Wlacznik rolety okna w warsztacie', 
+		digitalInputUp:=GVL.din_37,
+		digitalInputDown:=GVL.din_38,
+		up_outputs:=GVL.douts_19_roleta_warsztat_w_gore, 
+		down_outputs:=GVL.douts_20_roleta_warsztat_w_dol, 
+		shortTime:=T#250MS, longTime:= T#25S);
+wlaczniki_rolet_i_zaluzji[10] := ADR(wlacznik_10_roleta_warsztat);
+
+wlacznik_11_rolety_garaz(ID:=11, name:='Wlacznik rolety okna w kotlowni', 
+		digitalInputUp:=GVL.din_39,
+		digitalInputDown:=GVL.din_40,
+		up_outputs:=GVL.douts_21_roleta_kotlownia_w_gore, 
+		down_outputs:=GVL.douts_22_roleta_kotlownia_w_dol, 
+		shortTime:=T#250MS, longTime:= T#25S);
+wlaczniki_rolet_i_zaluzji[11] := ADR(wlacznik_11_rolety_garaz);
+
+*)
 
 //prosteWlaczniki[1] := wlacznik_ogrzewania_lustra; 
 
@@ -206,29 +254,38 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[wlaczniki_rolet_i_zaluzji[1]^.loop();
+        <ST><![CDATA[//TODO pozamieniac dout_1_zaluzja_pralnia_w_gore na konkretny indeksowany DOUT
+
+(* 
+wlaczniki_rolet_i_zaluzji[1]^.loop();
 	GVL.dout_1_zaluzja_pralnia_w_gore := GVL.douts_1_zaluzja_pralnia_w_gore[1];
 	GVL.dout_2_zaluzja_pralnia_w_dol := GVL.douts_2_zaluzja_pralnia_w_dol[1];
 	
-(*
- wlaczniki_rolet_i_zaluzji[2].loop();
+ wlaczniki_rolet_i_zaluzji[2]^.loop();
 	GVL.dout_3_zaluzja_okno_narozne_kuchnia_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
 	GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol := GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol[1];
 	
-wlaczniki_rolet_i_zaluzji[3].loop();
+wlaczniki_rolet_i_zaluzji[3]^.loop();
 	GVL.dout_5_zaluzja_wykusz_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
 	GVL.dout_6_zaluzja_wykusz_w_dol := GVL.douts_6_zaluzja_wykusz_w_dol[1];
 	
-wlaczniki_rolet_i_zaluzji[4].loop();
+wlaczniki_rolet_i_zaluzji[4]^.loop();
 	GVL.dout_7_zaluzja_slide_w_gore := GVL.douts_7_zaluzja_slide_w_gore[1];
 	GVL.dout_8_zaluzja_slide_w_dol := GVL.douts_8_zaluzja_slide_w_dol[1];
 *)
 
-//wlacznik_ogrzewania_lustra.loop();
-//wlacznik_bramy_garazowej.loop();
-//				GVL.dout_1_zaluzja_pralnia_w_gore :=GVL.douts_44_ogrzewanie_lustra[1];
+//TODO pozostale wlaczniki rolet
 
-	//GVL.dout_44_ogrzewanie_lustra := GVL.douts_44_ogrzewanie_lustra[1];]]></ST>
+
+wlaczniki_swiatel[1]^.loop();
+	GVL.b_led_2 := GVL.douts_ledy2[1];
+	GVL.b_led_3 := GVL.douts_ledy3[1];
+	
+wlaczniki_swiatel[2]^.loop();
+	GVL.b_led_1 := GVL.douts_ledy1[1];
+
+
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="systemService" Id="{e4d1bead-f766-4caa-a18e-e267b07bd01c}">
@@ -253,17 +310,7 @@ ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'To enter service mode next time set DIGITAL INP
 IF neededHigh AND NOT neededLow THEN
 	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode entered', '');
 	serviceMode := TRUE;
-	
-//	WHILE TRUE DO
-//		initialized := FALSE;	
-//		IF neededLow THEN
-//			ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Exiting service mode', '');
-//			JMP _run;
-//		END_IF
-//	END_WHILE
-//	ADSLOGSTR(ADSLOG_MSGTYPE_ERROR, 'Service mode exited', '');
 END_IF
-//_run :
 
 _wait_for_service_mode_exit :
 
@@ -287,10 +334,6 @@ END_IF
       <LineId Id="310" Count="0" />
       <LineId Id="184" Count="1" />
       <LineId Id="730" Count="0" />
-      <LineId Id="796" Count="0" />
-      <LineId Id="792" Count="0" />
-      <LineId Id="798" Count="0" />
-      <LineId Id="793" Count="0" />
       <LineId Id="797" Count="0" />
       <LineId Id="186" Count="1" />
       <LineId Id="190" Count="3" />
@@ -324,10 +367,13 @@ END_IF
       <LineId Id="63" Count="0" />
       <LineId Id="58" Count="0" />
       <LineId Id="64" Count="0" />
-      <LineId Id="66" Count="1" />
-      <LineId Id="76" Count="0" />
-      <LineId Id="68" Count="3" />
-      <LineId Id="65" Count="0" />
+      <LineId Id="166" Count="4" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="171" Count="0" />
+      <LineId Id="176" Count="3" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="160" Count="1" />
+      <LineId Id="149" Count="0" />
       <LineId Id="77" Count="0" />
       <LineId Id="6" Count="0" />
       <LineId Id="10" Count="0" />
@@ -335,13 +381,14 @@ END_IF
       <LineId Id="11" Count="0" />
       <LineId Id="41" Count="0" />
       <LineId Id="12" Count="0" />
-      <LineId Id="78" Count="1" />
+      <LineId Id="78" Count="0" />
       <LineId Id="7" Count="0" />
       <LineId Id="13" Count="1" />
       <LineId Id="43" Count="0" />
       <LineId Id="15" Count="0" />
       <LineId Id="42" Count="0" />
       <LineId Id="8" Count="0" />
+      <LineId Id="79" Count="0" />
       <LineId Id="16" Count="0" />
       <LineId Id="35" Count="0" />
       <LineId Id="72" Count="0" />
@@ -350,40 +397,53 @@ END_IF
       <LineId Id="44" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="17" Count="0" />
+      <LineId Id="80" Count="0" />
       <LineId Id="46" Count="5" />
       <LineId Id="19" Count="0" />
+      <LineId Id="81" Count="6" />
       <LineId Id="21" Count="0" />
-      <LineId Id="20" Count="0" />
-      <LineId Id="23" Count="0" />
-      <LineId Id="22" Count="0" />
-      <LineId Id="24" Count="1" />
+      <LineId Id="89" Count="6" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="97" Count="6" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="104" Count="6" />
       <LineId Id="5" Count="0" />
-      <LineId Id="27" Count="0" />
-      <LineId Id="26" Count="0" />
-      <LineId Id="29" Count="0" />
-      <LineId Id="28" Count="0" />
-      <LineId Id="30" Count="0" />
-      <LineId Id="33" Count="1" />
+      <LineId Id="113" Count="6" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="136" Count="5" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="142" Count="5" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="111" Count="0" />
       <LineId Id="60" Count="0" />
       <LineId Id="59" Count="0" />
       <LineId Id="62" Count="0" />
       <LineId Id="61" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.inputsOutputsLoop">
+      <LineId Id="41" Count="1" />
       <LineId Id="5" Count="0" />
+      <LineId Id="43" Count="0" />
       <LineId Id="10" Count="0" />
       <LineId Id="9" Count="0" />
-      <LineId Id="11" Count="1" />
+      <LineId Id="11" Count="0" />
       <LineId Id="39" Count="0" />
       <LineId Id="13" Count="3" />
       <LineId Id="20" Count="5" />
+      <LineId Id="44" Count="1" />
       <LineId Id="29" Count="0" />
-      <LineId Id="31" Count="0" />
-      <LineId Id="30" Count="0" />
-      <LineId Id="35" Count="0" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="33" Count="0" />
-      <LineId Id="32" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="59" Count="2" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="55" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.systemService">
       <LineId Id="29" Count="0" />
@@ -394,12 +454,8 @@ END_IF
       <LineId Id="28" Count="0" />
       <LineId Id="68" Count="1" />
       <LineId Id="6" Count="1" />
-      <LineId Id="42" Count="1" />
-      <LineId Id="8" Count="1" />
-      <LineId Id="11" Count="4" />
-      <LineId Id="26" Count="0" />
+      <LineId Id="42" Count="0" />
       <LineId Id="16" Count="0" />
-      <LineId Id="5" Count="0" />
       <LineId Id="70" Count="0" />
       <LineId Id="45" Count="0" />
       <LineId Id="71" Count="0" />

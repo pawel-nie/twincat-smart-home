@@ -3,13 +3,219 @@
   <GVL Name="GVL" Id="{798ee332-7b17-4a9d-a450-87f1f742e8e3}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
-    MAX_SHUTTER_OUTPUTS_PER_LEVEL : INT := 2;
+    MAX_SHUTTER_OUTPUTS_PER_LEVEL : INT := 1;
 	MAX_LIGHT_OUTPUTS_PER_LEVEL : INT := 3;
-	MAX_SHUTTERS : INT := 1;//4;//11;
+	MAX_SHUTTERS : INT := 11;
+	MAX_LIGHTS : INT := 2;//TODO 50;
 END_VAR
 
 VAR_GLOBAL
 	
+	din_1_1_1 AT %I* : BOOL; 
+	din_1_2_2 AT %I* : BOOL;
+	din_1_3_3 AT %I* : BOOL;
+	din_1_4_4 AT %I* : BOOL;
+	din_1_5_5 AT %I* : BOOL;
+	din_1_6_6 AT %I* : BOOL;
+	din_1_7_7 AT %I* : BOOL;
+	din_1_8_8 AT %I* : BOOL;
+	din_1_9_9 AT %I* : BOOL; 
+	din_1_10_10 AT %I* : BOOL;
+	din_1_11_11 AT %I* : BOOL;
+	din_1_12_12 AT %I* : BOOL;
+	din_1_13_13 AT %I* : BOOL;
+	din_1_14_14 AT %I* : BOOL;
+	din_1_15_15 AT %I* : BOOL;
+	din_1_16_16 AT %I* : BOOL;
+	
+	din_2_1_17 AT %I* : BOOL; 
+	din_2_2_18 AT %I* : BOOL;
+	din_2_3_19 AT %I* : BOOL;
+	din_2_4_20 AT %I* : BOOL;
+	din_2_5_21 AT %I* : BOOL;
+	din_2_6_22 AT %I* : BOOL;
+	din_2_7_23 AT %I* : BOOL;
+	din_2_8_24 AT %I* : BOOL;
+	din_2_9_25 AT %I* : BOOL; 
+	din_2_10_26 AT %I* : BOOL;
+	din_2_11_27 AT %I* : BOOL;
+	din_2_12_28 AT %I* : BOOL;
+	din_2_13_29 AT %I* : BOOL;
+	din_2_14_30 AT %I* : BOOL;
+	din_2_15_31 AT %I* : BOOL;
+	din_2_16_32 AT %I* : BOOL;
+	
+	din_3_1_33 AT %I* : BOOL; 
+	din_3_2_34 AT %I* : BOOL;
+	din_3_3_35 AT %I* : BOOL;
+	din_3_4_36 AT %I* : BOOL;
+	din_3_5_37 AT %I* : BOOL;
+	din_3_6_38 AT %I* : BOOL;
+	din_3_7_39 AT %I* : BOOL;
+	din_3_8_40 AT %I* : BOOL;
+	din_3_9_41 AT %I* : BOOL; 
+	din_3_10_42 AT %I* : BOOL;
+	din_3_11_43 AT %I* : BOOL;
+	din_3_12_44 AT %I* : BOOL;
+	din_3_13_45 AT %I* : BOOL;
+	din_3_14_46 AT %I* : BOOL;
+	din_3_15_47 AT %I* : BOOL;
+	din_3_16_48 AT %I* : BOOL;
+	
+	din_4_1_49 AT %I* : BOOL; 
+	din_4_2_50 AT %I* : BOOL;
+	din_4_3_51 AT %I* : BOOL;
+	din_4_4_52 AT %I* : BOOL;
+	din_4_5_53 AT %I* : BOOL;
+	din_4_6_54 AT %I* : BOOL;
+	din_4_7_55 AT %I* : BOOL;
+	din_4_8_56 AT %I* : BOOL;
+	din_4_9_57 AT %I* : BOOL; 
+	din_4_10_58 AT %I* : BOOL;
+	din_4_11_59 AT %I* : BOOL;
+	din_4_12_60 AT %I* : BOOL;
+	din_4_13_61 AT %I* : BOOL;
+	din_4_14_62 AT %I* : BOOL;
+	din_4_15_63 AT %I* : BOOL;
+	din_4_16_64 AT %I* : BOOL;
+	
+	din_5_1_65 AT %I* : BOOL; 
+	din_5_2_66 AT %I* : BOOL;
+	din_5_3_67 AT %I* : BOOL;
+	din_5_4_68 AT %I* : BOOL;
+	din_5_5_69 AT %I* : BOOL;
+	din_5_6_70 AT %I* : BOOL;
+	din_5_7_71 AT %I* : BOOL;
+	din_5_8_72 AT %I* : BOOL;
+	din_5_9_73 AT %I* : BOOL; 
+	din_5_10_74 AT %I* : BOOL;
+	din_5_11_75 AT %I* : BOOL;
+	din_5_12_76 AT %I* : BOOL;
+	din_5_13_77 AT %I* : BOOL;
+	din_5_14_78 AT %I* : BOOL;
+	din_5_15_79 AT %I* : BOOL;
+	din_5_16_80 AT %I* : BOOL;
+	
+	din_6_1_81 AT %I* : BOOL; 
+	din_6_2_82 AT %I* : BOOL;
+	din_6_3_83 AT %I* : BOOL;
+	din_6_4_84 AT %I* : BOOL;
+	din_6_5_85 AT %I* : BOOL;
+	din_6_6_86 AT %I* : BOOL;
+	din_6_7_87 AT %I* : BOOL;
+	din_6_8_88 AT %I* : BOOL;
+	din_6_9_89 AT %I* : BOOL; 
+	din_6_10_90 AT %I* : BOOL;
+	din_6_11_91 AT %I* : BOOL;
+	din_6_12_92 AT %I* : BOOL;
+	din_6_13_93 AT %I* : BOOL;
+	din_6_14_94 AT %I* : BOOL;
+	din_6_15_95 AT %I* : BOOL;
+	din_6_16_96 AT %I* : BOOL;
+	
+	din_7_1_97 AT %I* : BOOL; 
+	din_7_2_98 AT %I* : BOOL;
+	din_7_3_99 AT %I* : BOOL;
+	din_7_4_100 AT %I* : BOOL;
+	din_7_5_101 AT %I* : BOOL;
+	din_7_6_102 AT %I* : BOOL;
+	din_7_7_103 AT %I* : BOOL;
+	din_7_8_104 AT %I* : BOOL;
+	din_7_9_105 AT %I* : BOOL; 
+	din_7_10_106 AT %I* : BOOL;
+	din_7_11_107 AT %I* : BOOL;
+	din_7_12_108 AT %I* : BOOL;
+	din_7_13_109 AT %I* : BOOL;
+	din_7_14_110 AT %I* : BOOL;
+	din_7_15_111 AT %I* : BOOL;
+	din_7_16_112 AT %I* : BOOL;
+	
+	
+	dout_1_1_1 AT %Q* : BOOL; 
+	dout_1_2_2 AT %Q* : BOOL; 
+	dout_1_3_3 AT %Q* : BOOL; 
+	dout_1_4_4 AT %Q* : BOOL; 
+	dout_1_5_5 AT %Q* : BOOL; 
+	dout_1_6_6 AT %Q* : BOOL; 
+	dout_1_7_7 AT %Q* : BOOL; 
+	dout_1_8_8 AT %Q* : BOOL; 
+	dout_1_9_9 AT %Q* : BOOL; 
+	dout_1_10_10 AT %Q* : BOOL; 
+	dout_1_11_11 AT %Q* : BOOL; 
+	dout_1_12_12 AT %Q* : BOOL; 
+	dout_1_13_13 AT %Q* : BOOL; 
+	dout_1_14_14 AT %Q* : BOOL; 	
+	dout_1_15_15 AT %Q* : BOOL; 
+	dout_1_16_16 AT %Q* : BOOL; 
+
+	dout_2_1_17 AT %Q* : BOOL; 
+	dout_2_2_18 AT %Q* : BOOL; 
+	dout_2_3_19 AT %Q* : BOOL; 
+	dout_2_4_20 AT %Q* : BOOL; 
+	dout_2_5_21 AT %Q* : BOOL; 
+	dout_2_6_22 AT %Q* : BOOL; 
+	dout_2_7_23 AT %Q* : BOOL; 
+	dout_2_8_24 AT %Q* : BOOL; 
+	dout_2_9_25 AT %Q* : BOOL; 
+	dout_2_10_26 AT %Q* : BOOL; 
+	dout_2_11_27 AT %Q* : BOOL; 
+	dout_2_12_28 AT %Q* : BOOL; 
+	dout_2_13_29 AT %Q* : BOOL; 
+	dout_2_14_30 AT %Q* : BOOL; 	
+	dout_2_15_31 AT %Q* : BOOL; 
+	dout_2_16_32 AT %Q* : BOOL; 
+
+	dout_3_1_33 AT %Q* : BOOL; 
+	dout_3_2_34 AT %Q* : BOOL; 
+	dout_3_3_35 AT %Q* : BOOL; 
+	dout_3_4_36 AT %Q* : BOOL; 
+	dout_3_5_37 AT %Q* : BOOL; 
+	dout_3_6_38 AT %Q* : BOOL; 
+	dout_3_7_39 AT %Q* : BOOL; 
+	dout_3_8_40 AT %Q* : BOOL; 
+	dout_3_9_41 AT %Q* : BOOL; 
+	dout_3_10_42 AT %Q* : BOOL; 
+	dout_3_11_43 AT %Q* : BOOL; 
+	dout_3_12_44 AT %Q* : BOOL; 
+	dout_3_13_45 AT %Q* : BOOL; 
+	dout_3_14_46 AT %Q* : BOOL; 	
+	dout_3_15_47 AT %Q* : BOOL; 
+	dout_3_16_48 AT %Q* : BOOL; 
+
+	dout_4_1_49 AT %Q* : BOOL; 
+	dout_4_2_50 AT %Q* : BOOL; 
+	dout_4_3_51 AT %Q* : BOOL; 
+	dout_4_4_52 AT %Q* : BOOL; 
+	dout_4_5_53 AT %Q* : BOOL; 
+	dout_4_6_54 AT %Q* : BOOL; 
+	dout_4_7_55 AT %Q* : BOOL; 
+	dout_4_8_56 AT %Q* : BOOL; 
+	dout_4_9_57 AT %Q* : BOOL; 
+	dout_4_10_58 AT %Q* : BOOL; 
+	dout_4_11_59 AT %Q* : BOOL; 
+	dout_4_12_60 AT %Q* : BOOL; 
+	dout_4_13_61 AT %Q* : BOOL; 
+	dout_4_14_62 AT %Q* : BOOL; 	
+	dout_4_15_63 AT %Q* : BOOL; 
+	dout_4_16_64 AT %Q* : BOOL; 
+
+	dout_5_1_65 AT %Q* : BOOL; 
+	dout_5_2_66 AT %Q* : BOOL; 
+	dout_5_3_67 AT %Q* : BOOL; 
+	dout_5_4_68 AT %Q* : BOOL; 
+	dout_5_5_69 AT %Q* : BOOL; 
+	dout_5_6_70 AT %Q* : BOOL; 
+	dout_5_7_71 AT %Q* : BOOL; 
+	dout_5_8_72 AT %Q* : BOOL; 
+	dout_5_9_73 AT %Q* : BOOL; 
+	dout_5_10_74 AT %Q* : BOOL; 
+	dout_5_11_75 AT %Q* : BOOL; 
+	dout_5_12_76 AT %Q* : BOOL; 
+	dout_5_13_77 AT %Q* : BOOL; 
+	dout_5_14_78 AT %Q* : BOOL; 	
+	dout_5_15_79 AT %Q* : BOOL; 
+	dout_5_16_80 AT %Q* : BOOL; 
+
 	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
 	EventLogger : EventLogger(CsvPersistentEventStorage);
 	
@@ -118,7 +324,6 @@ VAR_GLOBAL
 	din_80 AT %I* : BOOL;
 	din_81 AT %I* : BOOL;
 	din_82_service AT %I* : BOOL;
-	wlacznik_z_garazu_do_pralni : LightSwitch;
 
 //-------------------------------------------------------------------------------------------------	
 //OUTPUTS
@@ -193,7 +398,9 @@ VAR_GLOBAL
 	douts_44_ogrzewanie_lustra : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	
-	
+	douts_ledy1 : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_ledy2 : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_ledy3 : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	
 	
