@@ -7,6 +7,7 @@ END_VAR
 VAR_INPUT
 	shutters : ARRAY[1..GVL.MAX_SHUTTERS] OF POINTER TO ShutterSwitch;
 	smartLights : ARRAY[1..GVL.MAX_LIGHTS] OF POINTER TO LightSwitch;
+	simpleButtons : ARRAY[1..GVL.MAX_SIMPLE_BUTTONS] OF POINTER TO SimpleButton;
 END_VAR
 VAR_OUTPUT
 END_VAR
@@ -101,6 +102,12 @@ END_VAR]]></Declaration>
 
 FOR i := 1 TO GVL.MAX_LIGHTS BY 1 DO
 	smartLights[i]^.turnOff();
+END_FOR
+
+FOR i := 1 TO GVL.MAX_SIMPLE_BUTTONS BY 1 DO
+	IF simpleButtons[i]^.isLightSwitch() THEN
+		simpleButtons[i]^.turnOff();
+	END_IF
 END_FOR]]></ST>
       </Implementation>
     </Method>
@@ -118,7 +125,12 @@ END_VAR]]></Declaration>
 FOR i := 1 TO GVL.MAX_LIGHTS BY 1 DO
 	smartLights[i]^.turnOnDefault();
 END_FOR
-]]></ST>
+
+FOR i := 1 TO GVL.MAX_SIMPLE_BUTTONS BY 1 DO
+	IF simpleButtons[i]^.isLightSwitch() THEN
+		simpleButtons[i]^.turnOn();
+	END_IF
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="requestShuttersClose" Id="{f3fde636-7658-4863-a5d1-01bc94f61d8d}">
@@ -187,11 +199,16 @@ currentShutterNumber := 1;]]></ST>
       <LineId Id="37" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="1" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="42" Count="2" />
+      <LineId Id="38" Count="0" />
     </LineIds>
     <LineIds Name="GroupController.requestLightsOnDefault">
       <LineId Id="18" Count="1" />
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="1" />
+      <LineId Id="36" Count="4" />
       <LineId Id="35" Count="0" />
     </LineIds>
     <LineIds Name="GroupController.requestShuttersClose">

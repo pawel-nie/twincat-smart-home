@@ -4,17 +4,18 @@
     <Declaration><![CDATA[FUNCTION_BLOCK SimpleButton
 
 VAR CONSTANT
-	MAX_OUTPUTS_PER_LEVEL : INT := 3;
+	MAX_OUTPUTS : INT := GVL.MAX_SIMPLE_OUTPUTS;
 END_VAR
 
 VAR_INPUT
 	ID : INT;
 	name : STRING := 'Simple button';
 	digitalInput : REFERENCE TO BOOL;
-	outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
+	outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS] OF BOOL;
 	runAsYouPress : BOOL := FALSE;
 	holdTime : TIME := T#10MS;
     withHold : BOOL := FALSE;
+	lightSwitch : BOOL := FALSE;
 END_VAR
 
 VAR_OUTPUT
@@ -27,11 +28,39 @@ VAR
 	released : F_TRIG;
 	holdTimer : TP := (PT := holdTime);
 	readyToBeTurnedOff : BOOL := FALSE;
+	inactivityTimeout : TP := (PT := T#1100MS);
+	consecutiveClicks : INT := 0;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[holdTimer(PT:= holdTime);]]></ST>
     </Implementation>
+    <Method Name="doSpecialAction" Id="{ec57c817-ce8e-400f-9fd2-4ff2cb41e0de}">
+      <Declaration><![CDATA[METHOD doSpecialAction : BOOL
+VAR_INPUT
+END_VAR
+
+VAR
+	i: INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE ID OF
+	//TODO pamietac
+	33:
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 1 - ', str2:='turning off all lights', str3:=getSource());
+		MAIN.groupController.requestLightsOff();
+		
+	2:
+		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2 - ', str2:='opening on all lights', str3:=getSource());
+		MAIN.groupController.requestLightsOnDefault();
+		
+//	1:
+	//	GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 3 - ', str2:='closing all shutters', str3:=getSource());
+		//MAIN.groupController.requestShuttersClose();
+		
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="getSource" Id="{42d4478f-5eab-4e0e-be94-887f1ace45d6}">
       <Declaration><![CDATA[METHOD PRIVATE getSource : STRING
 VAR_INPUT
@@ -50,8 +79,8 @@ details := CONCAT(STR1:=details, STR2:=name);
 getSource := details;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="loop" Id="{aa977121-eff7-4bf4-886a-ea3c6bcd0d1e}">
-      <Declaration><![CDATA[METHOD loop : BOOL
+    <Method Name="inputsOutputsLoop" Id="{b9b2e825-89df-4f93-87cc-8ef397b4f54a}">
+      <Declaration><![CDATA[METHOD PRIVATE inputsOutputsLoop
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -59,6 +88,25 @@ END_VAR
         <ST><![CDATA[pressed(CLK:= digitalInput);
 released(CLK:= digitalInput);
 holdTimer(IN:= FALSE);
+inactivityTimeout(IN:= FALSE);	]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="isLightSwitch" Id="{1f8d519e-914e-420b-b23a-d263efbcdbbb}">
+      <Declaration><![CDATA[METHOD PUBLIC isLightSwitch : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[isLightSwitch := lightSwitch;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="loop" Id="{aa977121-eff7-4bf4-886a-ea3c6bcd0d1e}">
+      <Declaration><![CDATA[METHOD PUBLIC loop : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[inputsOutputsLoop();
 
 IF pressed.Q THEN
 	GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Button pressed', str2:= '', str3:=getSource());
@@ -70,16 +118,18 @@ IF released.Q THEN
 	printed := FALSE;
 END_IF
 
+manageConsecutiveClicks();
+
 IF runAsYouPress THEN
 	setOutputs(state:= digitalInput);
 ELSE
 	IF pressed.Q THEN
 		IF isOn THEN 			//turned on -> lets turn off
-			setOutputs(state:= FALSE);
+			turnOff();
 			isOn := FALSE;
 			stopHoldTimer();
 		ELSE 					//turned off -> lets turn on
-			setOutputs(state:= TRUE);
+			turnOn();
 			isOn := TRUE;
 			IF withHold THEN
 				GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Button turned ON with hold time miliseconds=', str2:=TO_STRING(TIME_TO_INT(holdTime)), str3:=getSource());
@@ -100,6 +150,31 @@ END_IF
 ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="manageConsecutiveClicks" Id="{d4db80e7-7722-4438-b97c-90a17c31d3bf}">
+      <Declaration><![CDATA[METHOD PRIVATE manageConsecutiveClicks
+VAR_INPUT
+END_VAR
+
+VAR
+
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT inactivityTimeout.Q THEN
+	consecutiveClicks := 0;
+END_IF
+
+IF pressed.Q THEN
+	consecutiveClicks := consecutiveClicks + 1;
+	inactivityTimeout(IN:= TRUE);
+	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='consecutiveClicks=', str2:=TO_STRING(consecutiveClicks), str3:=getSource());
+END_IF
+
+IF consecutiveClicks >= 3 THEN
+	consecutiveClicks := 0;
+	doSpecialAction();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="setOutputs" Id="{b4040e0f-b48f-4a91-a4d6-98420882822c}">
       <Declaration><![CDATA[METHOD setOutputs
 VAR_INPUT
@@ -118,7 +193,7 @@ IF NOT printed THEN
 	printed := TRUE;
 END_IF
 
-FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+FOR i := 1 TO MAX_OUTPUTS BY 1 DO
 	outputs[i] := state;
 END_FOR
 
@@ -136,8 +211,39 @@ END_VAR
 holdTimer(PT:=holdTime);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="turnOff" Id="{417f1d3c-f956-4589-aa01-a1962fc76685}">
+      <Declaration><![CDATA[METHOD PUBLIC turnOff
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[setOutputs(state:= FALSE);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="turnOn" Id="{ed443c64-e6f0-47cc-ba8f-9652d922c180}">
+      <Declaration><![CDATA[METHOD PUBLIC turnOn
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[setOutputs(state:= TRUE);]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="SimpleButton">
       <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="SimpleButton.doSpecialAction">
+      <LineId Id="7" Count="2" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="45" Count="1" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="SimpleButton.getSource">
       <LineId Id="5" Count="0" />
@@ -148,10 +254,15 @@ holdTimer(PT:=holdTime);]]></ST>
       <LineId Id="14" Count="0" />
       <LineId Id="10" Count="0" />
     </LineIds>
-    <LineIds Name="SimpleButton.loop">
+    <LineIds Name="SimpleButton.inputsOutputsLoop">
+      <LineId Id="19" Count="2" />
       <LineId Id="5" Count="0" />
-      <LineId Id="41" Count="0" />
-      <LineId Id="25" Count="0" />
+    </LineIds>
+    <LineIds Name="SimpleButton.isLightSwitch">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="SimpleButton.loop">
+      <LineId Id="84" Count="0" />
       <LineId Id="55" Count="0" />
       <LineId Id="13" Count="0" />
       <LineId Id="50" Count="0" />
@@ -160,7 +271,9 @@ holdTimer(PT:=holdTime);]]></ST>
       <LineId Id="51" Count="0" />
       <LineId Id="48" Count="0" />
       <LineId Id="28" Count="0" />
+      <LineId Id="88" Count="0" />
       <LineId Id="49" Count="0" />
+      <LineId Id="89" Count="0" />
       <LineId Id="7" Count="0" />
       <LineId Id="14" Count="0" />
       <LineId Id="16" Count="0" />
@@ -184,6 +297,10 @@ holdTimer(PT:=holdTime);]]></ST>
       <LineId Id="59" Count="0" />
       <LineId Id="61" Count="0" />
     </LineIds>
+    <LineIds Name="SimpleButton.manageConsecutiveClicks">
+      <LineId Id="45" Count="12" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
     <LineIds Name="SimpleButton.setOutputs">
       <LineId Id="88" Count="0" />
       <LineId Id="106" Count="0" />
@@ -199,6 +316,12 @@ holdTimer(PT:=holdTime);]]></ST>
     </LineIds>
     <LineIds Name="SimpleButton.stopHoldTimer">
       <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="SimpleButton.turnOff">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="SimpleButton.turnOn">
       <LineId Id="5" Count="0" />
     </LineIds>
   </POU>

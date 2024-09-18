@@ -4,7 +4,7 @@
     <Declaration><![CDATA[FUNCTION_BLOCK ShutterSwitch
 
 VAR CONSTANT
-	MAX_OUTPUTS_PER_LEVEL : INT := GVL.MAX_SHUTTER_OUTPUTS_PER_LEVEL;
+	MAX_OUTPUTS_PER_LEVEL : INT := GVL.MAX_SHUTTER_OUTPUTS;
 END_VAR
 
 VAR_INPUT
@@ -277,7 +277,7 @@ IF pressedDown.Q THEN
 	GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='consecutiveClicks=', str2:=TO_STRING(consecutiveClicks), str3:=getSource());
 END_IF
 
-IF consecutiveClicks >= 3 THEN
+IF consecutiveClicks >= 4 THEN
 	consecutiveClicks := 0;
 	doSpecialAction();
 END_IF]]></ST>

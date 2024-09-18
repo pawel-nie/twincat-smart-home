@@ -31,8 +31,11 @@ VAR
     wlacznik_11_rolety_garaz : ShutterSwitch();
 	
 	wlaczniki_swiatel : ARRAY[1..GVL.MAX_LIGHTS] OF POINTER TO LightSwitch;
-	wlacznik_12_pralnia : LightSwitch();
-	wlacznik_17_schody : LightSwitch();
+		//wlacznik_12_pralnia : LightSwitch();
+		wlacznik_17_schody : LightSwitch();
+
+	proste_wlaczniki : ARRAY[1..GVL.MAX_SIMPLE_BUTTONS] OF POINTER TO SimpleButton;
+	wlacznik_33_pralnia : SimpleButton();
 	
 		arr1 : ARRAY[1..3] OF BOOL;
 		arr2 : ARRAY[1..3] OF BOOL;
@@ -48,9 +51,8 @@ VAR
 		//buttontest : ShutterSwitch;
 		
 		
-		
 
-		prosteWlaczniki : ARRAY[1..10] OF SimpleButton;
+	
 		wlacznikiTrojpozycyjne : ARRAY[1..10] OF UpStopDownButton;
 		
 	isDay : BOOL := TRUE;
@@ -79,7 +81,9 @@ END_VAR
 			GVL.EventLogger.AddEvent(eEventType, eEventSeverity, nEventIdentity, sEventText);
 			
 	initialized := TRUE;
-	groupController(shutters:= wlaczniki_rolet_i_zaluzji, smartLights:= wlaczniki_swiatel);
+	groupController(shutters:= wlaczniki_rolet_i_zaluzji, 
+					smartLights:= wlaczniki_swiatel,
+					simpleButtons:= proste_wlaczniki);
 
 END_IF
 
@@ -144,12 +148,16 @@ wlacznik_17_schody(ID:=17, name:='Wlacznik swiatla przy schodach',
 		defaultDayOutput:=E_OutputLevel.MEDIUM, defaultNightOutput:=E_OutputLevel.SMALL);	
 wlaczniki_swiatel[1] := ADR(wlacznik_17_schody);
 
-wlacznik_12_pralnia(ID:=12, name:='Wlacznik swiatla w pralni', 
-		digitalInput:=GVL.din_21, small_outputs:= GVL.douts_ledy1,
-		levelsManaged:= 1, 
-		defaultDayOutput:=E_OutputLevel.SMALL, defaultNightOutput:=E_OutputLevel.SMALL);
-wlaczniki_swiatel[2] := ADR(wlacznik_12_pralnia);
+//wlacznik_12_pralnia(ID:=12, name:='Wlacznik swiatla w pralni', 
+//		digitalInput:=GVL.din_21, small_outputs:= GVL.douts_ledy1,
+//		levelsManaged:= 1, 
+//		defaultDayOutput:=E_OutputLevel.SMALL, defaultNightOutput:=E_OutputLevel.SMALL);
+//wlaczniki_swiatel[2] := ADR(wlacznik_12_pralnia);
 		
+wlacznik_33_pralnia(ID:=33, name:='Wlacznik swiatla w pralni',
+		digitalInput:=GVL.din_21, outputs:=GVL.douts_ledy1,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+proste_wlaczniki[1] := ADR(wlacznik_33_pralnia);
 
 (* ShutterSwitch - pozostalo odkomentowac i podpiąć odpowiednie we/wy
 
@@ -281,7 +289,10 @@ wlaczniki_swiatel[1]^.loop();
 	GVL.b_led_2 := GVL.douts_ledy2[1];
 	GVL.b_led_3 := GVL.douts_ledy3[1];
 	
-wlaczniki_swiatel[2]^.loop();
+//wlaczniki_swiatel[2]^.loop();
+//	GVL.b_led_1 := GVL.douts_ledy1[1];
+	
+proste_wlaczniki[1]^.loop();
 	GVL.b_led_1 := GVL.douts_ledy1[1];
 
 
@@ -323,30 +334,7 @@ END_IF
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
-      <LineId Id="161" Count="0" />
-      <LineId Id="494" Count="0" />
-      <LineId Id="668" Count="2" />
-      <LineId Id="316" Count="0" />
-      <LineId Id="382" Count="1" />
-      <LineId Id="162" Count="0" />
-      <LineId Id="552" Count="0" />
-      <LineId Id="172" Count="1" />
-      <LineId Id="310" Count="0" />
-      <LineId Id="184" Count="1" />
-      <LineId Id="730" Count="0" />
-      <LineId Id="797" Count="0" />
-      <LineId Id="186" Count="1" />
-      <LineId Id="190" Count="3" />
-      <LineId Id="347" Count="0" />
-      <LineId Id="346" Count="0" />
-      <LineId Id="200" Count="0" />
-      <LineId Id="398" Count="0" />
-      <LineId Id="397" Count="0" />
-      <LineId Id="437" Count="0" />
-      <LineId Id="436" Count="0" />
-      <LineId Id="610" Count="0" />
-      <LineId Id="201" Count="5" />
-      <LineId Id="194" Count="0" />
+      <LineId Id="991" Count="39" />
       <LineId Id="71" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.initButtons">
@@ -372,7 +360,12 @@ END_IF
       <LineId Id="171" Count="0" />
       <LineId Id="176" Count="3" />
       <LineId Id="155" Count="0" />
-      <LineId Id="160" Count="1" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="180" Count="0" />
+      <LineId Id="182" Count="0" />
+      <LineId Id="184" Count="0" />
+      <LineId Id="181" Count="0" />
+      <LineId Id="161" Count="0" />
       <LineId Id="149" Count="0" />
       <LineId Id="77" Count="0" />
       <LineId Id="6" Count="0" />
@@ -441,6 +434,7 @@ END_IF
       <LineId Id="62" Count="0" />
       <LineId Id="46" Count="0" />
       <LineId Id="51" Count="0" />
+      <LineId Id="63" Count="2" />
       <LineId Id="53" Count="0" />
       <LineId Id="52" Count="0" />
       <LineId Id="55" Count="0" />

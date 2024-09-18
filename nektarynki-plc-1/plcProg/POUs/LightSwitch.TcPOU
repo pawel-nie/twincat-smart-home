@@ -205,7 +205,7 @@ IF released.Q THEN
 	pressedTimeMiliseconds := TIME_TO_INT(pressedTimer.ET);
 END_IF
 
-IF consecutiveClicks >= 4 THEN
+IF consecutiveClicks >= 3 THEN
 	consecutiveClicks := 0;
 	doSpecialAction();
 END_IF

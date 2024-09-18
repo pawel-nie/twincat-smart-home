@@ -3,10 +3,12 @@
   <GVL Name="GVL" Id="{798ee332-7b17-4a9d-a450-87f1f742e8e3}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
-    MAX_SHUTTER_OUTPUTS_PER_LEVEL : INT := 1;
+    MAX_SHUTTER_OUTPUTS : INT := 1;
 	MAX_LIGHT_OUTPUTS_PER_LEVEL : INT := 3;
+	MAX_SIMPLE_OUTPUTS : INT := 3;
 	MAX_SHUTTERS : INT := 11;
-	MAX_LIGHTS : INT := 2;//TODO 50;
+	MAX_LIGHTS : INT := 1;//TODO 50 ALBO MNIEJ;
+	MAX_SIMPLE_BUTTONS : INT := 1; //TODO PEWNIE WIECEJ
 END_VAR
 
 VAR_GLOBAL
@@ -219,168 +221,170 @@ VAR_GLOBAL
 	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
 	EventLogger : EventLogger(CsvPersistentEventStorage);
 	
-    b_button_1 AT %I* : BOOL;
-	b_button_2 AT %I* : BOOL;
-	b_button_3 AT %I* : BOOL;
-	b_button_4 AT %I* : BOOL;
-	b_button_5 AT %I* : BOOL;
-	
-	b_led_1 AT %Q* : BOOL;
-	b_led_2 AT %Q* : BOOL;	
-	b_led_10 AT %Q* : BOOL;
-	b_led_3 AT %Q* : BOOL;
-	b_led_4 AT %Q* : BOOL;
-	b_led_12 AT %Q* : BOOL;
 	
 	
+		b_button_1 AT %I* : BOOL;
+		b_button_2 AT %I* : BOOL;
+		b_button_3 AT %I* : BOOL;
+		b_button_4 AT %I* : BOOL;
+		b_button_5 AT %I* : BOOL;
+		
+		b_led_1 AT %Q* : BOOL;
+		b_led_2 AT %Q* : BOOL;	
+		b_led_10 AT %Q* : BOOL;
+		b_led_3 AT %Q* : BOOL;
+		b_led_4 AT %Q* : BOOL;
+		b_led_12 AT %Q* : BOOL;
+		
+		
+		
+		
+		bDigital1 : BOOL;
+		bDigital2 : BOOL;
+		iData1 : INT;
+		iData2 : INT;
+		strText1 : STRING;
+		strText2 : STRING;
 	
-	
-	bDigital1 : BOOL;
-	bDigital2 : BOOL;
-	iData1 : INT;
-	iData2 : INT;
-	strText1 : STRING;
-	strText2 : STRING;
-	
-	din_1 AT %I* : BOOL; //kontaktron drzwi garaż/pralnia 5-s-3-1 zasilanie:biało-zielony, sygnał:zielony
-	din_2 AT %I* : BOOL; //włącznik w garażu ......
-	din_3 AT %I* : BOOL; //kontaktron okna pralnia ... zasilanie:biało-zielony, sygnał:zielony
-	din_4 AT %I* : BOOL;
-	din_5 AT %I* : BOOL;
-	din_6 AT %I* : BOOL;
-	din_7 AT %I* : BOOL;
-	din_8 AT %I* : BOOL;
-	din_9 AT %I* : BOOL;
-	din_10 AT %I* : BOOL;
-	din_11 AT %I* : BOOL;
-	din_12 AT %I* : BOOL;
-	din_13 AT %I* : BOOL;
-	din_14 AT %I* : BOOL;
-	din_15 AT %I* : BOOL;
-	din_16 AT %I* : BOOL;
-	din_17 AT %I* : BOOL;
-	din_18 AT %I* : BOOL;
-	din_19 AT %I* : BOOL;
-	din_20 AT %I* : BOOL; //wlacznik zaluzji w pralni w gore
-	din_21 AT %I* : BOOL; //wlacznik zaluzji w pralni w dol
-	din_22 AT %I* : BOOL;
-	din_23 AT %I* : BOOL;
-	din_24 AT %I* : BOOL;
-	din_25 AT %I* : BOOL;
-	din_26 AT %I* : BOOL;
-	din_27 AT %I* : BOOL;
-	din_28 AT %I* : BOOL;
-	din_29 AT %I* : BOOL;
-	din_30 AT %I* : BOOL;
-	din_31 AT %I* : BOOL;
-	din_32 AT %I* : BOOL;
-	din_33 AT %I* : BOOL;
-	din_34 AT %I* : BOOL;
-	din_35 AT %I* : BOOL;
-	din_36 AT %I* : BOOL;
-	din_37 AT %I* : BOOL;
-	din_38 AT %I* : BOOL;
-	din_39 AT %I* : BOOL;
-	din_40 AT %I* : BOOL;
-	din_41 AT %I* : BOOL;
-	din_42 AT %I* : BOOL;
-	din_43 AT %I* : BOOL;
-	din_44 AT %I* : BOOL;
-	din_45 AT %I* : BOOL;
-	din_46 AT %I* : BOOL;
-	din_47 AT %I* : BOOL;
-	din_48 AT %I* : BOOL;
-	din_49 AT %I* : BOOL;
-	din_50 AT %I* : BOOL;
-	din_51 AT %I* : BOOL;
-	din_52 AT %I* : BOOL;
-	din_53 AT %I* : BOOL;
-	din_54 AT %I* : BOOL;
-	din_55 AT %I* : BOOL;
-	din_56 AT %I* : BOOL;
-	din_57 AT %I* : BOOL;
-	din_58 AT %I* : BOOL;
-	din_59 AT %I* : BOOL;
-	din_60 AT %I* : BOOL;
-	din_61 AT %I* : BOOL;
-	din_62 AT %I* : BOOL;
-	din_63 AT %I* : BOOL;
-	din_64 AT %I* : BOOL;
-	din_65 AT %I* : BOOL;
-	din_66 AT %I* : BOOL;
-	din_67 AT %I* : BOOL;
-	din_68 AT %I* : BOOL;
-	din_69 AT %I* : BOOL;
-	din_70 AT %I* : BOOL;
-	din_71 AT %I* : BOOL;
-	din_72 AT %I* : BOOL;
-	din_73 AT %I* : BOOL;
-	din_74 AT %I* : BOOL;
-	din_75 AT %I* : BOOL;
-	din_76 AT %I* : BOOL;
-	din_77 AT %I* : BOOL;
-	din_78 AT %I* : BOOL;
-	din_79 AT %I* : BOOL;
-	din_80 AT %I* : BOOL;
-	din_81 AT %I* : BOOL;
-	din_82_service AT %I* : BOOL;
+		din_1 AT %I* : BOOL; //kontaktron drzwi garaż/pralnia 5-s-3-1 zasilanie:biało-zielony, sygnał:zielony
+		din_2 AT %I* : BOOL; //włącznik w garażu ......
+		din_3 AT %I* : BOOL; //kontaktron okna pralnia ... zasilanie:biało-zielony, sygnał:zielony
+		din_4 AT %I* : BOOL;
+		din_5 AT %I* : BOOL;
+		din_6 AT %I* : BOOL;
+		din_7 AT %I* : BOOL;
+		din_8 AT %I* : BOOL;
+		din_9 AT %I* : BOOL;
+		din_10 AT %I* : BOOL;
+		din_11 AT %I* : BOOL;
+		din_12 AT %I* : BOOL;
+		din_13 AT %I* : BOOL;
+		din_14 AT %I* : BOOL;
+		din_15 AT %I* : BOOL;
+		din_16 AT %I* : BOOL;
+		din_17 AT %I* : BOOL;
+		din_18 AT %I* : BOOL;
+		din_19 AT %I* : BOOL;
+		din_20 AT %I* : BOOL; //wlacznik zaluzji w pralni w gore
+		din_21 AT %I* : BOOL; //wlacznik zaluzji w pralni w dol
+		din_22 AT %I* : BOOL;
+		din_23 AT %I* : BOOL;
+		din_24 AT %I* : BOOL;
+		din_25 AT %I* : BOOL;
+		din_26 AT %I* : BOOL;
+		din_27 AT %I* : BOOL;
+		din_28 AT %I* : BOOL;
+		din_29 AT %I* : BOOL;
+		din_30 AT %I* : BOOL;
+		din_31 AT %I* : BOOL;
+		din_32 AT %I* : BOOL;
+		din_33 AT %I* : BOOL;
+		din_34 AT %I* : BOOL;
+		din_35 AT %I* : BOOL;
+		din_36 AT %I* : BOOL;
+		din_37 AT %I* : BOOL;
+		din_38 AT %I* : BOOL;
+		din_39 AT %I* : BOOL;
+		din_40 AT %I* : BOOL;
+		din_41 AT %I* : BOOL;
+		din_42 AT %I* : BOOL;
+		din_43 AT %I* : BOOL;
+		din_44 AT %I* : BOOL;
+		din_45 AT %I* : BOOL;
+		din_46 AT %I* : BOOL;
+		din_47 AT %I* : BOOL;
+		din_48 AT %I* : BOOL;
+		din_49 AT %I* : BOOL;
+		din_50 AT %I* : BOOL;
+		din_51 AT %I* : BOOL;
+		din_52 AT %I* : BOOL;
+		din_53 AT %I* : BOOL;
+		din_54 AT %I* : BOOL;
+		din_55 AT %I* : BOOL;
+		din_56 AT %I* : BOOL;
+		din_57 AT %I* : BOOL;
+		din_58 AT %I* : BOOL;
+		din_59 AT %I* : BOOL;
+		din_60 AT %I* : BOOL;
+		din_61 AT %I* : BOOL;
+		din_62 AT %I* : BOOL;
+		din_63 AT %I* : BOOL;
+		din_64 AT %I* : BOOL;
+		din_65 AT %I* : BOOL;
+		din_66 AT %I* : BOOL;
+		din_67 AT %I* : BOOL;
+		din_68 AT %I* : BOOL;
+		din_69 AT %I* : BOOL;
+		din_70 AT %I* : BOOL;
+		din_71 AT %I* : BOOL;
+		din_72 AT %I* : BOOL;
+		din_73 AT %I* : BOOL;
+		din_74 AT %I* : BOOL;
+		din_75 AT %I* : BOOL;
+		din_76 AT %I* : BOOL;
+		din_77 AT %I* : BOOL;
+		din_78 AT %I* : BOOL;
+		din_79 AT %I* : BOOL;
+		din_80 AT %I* : BOOL;
+		din_81 AT %I* : BOOL;
+		din_82_service AT %I* : BOOL;
 
 //-------------------------------------------------------------------------------------------------	
 //OUTPUTS
 	dout_1_zaluzja_pralnia_w_gore AT %Q* : BOOL;
-	douts_1_zaluzja_pralnia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 	
+	douts_1_zaluzja_pralnia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 	
 	dout_2_zaluzja_pralnia_w_dol AT %Q* : BOOL;
-	douts_2_zaluzja_pralnia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_2_zaluzja_pralnia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 	dout_3_zaluzja_okno_narozne_kuchnia_w_gore AT %Q* : BOOL;
-	douts_3_zaluzja_okno_narozne_kuchnia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_3_zaluzja_okno_narozne_kuchnia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	dout_4_zaluzja_okno_narozne_kuchnia_w_dol AT %Q* : BOOL;
-	douts_4_zaluzja_okno_narozne_kuchnia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_4_zaluzja_okno_narozne_kuchnia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 	dout_5_zaluzja_wykusz_w_gore AT %Q* : BOOL;	
-	douts_5_zaluzja_wykusz_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	douts_5_zaluzja_wykusz_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 
 	dout_6_zaluzja_wykusz_w_dol AT %Q* : BOOL;
-	douts_6_zaluzja_wykusz_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_6_zaluzja_wykusz_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 	dout_7_zaluzja_slide_w_gore AT %Q* : BOOL;	
-	douts_7_zaluzja_slide_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	douts_7_zaluzja_slide_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 
 	dout_8_zaluzja_slide_w_dol AT %Q* : BOOL;
-	douts_8_zaluzja_slide_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_8_zaluzja_slide_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 	dout_9_zaluzja_gabinet_w_gore AT %Q* : BOOL;	
-	douts_9_zaluzja_gabinet_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	douts_9_zaluzja_gabinet_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 
 	dout_10_zaluzja_gabinet_w_dol AT %Q* : BOOL;
-	douts_10_zaluzja_gabinet_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_10_zaluzja_gabinet_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 	dout_11_zaluzja_balkon_w_gore AT %Q* : BOOL;	
-	douts_11_zaluzja_balkon_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	douts_11_zaluzja_balkon_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 
 	dout_12_zaluzja_balkon_w_dol AT %Q* : BOOL;	
-	douts_12_zaluzja_balkon_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	douts_12_zaluzja_balkon_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 
 	
 	dout_13_zaluzja_nad_wykuszem_w_gore AT %Q* : BOOL;
-	douts_13_zaluzja_nad_wykuszem_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_13_zaluzja_nad_wykuszem_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	dout_14_zaluzja_nad_wykuszem_w_dol AT %Q* : BOOL;
-	douts_14_zaluzja_nad_wykuszem_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_14_zaluzja_nad_wykuszem_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 	dout_15_zaluzja_okno_bez_balkonu_w_gore AT %Q* : BOOL;	
-	douts_15_zaluzja_okno_bez_balkonu_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	douts_15_zaluzja_okno_bez_balkonu_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 
 	dout_16_zaluzja_okno_bez_balkonu_w_dol AT %Q* : BOOL;
-	douts_16_zaluzja_okno_bez_balkonu_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_16_zaluzja_okno_bez_balkonu_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 	dout_17_roleta_kotlownia_w_gore AT %Q* : BOOL;	
-	douts_17_roleta_kotlownia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	douts_17_roleta_kotlownia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 
 	dout_18_roleta_kotlownia_w_dol AT %Q* : BOOL;
-	douts_18_roleta_kotlownia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_18_roleta_kotlownia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 	dout_19_roleta_warsztat_w_gore AT %Q* : BOOL;	
-	douts_19_roleta_warsztat_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	douts_19_roleta_warsztat_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 
 	dout_20_roleta_warsztat_w_dol AT %Q* : BOOL;
-	douts_20_roleta_warsztat_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_20_roleta_warsztat_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 	dout_21_roleta_kotlownia_w_gore AT %Q* : BOOL;	
-	douts_21_roleta_kotlownia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL; 
+	douts_21_roleta_kotlownia_w_gore : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL; 
 	dout_22_roleta_kotlownia_w_dol AT %Q* : BOOL;
-	douts_22_roleta_kotlownia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS_PER_LEVEL] OF BOOL;
+	douts_22_roleta_kotlownia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
 //--
 	
