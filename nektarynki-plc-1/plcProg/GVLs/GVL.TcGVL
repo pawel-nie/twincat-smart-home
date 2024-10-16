@@ -8,23 +8,23 @@ VAR_GLOBAL CONSTANT
 	MAX_SIMPLE_OUTPUTS : INT := 3;
 	MAX_SHUTTERS : INT := 11;
 	MAX_LIGHTS : INT := 1;//TODO 50 ALBO MNIEJ;
-	MAX_SIMPLE_BUTTONS : INT := 1; //TODO PEWNIE WIECEJ
+	MAX_SIMPLE_BUTTONS : INT := 3; //TODO PEWNIE WIECEJ
 END_VAR
 
 VAR_GLOBAL
 	
-	din_1_1_1 AT %I* : BOOL; 
-	din_1_2_2 AT %I* : BOOL;
-	din_1_3_3 AT %I* : BOOL;
-	din_1_4_4 AT %I* : BOOL;
+	din_1_1_1 AT %I* : BOOL; //garaż po prawej stronie od drzwi
+	din_1_2_2 AT %I* : BOOL; //garaż po lewej stronie od drzwi (wh-gn->bl) + pralnia po lewej stronie od drzwi, pierwszy od dołu (trzeba namierzyć)
+	din_1_3_3 AT %I* : BOOL; //pralnia po lewej stronie od drzwi, drugi od dołu (trzeba namierzyć)
+	din_1_4_4 AT %I* : BOOL; 
 	din_1_5_5 AT %I* : BOOL;
-	din_1_6_6 AT %I* : BOOL;
+	din_1_6_6 AT %I* : BOOL; 
 	din_1_7_7 AT %I* : BOOL;
 	din_1_8_8 AT %I* : BOOL;
 	din_1_9_9 AT %I* : BOOL; 
-	din_1_10_10 AT %I* : BOOL;
-	din_1_11_11 AT %I* : BOOL;
-	din_1_12_12 AT %I* : BOOL;
+	din_1_10_10 AT %I* : BOOL; //1-s-25-1 1/4 koniec przedpokoju elektroniczny poczwórny (wh-gn->br)
+	din_1_11_11 AT %I* : BOOL; //1-s-25-1 2/4 koniec przedpokoju elektroniczny poczwórny (wh-gn->wh-bl)
+	din_1_12_12 AT %I* : BOOL; //1-s-25-1 3/4 koniec przedpokoju elektroniczny poczwórny (wh-gn->wh-or)
 	din_1_13_13 AT %I* : BOOL;
 	din_1_14_14 AT %I* : BOOL;
 	din_1_15_15 AT %I* : BOOL;
@@ -133,8 +133,8 @@ VAR_GLOBAL
 	din_7_16_112 AT %I* : BOOL;
 	
 	
-	dout_1_1_1 AT %Q* : BOOL; 
-	dout_1_2_2 AT %Q* : BOOL; 
+	dout_1_1_1 AT %Q* : BOOL;
+	dout_1_2_2 AT %Q* : BOOL;  
 	dout_1_3_3 AT %Q* : BOOL; 
 	dout_1_4_4 AT %Q* : BOOL; 
 	dout_1_5_5 AT %Q* : BOOL; 
@@ -246,87 +246,6 @@ VAR_GLOBAL
 		strText1 : STRING;
 		strText2 : STRING;
 	
-		din_1 AT %I* : BOOL; //kontaktron drzwi garaż/pralnia 5-s-3-1 zasilanie:biało-zielony, sygnał:zielony
-		din_2 AT %I* : BOOL; //włącznik w garażu ......
-		din_3 AT %I* : BOOL; //kontaktron okna pralnia ... zasilanie:biało-zielony, sygnał:zielony
-		din_4 AT %I* : BOOL;
-		din_5 AT %I* : BOOL;
-		din_6 AT %I* : BOOL;
-		din_7 AT %I* : BOOL;
-		din_8 AT %I* : BOOL;
-		din_9 AT %I* : BOOL;
-		din_10 AT %I* : BOOL;
-		din_11 AT %I* : BOOL;
-		din_12 AT %I* : BOOL;
-		din_13 AT %I* : BOOL;
-		din_14 AT %I* : BOOL;
-		din_15 AT %I* : BOOL;
-		din_16 AT %I* : BOOL;
-		din_17 AT %I* : BOOL;
-		din_18 AT %I* : BOOL;
-		din_19 AT %I* : BOOL;
-		din_20 AT %I* : BOOL; //wlacznik zaluzji w pralni w gore
-		din_21 AT %I* : BOOL; //wlacznik zaluzji w pralni w dol
-		din_22 AT %I* : BOOL;
-		din_23 AT %I* : BOOL;
-		din_24 AT %I* : BOOL;
-		din_25 AT %I* : BOOL;
-		din_26 AT %I* : BOOL;
-		din_27 AT %I* : BOOL;
-		din_28 AT %I* : BOOL;
-		din_29 AT %I* : BOOL;
-		din_30 AT %I* : BOOL;
-		din_31 AT %I* : BOOL;
-		din_32 AT %I* : BOOL;
-		din_33 AT %I* : BOOL;
-		din_34 AT %I* : BOOL;
-		din_35 AT %I* : BOOL;
-		din_36 AT %I* : BOOL;
-		din_37 AT %I* : BOOL;
-		din_38 AT %I* : BOOL;
-		din_39 AT %I* : BOOL;
-		din_40 AT %I* : BOOL;
-		din_41 AT %I* : BOOL;
-		din_42 AT %I* : BOOL;
-		din_43 AT %I* : BOOL;
-		din_44 AT %I* : BOOL;
-		din_45 AT %I* : BOOL;
-		din_46 AT %I* : BOOL;
-		din_47 AT %I* : BOOL;
-		din_48 AT %I* : BOOL;
-		din_49 AT %I* : BOOL;
-		din_50 AT %I* : BOOL;
-		din_51 AT %I* : BOOL;
-		din_52 AT %I* : BOOL;
-		din_53 AT %I* : BOOL;
-		din_54 AT %I* : BOOL;
-		din_55 AT %I* : BOOL;
-		din_56 AT %I* : BOOL;
-		din_57 AT %I* : BOOL;
-		din_58 AT %I* : BOOL;
-		din_59 AT %I* : BOOL;
-		din_60 AT %I* : BOOL;
-		din_61 AT %I* : BOOL;
-		din_62 AT %I* : BOOL;
-		din_63 AT %I* : BOOL;
-		din_64 AT %I* : BOOL;
-		din_65 AT %I* : BOOL;
-		din_66 AT %I* : BOOL;
-		din_67 AT %I* : BOOL;
-		din_68 AT %I* : BOOL;
-		din_69 AT %I* : BOOL;
-		din_70 AT %I* : BOOL;
-		din_71 AT %I* : BOOL;
-		din_72 AT %I* : BOOL;
-		din_73 AT %I* : BOOL;
-		din_74 AT %I* : BOOL;
-		din_75 AT %I* : BOOL;
-		din_76 AT %I* : BOOL;
-		din_77 AT %I* : BOOL;
-		din_78 AT %I* : BOOL;
-		din_79 AT %I* : BOOL;
-		din_80 AT %I* : BOOL;
-		din_81 AT %I* : BOOL;
 		din_82_service AT %I* : BOOL;
 
 //-------------------------------------------------------------------------------------------------	
@@ -386,13 +305,21 @@ VAR_GLOBAL
 	dout_22_roleta_kotlownia_w_dol AT %Q* : BOOL;
 	douts_22_roleta_kotlownia_w_dol : ARRAY[1..MAX_SHUTTER_OUTPUTS] OF BOOL;
 	
-//--
+	
+
+	dout_1_1_1_swiatlo_w_salonie_jadalnia_sufit AT %Q* : BOOL; //2-o-4-1
+	douts_1_1_1_swiatlo_w_salonie_jadalnia_sufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_1_2_2_swiatlo_w_salonie_kanapa_sufit AT %Q* : BOOL; //2-o-5-1
+	douts_1_2_2_swiatlo_w_salonie_kanapa_sufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon AT %Q* : BOOL; //2-o-7-1
+	douts_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	
+	
+	dout_102_swiatlo_w_kuchni_sufit AT %Q* : BOOL;
+	douts_102_swiatlo_w_kuchni_sufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	dout_23_swiatlo_w_pralni AT %Q* : BOOL;
 	douts_23_swiatlo_w_pralni : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL; 
-
-	dout_31_swiatlo_w_kuchni_sufit AT %Q* : BOOL;
-	douts_31_swiatlo_w_kuchni_sufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	dout_32_swiatlo_w_kuchni_podszafkowe AT %Q* : BOOL;
 	douts_32_swiatlo_w_kuchni_posszafkowe : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;

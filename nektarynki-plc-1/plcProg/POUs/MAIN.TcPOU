@@ -35,16 +35,19 @@ VAR
 		wlacznik_17_schody : LightSwitch();
 
 	proste_wlaczniki : ARRAY[1..GVL.MAX_SIMPLE_BUTTONS] OF POINTER TO SimpleButton;
-	wlacznik_33_pralnia : SimpleButton();
+		wlacznik_12_przedpokoj_poczworny_1z4 : SimpleButton();
+		wlacznik_13_przedpokoj_poczworny_2z4 : SimpleButton();
+		wlacznik_14_przedpokoj_poczworny_3z4 : SimpleButton();
+	//wlacznik_33_pralnia : SimpleButton();
 	
-		arr1 : ARRAY[1..3] OF BOOL;
-		arr2 : ARRAY[1..3] OF BOOL;
-		arr3 : ARRAY[1..3] OF BOOL;
-		arr4 : ARRAY[1..3] OF BOOL;
+	//	arr1 : ARRAY[1..3] OF BOOL;
+	//	arr2 : ARRAY[1..3] OF BOOL;
+	//	arr3 : ARRAY[1..3] OF BOOL;
+	//	arr4 : ARRAY[1..3] OF BOOL;
 		
 		
-		arr5 : ARRAY[1..2] OF BOOL;
-		arr6 : ARRAY[1..2] OF BOOL;
+	//	arr5 : ARRAY[1..2] OF BOOL;
+	//	arr6 : ARRAY[1..2] OF BOOL;
 		
 		//button1 : LightSwitch;//ShutterSwitch;//LightSwitch;//UpStopDownButton;// LightSwitch;	
 		//button2 : ShutterSwitch;
@@ -108,26 +111,6 @@ _programBypass :
 
 ]]></ST>
     </Implementation>
-    <Method Name="initButtons" Id="{bf7480a3-2217-4091-9e5a-54e832bdb26c}">
-      <Declaration><![CDATA[METHOD initButtons
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[//button2(ID:= 1,	digitalInputUp:= GVL.b_button_4,	digitalInputDown:= GVL.b_button_5,down_outputs:=arr5, up_outputs:=arr6); //shutter switch
- 
-//button1(ID := 1, digitalInput := GVL.b_button_4, small_outputs := arr1,	medium_outputs := arr2,	big_outputs := arr3,
-//	superstrong_outputs := arr4, 	levelsManaged := 4,	defaultDayOutput := E_OutputLevel.big,	defaultNightOutput := E_OutputLevel.small); //light switch
-	
-	
-//button1(ID:= 1, digitalInput := GVL.b_button_4, outputs := arr1, defaultFirstClickDirection := E_Direction.UP);
-	
-//button1(digitalInput:= GVL.b_button_4, ID:=1, name:='goscinny', outputs := arr1, runAsYouPress := FALSE);
-
-
-	]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="initializeButtons" Id="{8a6ffdb9-baa8-41fd-856d-9b1a94c3eee6}">
       <Declaration><![CDATA[METHOD initializeButtons
 VAR_INPUT
@@ -142,11 +125,11 @@ END_VAR
 //wlacznik_bramy_garazowej(ID:=123, defaultFirstClickDirection:=E_Direction.UP, digitalInput:=GVL.din_21, outputs:=GVL.douts_44_ogrzewanie_lustra, name:='brama garazowa', withReturn:=FALSE);
 	
 
-wlacznik_17_schody(ID:=17, name:='Wlacznik swiatla przy schodach', 
-		digitalInput:=GVL.din_22, small_outputs:= GVL.douts_ledy2, medium_outputs:= GVL.douts_ledy3,
-		levelsManaged:= 2, 
-		defaultDayOutput:=E_OutputLevel.MEDIUM, defaultNightOutput:=E_OutputLevel.SMALL);	
-wlaczniki_swiatel[1] := ADR(wlacznik_17_schody);
+//wlacznik_17_schody(ID:=17, name:='Wlacznik swiatla przy schodach', 
+//		digitalInput:=GVL.din_22, small_outputs:= GVL.douts_ledy2, medium_outputs:= GVL.douts_ledy3,
+//		levelsManaged:= 2, 
+//		defaultDayOutput:=E_OutputLevel.MEDIUM, defaultNightOutput:=E_OutputLevel.SMALL);	
+//wlaczniki_swiatel[1] := ADR(wlacznik_17_schody);
 
 //wlacznik_12_pralnia(ID:=12, name:='Wlacznik swiatla w pralni', 
 //		digitalInput:=GVL.din_21, small_outputs:= GVL.douts_ledy1,
@@ -154,11 +137,23 @@ wlaczniki_swiatel[1] := ADR(wlacznik_17_schody);
 //		defaultDayOutput:=E_OutputLevel.SMALL, defaultNightOutput:=E_OutputLevel.SMALL);
 //wlaczniki_swiatel[2] := ADR(wlacznik_12_pralnia);
 		
-wlacznik_33_pralnia(ID:=33, name:='Wlacznik swiatla w pralni',
-		digitalInput:=GVL.din_21, outputs:=GVL.douts_ledy1,
-        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
-proste_wlaczniki[1] := ADR(wlacznik_33_pralnia);
+//wlacznik_33_pralnia(ID:=33, name:='Wlacznik swiatla w pralni',
+//		digitalInput:=GVL.din_21, outputs:=GVL.douts_ledy1,
+//        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+//proste_wlaczniki[1] := ADR(wlacznik_33_pralnia);
 
+wlacznik_12_przedpokoj_poczworny_1z4(ID:=12, name:='Elektroniczny lacznik swiatla w przedpokoju 1/4',
+		digitalInput:=GVL.din_1_10_10, outputs:=GVL.douts_1_1_1_swiatlo_w_salonie_jadalnia_sufit,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+proste_wlaczniki[1] := ADR(wlacznik_12_przedpokoj_poczworny_1z4);
+wlacznik_13_przedpokoj_poczworny_2z4(ID:=13, name:='Elektroniczny lacznik swiatla w przedpokoju 2/4',
+		digitalInput:=GVL.din_1_11_11, outputs:=GVL.douts_1_2_2_swiatlo_w_salonie_kanapa_sufit,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+proste_wlaczniki[2] := ADR(wlacznik_13_przedpokoj_poczworny_2z4);
+wlacznik_14_przedpokoj_poczworny_3z4(ID:=14, name:='Elektroniczny lacznik swiatla w przedpokoju 3/4',
+		digitalInput:=GVL.din_1_12_12, outputs:=GVL.douts_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+proste_wlaczniki[3] := ADR(wlacznik_14_przedpokoj_poczworny_3z4);
 (* ShutterSwitch - pozostalo odkomentowac i podpiąć odpowiednie we/wy
 
 wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji okna w pralni', 
@@ -285,15 +280,23 @@ wlaczniki_rolet_i_zaluzji[4]^.loop();
 //TODO pozostale wlaczniki rolet
 
 
-wlaczniki_swiatel[1]^.loop();
-	GVL.b_led_2 := GVL.douts_ledy2[1];
-	GVL.b_led_3 := GVL.douts_ledy3[1];
+//wlaczniki_swiatel[1]^.loop();
+
+//	GVL.b_led_2 := GVL.douts_ledy2[1];
+//	GVL.b_led_3 := GVL.douts_ledy3[1];
 	
 //wlaczniki_swiatel[2]^.loop();
 //	GVL.b_led_1 := GVL.douts_ledy1[1];
 	
+
 proste_wlaczniki[1]^.loop();
-	GVL.b_led_1 := GVL.douts_ledy1[1];
+	GVL.dout_1_1_1_swiatlo_w_salonie_jadalnia_sufit := GVL.douts_1_1_1_swiatlo_w_salonie_jadalnia_sufit[1];
+	
+proste_wlaczniki[2]^.loop();
+	GVL.dout_1_2_2_swiatlo_w_salonie_kanapa_sufit := GVL.douts_1_2_2_swiatlo_w_salonie_kanapa_sufit[1];
+
+proste_wlaczniki[3]^.loop();
+	GVL.dout_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon := GVL.douts_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon[1];
 
 
 ]]></ST>
@@ -309,8 +312,8 @@ VAR
 	neededLow : BOOL := TRUE;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[neededHigh := GVL.din_21;//_1;
-neededLow := GVL.din_22;//_2;
+        <ST><![CDATA[neededHigh := GVL.din_1_1_1;//_1;
+neededLow := GVL.din_1_2_2;//_2;
 
 IF serviceMode THEN
 	JMP _wait_for_service_mode_exit;
@@ -337,18 +340,6 @@ END_IF
       <LineId Id="991" Count="39" />
       <LineId Id="71" Count="0" />
     </LineIds>
-    <LineIds Name="MAIN.initButtons">
-      <LineId Id="50" Count="1" />
-      <LineId Id="6" Count="0" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="23" Count="0" />
-      <LineId Id="38" Count="1" />
-      <LineId Id="24" Count="0" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="48" Count="0" />
-      <LineId Id="47" Count="0" />
-      <LineId Id="49" Count="0" />
-    </LineIds>
     <LineIds Name="MAIN.initializeButtons">
       <LineId Id="38" Count="0" />
       <LineId Id="55" Count="2" />
@@ -365,7 +356,12 @@ END_IF
       <LineId Id="182" Count="0" />
       <LineId Id="184" Count="0" />
       <LineId Id="181" Count="0" />
+      <LineId Id="189" Count="3" />
+      <LineId Id="188" Count="0" />
+      <LineId Id="193" Count="2" />
       <LineId Id="161" Count="0" />
+      <LineId Id="197" Count="2" />
+      <LineId Id="196" Count="0" />
       <LineId Id="149" Count="0" />
       <LineId Id="77" Count="0" />
       <LineId Id="6" Count="0" />
@@ -429,12 +425,16 @@ END_IF
       <LineId Id="44" Count="1" />
       <LineId Id="29" Count="0" />
       <LineId Id="47" Count="0" />
-      <LineId Id="59" Count="2" />
+      <LineId Id="59" Count="1" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="61" Count="0" />
       <LineId Id="48" Count="0" />
       <LineId Id="62" Count="0" />
       <LineId Id="46" Count="0" />
       <LineId Id="51" Count="0" />
-      <LineId Id="63" Count="2" />
+      <LineId Id="63" Count="1" />
+      <LineId Id="74" Count="1" />
+      <LineId Id="78" Count="5" />
       <LineId Id="53" Count="0" />
       <LineId Id="52" Count="0" />
       <LineId Id="55" Count="0" />
