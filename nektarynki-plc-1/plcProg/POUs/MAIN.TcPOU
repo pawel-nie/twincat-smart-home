@@ -126,41 +126,41 @@ wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji okna w pralni',
 		digitalInputDown:=GVL.din_04zModulu1_przewod_5_s_27_1_pralnia_2z2_niebieski,
 		up_outputs:=GVL.douts_1_zaluzja_pralnia_w_gore, 
 		down_outputs:=GVL.douts_2_zaluzja_pralnia_w_dol, 
-		shortTime:=T#600MS, longTime:= T#40S);
+		shortTime:=T#500MS, longTime:= T#37S);
 wlaczniki_rolet_i_zaluzji[1] := ADR(wlacznik_1_zaluzja_pralnia);
 
-(*wlacznik_2_zaluzje_kuchnia(ID:=2, name:='Wlacznik zaluzji okna naroznego w kuchni', 
-		digitalInputUp:=GVL.din_23, 
-		digitalInputDown:=GVL.din_24,
+wlacznik_2_zaluzje_kuchnia(ID:=2, name:='Wlacznik zaluzji okna naroznego w kuchni', 
+		digitalInputUp:=GVL.din_04zModulu2_przewod_3_s_30_1_kuchnia_1z2_niebieski,
+		digitalInputDown:=GVL.din_03zModulu2_przewod_3_s_30_1_kuchnia_2z2_zielony,
 		up_outputs:=GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore, 
 		down_outputs:=GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol, 
-		shortTime:=T#250MS, longTime:= T#30S);
+		shortTime:=T#500MS, longTime:= T#37S);
 wlaczniki_rolet_i_zaluzji[2] := ADR(wlacznik_2_zaluzje_kuchnia);
 
 wlacznik_3_zaluzje_wykusz(ID:=3, name:='Wlacznik zaluzji przeszklenia wykuszu w salonie', 
-		digitalInputUp:=GVL.din_25, 
-		digitalInputDown:=GVL.din_26,
+		digitalInputUp:=GVL.din_06zModulu2_przewod_3_s_30_1_kuchnia_1z2_brazowy, 
+		digitalInputDown:=GVL.din_05zModulu2_przewod_3_s_30_1_kuchnia_2z2_pomaranczowy,
 		up_outputs:=GVL.douts_5_zaluzja_wykusz_w_gore, 
 		down_outputs:=GVL.douts_6_zaluzja_wykusz_w_dol, 
-		shortTime:=T#250MS, longTime:= T#60S);		
+		shortTime:=T#500MS, longTime:= T#56S);		
 wlaczniki_rolet_i_zaluzji[3] := ADR(wlacznik_3_zaluzje_wykusz);
 
 wlacznik_4_zaluzja_slide(ID:=4, name:='Wlacznik zaluzji drzwi slide na taras', 
-		digitalInputUp:=GVL.din_27, 
-		digitalInputDown:=GVL.din_28,
+		digitalInputUp:=GVL.din_08zModulu2_przewod_3_s_30_1_kuchnia_1z2_bialopomaranczowy, 
+		digitalInputDown:=GVL.din_07zModulu2_przewod_3_s_30_1_kuchnia_2z2_bialoniebieski,
 		up_outputs:=GVL.douts_7_zaluzja_slide_w_gore, 
 		down_outputs:=GVL.douts_8_zaluzja_slide_w_dol, 
-		shortTime:=T#250MS, longTime:= T#60S);				
+		shortTime:=T#500MS, longTime:= T#56S);				
 wlaczniki_rolet_i_zaluzji[4] := ADR(wlacznik_4_zaluzja_slide);	
 
 wlacznik_5_zaluzja_gabinet(ID:=5, name:='Wlacznik zaluzji okna w gabinecie', 
-		digitalInputUp:=GVL.din_29,
-		digitalInputDown:=GVL.din_30,
+		digitalInputUp:=GVL.din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy,
+		digitalInputDown:=GVL.din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski,
 		up_outputs:=GVL.douts_9_zaluzja_gabinet_w_gore, 
 		down_outputs:=GVL.douts_10_zaluzja_gabinet_w_dol, 
-		shortTime:=T#250MS, longTime:= T#30S);
+		shortTime:=T#500MS, longTime:= T#37S);
 wlaczniki_rolet_i_zaluzji[5] := ADR(wlacznik_5_zaluzja_gabinet);
-
+(*
 wlacznik_6_zaluzja_balkon(ID:=6, name:='Wlacznik zaluzji drzwi sypialni z balkonem', 
 		digitalInputUp:=GVL.din_31,
 		digitalInputDown:=GVL.din_32,
@@ -284,19 +284,22 @@ END_VAR
 wlaczniki_rolet_i_zaluzji[1]^.loop();
 	GVL.dout_1_zaluzja_pralnia_w_gore := GVL.douts_1_zaluzja_pralnia_w_gore[1];
 	GVL.dout_2_zaluzja_pralnia_w_dol := GVL.douts_2_zaluzja_pralnia_w_dol[1];
-(* 	
+ 	
  wlaczniki_rolet_i_zaluzji[2]^.loop();
 	GVL.dout_3_zaluzja_okno_narozne_kuchnia_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
 	GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol := GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol[1];
 	
 wlaczniki_rolet_i_zaluzji[3]^.loop();
-	GVL.dout_5_zaluzja_wykusz_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
+	GVL.dout_5_zaluzja_wykusz_w_gore := GVL.douts_5_zaluzja_wykusz_w_gore[1];
 	GVL.dout_6_zaluzja_wykusz_w_dol := GVL.douts_6_zaluzja_wykusz_w_dol[1];
 	
 wlaczniki_rolet_i_zaluzji[4]^.loop();
 	GVL.dout_7_zaluzja_slide_w_gore := GVL.douts_7_zaluzja_slide_w_gore[1];
 	GVL.dout_8_zaluzja_slide_w_dol := GVL.douts_8_zaluzja_slide_w_dol[1];
-*)
+
+wlaczniki_rolet_i_zaluzji[5]^.loop();
+	GVL.dout_9_zaluzja_gabinet_w_gore := GVL.douts_9_zaluzja_gabinet_w_gore[1];
+	GVL.dout_10_zaluzja_gabinet_w_dol := GVL.douts_10_zaluzja_gabinet_w_dol[1];
 
 //TODO pozostale wlaczniki rolet
 
@@ -396,7 +399,8 @@ END_IF
       <LineId Id="11" Count="0" />
       <LineId Id="39" Count="0" />
       <LineId Id="13" Count="3" />
-      <LineId Id="20" Count="5" />
+      <LineId Id="20" Count="4" />
+      <LineId Id="87" Count="3" />
       <LineId Id="44" Count="1" />
       <LineId Id="29" Count="0" />
       <LineId Id="47" Count="0" />

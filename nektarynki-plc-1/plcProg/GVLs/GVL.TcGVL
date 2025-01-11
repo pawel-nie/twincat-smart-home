@@ -22,8 +22,22 @@ VAR_GLOBAL
 	din_1_7_7 AT %I* : BOOL;
 	din_1_8_8 AT %I* : BOOL;
 	din_1_9_9 AT %I* : BOOL; 
-	din_04zModulu1_przewod_5_s_27_1_pralnia_2z2_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w pralni dol
 	din_05zModulu1_przewod_5_s_27_1_pralnia_1z2_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w pralni gora
+	din_04zModulu1_przewod_5_s_27_1_pralnia_2z2_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w pralni dol
+
+	din_04zModulu2_przewod_3_s_30_1_kuchnia_1z2_niebieski  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia dol
+	din_03zModulu2_przewod_3_s_30_1_kuchnia_2z2_zielony  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia gora
+    
+    din_06zModulu2_przewod_3_s_30_1_kuchnia_1z2_brazowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni wykusz gora
+	din_05zModulu2_przewod_3_s_30_1_kuchnia_2z2_pomaranczowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni wykusz dol
+
+    din_08zModulu2_przewod_3_s_30_1_kuchnia_1z2_bialopomaranczowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni slide gora
+	din_07zModulu2_przewod_3_s_30_1_kuchnia_2z2_bialoniebieski  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni slide dol
+
+    din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie gora
+	din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie dol
+	
+
 	din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy AT %I* : BOOL;//bylo din1_10_10 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 1/4 lub wlacznik poczworny w kuchni na slupku
 	din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski AT %I* : BOOL; //bylo din1_11_11 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 2/4
 	din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy AT %I* : BOOL; //bylo din1_12_12 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 3/4 lub wlacznik poczworny na dole schodow 1/4

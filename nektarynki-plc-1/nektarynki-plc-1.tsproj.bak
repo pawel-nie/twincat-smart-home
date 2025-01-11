@@ -15,7 +15,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{A14C7FBD-5B32-49C5-96AB-4C1D0189B914}" Name="plcProg" PrjFilePath="plcProg\plcProg.plcproj" TmcFilePath="plcProg\plcProg.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{8DAD9426-F998-A59F-ABF4-1F8F12525354}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{C7BA5969-90D6-49CB-565D-E8C8D920EAD9}">
 					<Name>plcProg Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
@@ -60,6 +60,16 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
+							<Name>GVL.din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w gabinecie gora]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w gabinecie dol]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
 							<Name>GVL.din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy</Name>
 							<Comment><![CDATA[bylo din1_10_10 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 1/4 lub wlacznik poczworny w kuchni na slupku]]></Comment>
 							<Type>BOOL</Type>
@@ -99,6 +109,36 @@
 						<Var>
 							<Name>GVL.din_05zModulu1_przewod_5_s_27_1_pralnia_1z2_pomaranczowy</Name>
 							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w pralni gora]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_03zModulu2_przewod_3_s_30_1_kuchnia_2z2_zielony</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia gora]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_04zModulu2_przewod_3_s_30_1_kuchnia_1z2_niebieski</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia dol]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_06zModulu2_przewod_3_s_30_1_kuchnia_1z2_brazowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni wykusz gora]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_05zModulu2_przewod_3_s_30_1_kuchnia_2z2_pomaranczowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni wykusz dol]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_08zModulu2_przewod_3_s_30_1_kuchnia_1z2_bialopomaranczowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni slide gora]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_07zModulu2_przewod_3_s_30_1_kuchnia_2z2_bialoniebieski</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni slide dol]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 					</Vars>
@@ -2194,6 +2234,14 @@ Bit 15 = Acyc. Function atcive (e.g. K-Bus Reset)
 		<MappingInfo Identifier="{00000000-2001-0850-0020-500810000403}" Id="#x02030010"/>
 		<OwnerA Name="TIPC^plcProg^plcProg Instance">
 			<OwnerB Name="TIID^Device 2 (CX-BK)^Box 1 (CX-BK)">
+				<Link VarA="PlcTask Inputs^GVL.din_03zModulu2_przewod_3_s_30_1_kuchnia_2z2_zielony" VarB="Term 3 (KL1809)^Channel 3^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_04zModulu1_przewod_5_s_27_1_pralnia_2z2_niebieski" VarB="Term 2 (KL1809)^Channel 4^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_04zModulu2_przewod_3_s_30_1_kuchnia_1z2_niebieski" VarB="Term 3 (KL1809)^Channel 4^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_05zModulu1_przewod_5_s_27_1_pralnia_1z2_pomaranczowy" VarB="Term 2 (KL1809)^Channel 5^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_05zModulu2_przewod_3_s_30_1_kuchnia_2z2_pomaranczowy" VarB="Term 3 (KL1809)^Channel 5^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_06zModulu2_przewod_3_s_30_1_kuchnia_1z2_brazowy" VarB="Term 3 (KL1809)^Channel 6^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_07zModulu2_przewod_3_s_30_1_kuchnia_2z2_bialoniebieski" VarB="Term 3 (KL1809)^Channel 7^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_08zModulu2_przewod_3_s_30_1_kuchnia_1z2_bialopomaranczowy" VarB="Term 3 (KL1809)^Channel 8^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy" VarB="Term 2 (KL1809)^Channel 10^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski" VarB="Term 2 (KL1809)^Channel 11^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy" VarB="Term 2 (KL1809)^Channel 12^Input"/>
@@ -2201,7 +2249,13 @@ Bit 15 = Acyc. Function atcive (e.g. K-Bus Reset)
 				<Link VarA="PlcTask Outputs^GVL.dout_1zModulu1_przewod_2_o_4_1_swiatloSalonJadalniaSufit" VarB="Term 9 (KL2809)^Channel 1^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_2_zaluzja_pralnia_w_dol" VarB="Term 12 (KL2809)^Channel 12^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_2zModulu1_przewod_2_o_5_1_swiatloSalonKanapaSufit" VarB="Term 9 (KL2809)^Channel 2^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_3_zaluzja_okno_narozne_kuchnia_w_gore" VarB="Term 12 (KL2809)^Channel 13^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_3zModulu1_przewod_2_o_7_1_swiatloPrzejscieZPrzedpokojuDoSalonuSufit" VarB="Term 9 (KL2809)^Channel 3^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol" VarB="Term 12 (KL2809)^Channel 14^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_5_zaluzja_wykusz_w_gore" VarB="Term 12 (KL2809)^Channel 15^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_6_zaluzja_wykusz_w_dol" VarB="Term 12 (KL2809)^Channel 16^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_7_zaluzja_slide_w_gore" VarB="Term 13 (KL2809)^Channel 1^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_8_zaluzja_slide_w_dol" VarB="Term 13 (KL2809)^Channel 2^Output"/>
 			</OwnerB>
 		</OwnerA>
 	</Mappings>
