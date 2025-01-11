@@ -22,231 +22,21 @@ VAR_GLOBAL
 	din_1_7_7 AT %I* : BOOL;
 	din_1_8_8 AT %I* : BOOL;
 	din_1_9_9 AT %I* : BOOL; 
-	din_1_10_10 AT %I* : BOOL; //1-s-25-1 1/4 koniec przedpokoju elektroniczny poczwórny (wh-gn->br)
-	din_1_11_11 AT %I* : BOOL; //1-s-25-1 2/4 koniec przedpokoju elektroniczny poczwórny (wh-gn->wh-bl)
-	din_1_12_12 AT %I* : BOOL; //1-s-25-1 3/4 koniec przedpokoju elektroniczny poczwórny (wh-gn->wh-or)
-	din_1_13_13 AT %I* : BOOL;
+	din_04zModulu1_przewod_5_s_27_1_pralnia_2z2_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w pralni dol
+	din_05zModulu1_przewod_5_s_27_1_pralnia_1z2_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w pralni gora
+	din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy AT %I* : BOOL;//bylo din1_10_10 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 1/4 lub wlacznik poczworny w kuchni na slupku
+	din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski AT %I* : BOOL; //bylo din1_11_11 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 2/4
+	din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy AT %I* : BOOL; //bylo din1_12_12 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 3/4 lub wlacznik poczworny na dole schodow 1/4
+	din_13zModulu1_przewod_xxxxxxxx_koniecPrzedpokojuElektronicznyPoczworny_4z4_bialobrazowy AT %I* : BOOL; //din_1_13_13 //zasilanie bialo-zielony: Elektroniczny wlacznik swiatla w przedpokoju 4/4	
+
+	
 	din_1_14_14 AT %I* : BOOL;
 	din_1_15_15 AT %I* : BOOL;
 	din_1_16_16 AT %I* : BOOL;
-	
-	din_2_1_17 AT %I* : BOOL; 
-	din_2_2_18 AT %I* : BOOL;
-	din_2_3_19 AT %I* : BOOL;
-	din_2_4_20 AT %I* : BOOL;
-	din_2_5_21 AT %I* : BOOL;
-	din_2_6_22 AT %I* : BOOL;
-	din_2_7_23 AT %I* : BOOL;
-	din_2_8_24 AT %I* : BOOL;
-	din_2_9_25 AT %I* : BOOL; 
-	din_2_10_26 AT %I* : BOOL;
-	din_2_11_27 AT %I* : BOOL;
-	din_2_12_28 AT %I* : BOOL;
-	din_2_13_29 AT %I* : BOOL;
-	din_2_14_30 AT %I* : BOOL;
-	din_2_15_31 AT %I* : BOOL;
-	din_2_16_32 AT %I* : BOOL;
-	
-	din_3_1_33 AT %I* : BOOL; 
-	din_3_2_34 AT %I* : BOOL;
-	din_3_3_35 AT %I* : BOOL;
-	din_3_4_36 AT %I* : BOOL;
-	din_3_5_37 AT %I* : BOOL;
-	din_3_6_38 AT %I* : BOOL;
-	din_3_7_39 AT %I* : BOOL;
-	din_3_8_40 AT %I* : BOOL;
-	din_3_9_41 AT %I* : BOOL; 
-	din_3_10_42 AT %I* : BOOL;
-	din_3_11_43 AT %I* : BOOL;
-	din_3_12_44 AT %I* : BOOL;
-	din_3_13_45 AT %I* : BOOL;
-	din_3_14_46 AT %I* : BOOL;
-	din_3_15_47 AT %I* : BOOL;
-	din_3_16_48 AT %I* : BOOL;
-	
-	din_4_1_49 AT %I* : BOOL; 
-	din_4_2_50 AT %I* : BOOL;
-	din_4_3_51 AT %I* : BOOL;
-	din_4_4_52 AT %I* : BOOL;
-	din_4_5_53 AT %I* : BOOL;
-	din_4_6_54 AT %I* : BOOL;
-	din_4_7_55 AT %I* : BOOL;
-	din_4_8_56 AT %I* : BOOL;
-	din_4_9_57 AT %I* : BOOL; 
-	din_4_10_58 AT %I* : BOOL;
-	din_4_11_59 AT %I* : BOOL;
-	din_4_12_60 AT %I* : BOOL;
-	din_4_13_61 AT %I* : BOOL;
-	din_4_14_62 AT %I* : BOOL;
-	din_4_15_63 AT %I* : BOOL;
-	din_4_16_64 AT %I* : BOOL;
-	
-	din_5_1_65 AT %I* : BOOL; 
-	din_5_2_66 AT %I* : BOOL;
-	din_5_3_67 AT %I* : BOOL;
-	din_5_4_68 AT %I* : BOOL;
-	din_5_5_69 AT %I* : BOOL;
-	din_5_6_70 AT %I* : BOOL;
-	din_5_7_71 AT %I* : BOOL;
-	din_5_8_72 AT %I* : BOOL;
-	din_5_9_73 AT %I* : BOOL; 
-	din_5_10_74 AT %I* : BOOL;
-	din_5_11_75 AT %I* : BOOL;
-	din_5_12_76 AT %I* : BOOL;
-	din_5_13_77 AT %I* : BOOL;
-	din_5_14_78 AT %I* : BOOL;
-	din_5_15_79 AT %I* : BOOL;
-	din_5_16_80 AT %I* : BOOL;
-	
-	din_6_1_81 AT %I* : BOOL; 
-	din_6_2_82 AT %I* : BOOL;
-	din_6_3_83 AT %I* : BOOL;
-	din_6_4_84 AT %I* : BOOL;
-	din_6_5_85 AT %I* : BOOL;
-	din_6_6_86 AT %I* : BOOL;
-	din_6_7_87 AT %I* : BOOL;
-	din_6_8_88 AT %I* : BOOL;
-	din_6_9_89 AT %I* : BOOL; 
-	din_6_10_90 AT %I* : BOOL;
-	din_6_11_91 AT %I* : BOOL;
-	din_6_12_92 AT %I* : BOOL;
-	din_6_13_93 AT %I* : BOOL;
-	din_6_14_94 AT %I* : BOOL;
-	din_6_15_95 AT %I* : BOOL;
-	din_6_16_96 AT %I* : BOOL;
-	
-	din_7_1_97 AT %I* : BOOL; 
-	din_7_2_98 AT %I* : BOOL;
-	din_7_3_99 AT %I* : BOOL;
-	din_7_4_100 AT %I* : BOOL;
-	din_7_5_101 AT %I* : BOOL;
-	din_7_6_102 AT %I* : BOOL;
-	din_7_7_103 AT %I* : BOOL;
-	din_7_8_104 AT %I* : BOOL;
-	din_7_9_105 AT %I* : BOOL; 
-	din_7_10_106 AT %I* : BOOL;
-	din_7_11_107 AT %I* : BOOL;
-	din_7_12_108 AT %I* : BOOL;
-	din_7_13_109 AT %I* : BOOL;
-	din_7_14_110 AT %I* : BOOL;
-	din_7_15_111 AT %I* : BOOL;
-	din_7_16_112 AT %I* : BOOL;
-	
-	
-	dout_1_1_1 AT %Q* : BOOL;
-	dout_1_2_2 AT %Q* : BOOL;  
-	dout_1_3_3 AT %Q* : BOOL; 
-	dout_1_4_4 AT %Q* : BOOL; 
-	dout_1_5_5 AT %Q* : BOOL; 
-	dout_1_6_6 AT %Q* : BOOL; 
-	dout_1_7_7 AT %Q* : BOOL; 
-	dout_1_8_8 AT %Q* : BOOL; 
-	dout_1_9_9 AT %Q* : BOOL; 
-	dout_1_10_10 AT %Q* : BOOL; 
-	dout_1_11_11 AT %Q* : BOOL; 
-	dout_1_12_12 AT %Q* : BOOL; 
-	dout_1_13_13 AT %Q* : BOOL; 
-	dout_1_14_14 AT %Q* : BOOL; 	
-	dout_1_15_15 AT %Q* : BOOL; 
-	dout_1_16_16 AT %Q* : BOOL; 
-
-	dout_2_1_17 AT %Q* : BOOL; 
-	dout_2_2_18 AT %Q* : BOOL; 
-	dout_2_3_19 AT %Q* : BOOL; 
-	dout_2_4_20 AT %Q* : BOOL; 
-	dout_2_5_21 AT %Q* : BOOL; 
-	dout_2_6_22 AT %Q* : BOOL; 
-	dout_2_7_23 AT %Q* : BOOL; 
-	dout_2_8_24 AT %Q* : BOOL; 
-	dout_2_9_25 AT %Q* : BOOL; 
-	dout_2_10_26 AT %Q* : BOOL; 
-	dout_2_11_27 AT %Q* : BOOL; 
-	dout_2_12_28 AT %Q* : BOOL; 
-	dout_2_13_29 AT %Q* : BOOL; 
-	dout_2_14_30 AT %Q* : BOOL; 	
-	dout_2_15_31 AT %Q* : BOOL; 
-	dout_2_16_32 AT %Q* : BOOL; 
-
-	dout_3_1_33 AT %Q* : BOOL; 
-	dout_3_2_34 AT %Q* : BOOL; 
-	dout_3_3_35 AT %Q* : BOOL; 
-	dout_3_4_36 AT %Q* : BOOL; 
-	dout_3_5_37 AT %Q* : BOOL; 
-	dout_3_6_38 AT %Q* : BOOL; 
-	dout_3_7_39 AT %Q* : BOOL; 
-	dout_3_8_40 AT %Q* : BOOL; 
-	dout_3_9_41 AT %Q* : BOOL; 
-	dout_3_10_42 AT %Q* : BOOL; 
-	dout_3_11_43 AT %Q* : BOOL; 
-	dout_3_12_44 AT %Q* : BOOL; 
-	dout_3_13_45 AT %Q* : BOOL; 
-	dout_3_14_46 AT %Q* : BOOL; 	
-	dout_3_15_47 AT %Q* : BOOL; 
-	dout_3_16_48 AT %Q* : BOOL; 
-
-	dout_4_1_49 AT %Q* : BOOL; 
-	dout_4_2_50 AT %Q* : BOOL; 
-	dout_4_3_51 AT %Q* : BOOL; 
-	dout_4_4_52 AT %Q* : BOOL; 
-	dout_4_5_53 AT %Q* : BOOL; 
-	dout_4_6_54 AT %Q* : BOOL; 
-	dout_4_7_55 AT %Q* : BOOL; 
-	dout_4_8_56 AT %Q* : BOOL; 
-	dout_4_9_57 AT %Q* : BOOL; 
-	dout_4_10_58 AT %Q* : BOOL; 
-	dout_4_11_59 AT %Q* : BOOL; 
-	dout_4_12_60 AT %Q* : BOOL; 
-	dout_4_13_61 AT %Q* : BOOL; 
-	dout_4_14_62 AT %Q* : BOOL; 	
-	dout_4_15_63 AT %Q* : BOOL; 
-	dout_4_16_64 AT %Q* : BOOL; 
-
-	dout_5_1_65 AT %Q* : BOOL; 
-	dout_5_2_66 AT %Q* : BOOL; 
-	dout_5_3_67 AT %Q* : BOOL; 
-	dout_5_4_68 AT %Q* : BOOL; 
-	dout_5_5_69 AT %Q* : BOOL; 
-	dout_5_6_70 AT %Q* : BOOL; 
-	dout_5_7_71 AT %Q* : BOOL; 
-	dout_5_8_72 AT %Q* : BOOL; 
-	dout_5_9_73 AT %Q* : BOOL; 
-	dout_5_10_74 AT %Q* : BOOL; 
-	dout_5_11_75 AT %Q* : BOOL; 
-	dout_5_12_76 AT %Q* : BOOL; 
-	dout_5_13_77 AT %Q* : BOOL; 
-	dout_5_14_78 AT %Q* : BOOL; 	
-	dout_5_15_79 AT %Q* : BOOL; 
-	dout_5_16_80 AT %Q* : BOOL; 
 
 	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
 	EventLogger : EventLogger(CsvPersistentEventStorage);
 	
-	
-	
-		b_button_1 AT %I* : BOOL;
-		b_button_2 AT %I* : BOOL;
-		b_button_3 AT %I* : BOOL;
-		b_button_4 AT %I* : BOOL;
-		b_button_5 AT %I* : BOOL;
-		
-		b_led_1 AT %Q* : BOOL;
-		b_led_2 AT %Q* : BOOL;	
-		b_led_10 AT %Q* : BOOL;
-		b_led_3 AT %Q* : BOOL;
-		b_led_4 AT %Q* : BOOL;
-		b_led_12 AT %Q* : BOOL;
-		
-		
-		
-		
-		bDigital1 : BOOL;
-		bDigital2 : BOOL;
-		iData1 : INT;
-		iData2 : INT;
-		strText1 : STRING;
-		strText2 : STRING;
-	
-		din_82_service AT %I* : BOOL;
 
 //-------------------------------------------------------------------------------------------------	
 //OUTPUTS
@@ -307,32 +97,49 @@ VAR_GLOBAL
 	
 	
 
-	dout_1_1_1_swiatlo_w_salonie_jadalnia_sufit AT %Q* : BOOL; //2-o-4-1
-	douts_1_1_1_swiatlo_w_salonie_jadalnia_sufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_1_2_2_swiatlo_w_salonie_kanapa_sufit AT %Q* : BOOL; //2-o-5-1
-	douts_1_2_2_swiatlo_w_salonie_kanapa_sufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon AT %Q* : BOOL; //2-o-7-1
-	douts_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	
-	
-	dout_102_swiatlo_w_kuchni_sufit AT %Q* : BOOL;
-	douts_102_swiatlo_w_kuchni_sufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	
-	dout_23_swiatlo_w_pralni AT %Q* : BOOL;
-	douts_23_swiatlo_w_pralni : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL; 
-	
-	dout_32_swiatlo_w_kuchni_podszafkowe AT %Q* : BOOL;
-	douts_32_swiatlo_w_kuchni_posszafkowe : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	
-	
-	dout_44_ogrzewanie_lustra AT %Q* : BOOL;
-	douts_44_ogrzewanie_lustra : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	
-	
-	douts_ledy1 : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	douts_ledy2 : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	douts_ledy3 : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	
+	dout_1zModulu1_przewod_2_o_4_1_swiatloSalonJadalniaSufit AT %Q* : BOOL; //2-o-4-1
+		douts_swiatloSalonJadalniaSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_2zModulu1_przewod_2_o_5_1_swiatloSalonKanapaSufit AT %Q* : BOOL; //2-o-5-1
+		douts_swiatloSalonKanapaSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_3zModulu1_przewod_2_o_7_1_swiatloPrzejscieZPrzedpokojuDoSalonuSufit AT %Q* : BOOL; //2-o-7-1
+		douts_swiatloPrzejscieZPrzedpokojuDoSalonuSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_4zModulu1_przewod_x_o_x_x_swiatloSrodekSalonuSufit AT %Q* : BOOL; //xxxxx
+		douts_swiatloSrodekSalonuSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+    
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloKontuarKuchnia AT %Q* : BOOL; //xxxxx
+		douts_swiatloKontuarKuchnia : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloKuchniaSufit AT %Q* : BOOL; //xxxxx
+		douts_swiatloKuchniaSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloKuchniaPodSzafkami AT %Q* : BOOL; //xxxxx
+		douts_swiatloKuchniaPodSzafkami : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloPrzedpokojBlizejSalonu AT %Q* : BOOL; //xxxxx
+		douts_swiatloPrzedpokojBlizejSalonu : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloPrzedpokojBlizejDrzwi AT %Q* : BOOL; //xxxxx
+		douts_swiatloPrzedpokojBlizejDrzwi : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloTrepy AT %Q* : BOOL; //xxxxx
+		douts_swiatloTrepy : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloKorytarzPunktySufit AT %Q* : BOOL; //xxxxx
+		douts_swiatloKorytarzPunktySufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloZyrandolKorytarz AT %Q* : BOOL; //xxxxx
+		douts_swiatloZyrandolKorytarz : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloPralnia AT %Q* : BOOL; //xxxxx
+		douts_swiatloPralnia : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloToaletkaSypialniaRodzicow AT %Q* : BOOL; //xxxxx
+		douts_swiatloToaletkaSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatlo AT %Q* : BOOL; //xxxxx
+		douts_swiatloNiskiSufitSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloNiskiSufitSypialniaRodzicow AT %Q* : BOOL; //xxxxx
+		douts_swiatloWysokiSufitSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloWysokiSufitSypialniaRodzicow AT %Q* : BOOL; //xxxxx
+		douts_swiatlo : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloNadLozkiemSypialniaRodzicow AT %Q* : BOOL; //xxxxx
+		douts_swiatloNadLozkiemSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloPrzedDomem AT %Q* : BOOL; //xxxxx
+		douts_swiatloPrzedDomem : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloPodbitki AT %Q* : BOOL; //xxxxx
+		douts_swiatloPodbitki : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_xxxxxxxx_przewod_xxxxxx_swiatloGaraz AT %Q* : BOOL; //xxxxx
+		douts_swiatloGaraz : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
 	
 END_VAR]]></Declaration>

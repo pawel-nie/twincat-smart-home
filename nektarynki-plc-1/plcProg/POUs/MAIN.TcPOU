@@ -29,34 +29,36 @@ VAR
 	wlacznik_9_roleta_kotlownia : ShutterSwitch();
 	wlacznik_10_roleta_warsztat : ShutterSwitch();
     wlacznik_11_rolety_garaz : ShutterSwitch();
-	
-	wlaczniki_swiatel : ARRAY[1..GVL.MAX_LIGHTS] OF POINTER TO LightSwitch;
-		//wlacznik_12_pralnia : LightSwitch();
-		wlacznik_17_schody : LightSwitch();
 
-	proste_wlaczniki : ARRAY[1..GVL.MAX_SIMPLE_BUTTONS] OF POINTER TO SimpleButton;
-		wlacznik_12_przedpokoj_poczworny_1z4 : SimpleButton();
-		wlacznik_13_przedpokoj_poczworny_2z4 : SimpleButton();
-		wlacznik_14_przedpokoj_poczworny_3z4 : SimpleButton();
-	//wlacznik_33_pralnia : SimpleButton();
+	proste_wlaczniki_swiatel : ARRAY[1..GVL.MAX_SIMPLE_BUTTONS] OF POINTER TO SimpleButton;
+		wlacznik_12_swiatlo_w_jadalni : SimpleButton();
+		wlacznik_13_swiatlo_nad_kanapa_w_salonie : SimpleButton();
+		wlacznik_14_swiatlo_w_przejsciu_z_przedpokoju_do_salonu : SimpleButton();
+		wlacznik_15_swiatlo_na_srodku_salonu : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_16_swiatlo_nad_kontuarem_w_kuchni : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_17_swiatlo_w_kuchni_sufit : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_18_swiatlo_w_kuchni_pod_szafkami : SimpleButton(); //do namierzenia i podlaczenia jako 12V
+		wlacznik_19_swiatlo_w_przedpokoju_blizej_salonu : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_20_swiatlo_w_przedpokoju_blizej_drzwi : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_21_swiatlo_pod_trepami : SimpleButton(); //do namierzenia i podlaczenia jako 12V albo 24V
+		wlacznik_22_swiatlo_punkty_na_suficie_w_korytarzu : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_23_swiatlo_zyrandol_w_korytarzu : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_24_swiatlo_przypodlogowe_w_korytarzu : SimpleButton(); //do namierzenia i podlaczenia jako 12 V albo 24 V
+		wlacznik_25_swiatlo_w_pralni : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_26_swiatlo_nad_toaletka_w_sypialni_rodzicow : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_27_swiatlo_niski_sufit_w_sypialni_rodzicow : SimpleButton(); //do namierzenia i podlaczenia
+		wlacznik_28_swiatlo_wysoki_sufit_w_sypialni_rodzicow : SimpleButton();//do namierzenia i podlaczenia
+		wlacznik_29_swiatlo_nad_lozkiem_w_sypialni_rodzicow : SimpleButton();//do namierzenia i podlaczenia
+		wlacznik_30_swiatlo_frontowe : SimpleButton();//do namierzenia i podlaczenia
+		wlacznik_31_swiatlo_podbitki : SimpleButton();//do namierzenia i podlaczenia
+		wlacznik_32_swiatlo_w_garazu : SimpleButton();//do namierzenia i podlaczenia
+		
+	stopniowe_wlaczniki_swiatel : ARRAY[1..GVL.MAX_LIGHTS] OF POINTER TO LightSwitch;
+		wlacznik_50_swiatlo_w_gornej_lazience_zwisajace_i_nocne : LightSwitch();//do namierzenia i podlaczenia
+		wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie : LightSwitch();//do namierzenia i podlaczenia
 	
-	//	arr1 : ARRAY[1..3] OF BOOL;
-	//	arr2 : ARRAY[1..3] OF BOOL;
-	//	arr3 : ARRAY[1..3] OF BOOL;
-	//	arr4 : ARRAY[1..3] OF BOOL;
-		
-		
-	//	arr5 : ARRAY[1..2] OF BOOL;
-	//	arr6 : ARRAY[1..2] OF BOOL;
-		
-		//button1 : LightSwitch;//ShutterSwitch;//LightSwitch;//UpStopDownButton;// LightSwitch;	
-		//button2 : ShutterSwitch;
-		//buttontest : ShutterSwitch;
-		
-		
-
-	
-		wlacznikiTrojpozycyjne : ARRAY[1..10] OF UpStopDownButton;
+	wlaczniki_trojpozycyjne : ARRAY[1..10] OF UpStopDownButton;
+		wlacznik_70_brama_garazowa : UpStopDownButton();//do namierzenia i podlaczenia
 		
 	isDay : BOOL := TRUE;
 	minimumLogSeverity : TcEventSeverity := TcEventSeverity.Verbose;
@@ -85,8 +87,8 @@ END_VAR
 			
 	initialized := TRUE;
 	groupController(shutters:= wlaczniki_rolet_i_zaluzji, 
-					smartLights:= wlaczniki_swiatel,
-					simpleButtons:= proste_wlaczniki);
+					smartLights:= stopniowe_wlaczniki_swiatel,
+					simpleButtons:= proste_wlaczniki_swiatel);
 
 END_IF
 
@@ -117,54 +119,17 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//TODO ATTENTION ponizsze DIN inputy sa niesprawdzone
-
-//wlacznik_ogrzewania_lustra(ID:= 99, name:= 'lustro', digitalInput:=GVL.din_21, holdTime:=T#8S, outputs:= GVL.douts_44_ogrzewanie_lustra,
-//withHold:=FALSE, runAsYouPress := FALSE);
-
-//wlacznik_bramy_garazowej(ID:=123, defaultFirstClickDirection:=E_Direction.UP, digitalInput:=GVL.din_21, outputs:=GVL.douts_44_ogrzewanie_lustra, name:='brama garazowa', withReturn:=FALSE);
-	
-
-//wlacznik_17_schody(ID:=17, name:='Wlacznik swiatla przy schodach', 
-//		digitalInput:=GVL.din_22, small_outputs:= GVL.douts_ledy2, medium_outputs:= GVL.douts_ledy3,
-//		levelsManaged:= 2, 
-//		defaultDayOutput:=E_OutputLevel.MEDIUM, defaultNightOutput:=E_OutputLevel.SMALL);	
-//wlaczniki_swiatel[1] := ADR(wlacznik_17_schody);
-
-//wlacznik_12_pralnia(ID:=12, name:='Wlacznik swiatla w pralni', 
-//		digitalInput:=GVL.din_21, small_outputs:= GVL.douts_ledy1,
-//		levelsManaged:= 1, 
-//		defaultDayOutput:=E_OutputLevel.SMALL, defaultNightOutput:=E_OutputLevel.SMALL);
-//wlaczniki_swiatel[2] := ADR(wlacznik_12_pralnia);
-		
-//wlacznik_33_pralnia(ID:=33, name:='Wlacznik swiatla w pralni',
-//		digitalInput:=GVL.din_21, outputs:=GVL.douts_ledy1,
-//        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
-//proste_wlaczniki[1] := ADR(wlacznik_33_pralnia);
-
-wlacznik_12_przedpokoj_poczworny_1z4(ID:=12, name:='Elektroniczny lacznik swiatla w przedpokoju 1/4',
-		digitalInput:=GVL.din_1_10_10, outputs:=GVL.douts_1_1_1_swiatlo_w_salonie_jadalnia_sufit,
-        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
-proste_wlaczniki[1] := ADR(wlacznik_12_przedpokoj_poczworny_1z4);
-wlacznik_13_przedpokoj_poczworny_2z4(ID:=13, name:='Elektroniczny lacznik swiatla w przedpokoju 2/4',
-		digitalInput:=GVL.din_1_11_11, outputs:=GVL.douts_1_2_2_swiatlo_w_salonie_kanapa_sufit,
-        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
-proste_wlaczniki[2] := ADR(wlacznik_13_przedpokoj_poczworny_2z4);
-wlacznik_14_przedpokoj_poczworny_3z4(ID:=14, name:='Elektroniczny lacznik swiatla w przedpokoju 3/4',
-		digitalInput:=GVL.din_1_12_12, outputs:=GVL.douts_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon,
-        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
-proste_wlaczniki[3] := ADR(wlacznik_14_przedpokoj_poczworny_3z4);
-(* ShutterSwitch - pozostalo odkomentowac i podpiąć odpowiednie we/wy
+        <ST><![CDATA[// ShutterSwitch - pozostalo odkomentowac i podpiąć odpowiednie we/wy
 
 wlacznik_1_zaluzja_pralnia(ID:=1, name:='Wlacznik zaluzji okna w pralni', 
-		digitalInputUp:=GVL.din_21,
-		digitalInputDown:=GVL.din_22,
+		digitalInputUp:=GVL.din_05zModulu1_przewod_5_s_27_1_pralnia_1z2_pomaranczowy,
+		digitalInputDown:=GVL.din_04zModulu1_przewod_5_s_27_1_pralnia_2z2_niebieski,
 		up_outputs:=GVL.douts_1_zaluzja_pralnia_w_gore, 
 		down_outputs:=GVL.douts_2_zaluzja_pralnia_w_dol, 
-		shortTime:=T#250MS, longTime:= T#30S);
+		shortTime:=T#600MS, longTime:= T#40S);
 wlaczniki_rolet_i_zaluzji[1] := ADR(wlacznik_1_zaluzja_pralnia);
 
-wlacznik_2_zaluzje_kuchnia(ID:=2, name:='Wlacznik zaluzji okna naroznego w kuchni', 
+(*wlacznik_2_zaluzje_kuchnia(ID:=2, name:='Wlacznik zaluzji okna naroznego w kuchni', 
 		digitalInputUp:=GVL.din_23, 
 		digitalInputDown:=GVL.din_24,
 		up_outputs:=GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore, 
@@ -246,9 +211,65 @@ wlaczniki_rolet_i_zaluzji[11] := ADR(wlacznik_11_rolety_garaz);
 
 *)
 
+wlacznik_12_swiatlo_w_jadalni(ID:=12, name:='El. wl. sw. w przedpokoju 1/4 lub wl. poczworny w kuchni na slupku',
+		digitalInput:=GVL.din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy, outputs:=GVL.douts_swiatloSalonJadalniaSufit,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+proste_wlaczniki_swiatel[1] := ADR(wlacznik_12_swiatlo_w_jadalni);
+wlacznik_13_swiatlo_nad_kanapa_w_salonie(ID:=13, name:='El. wl. swiatla w przedpokoju 2/4',
+		digitalInput:=GVL.din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski, outputs:=GVL.douts_swiatloSalonKanapaSufit,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+proste_wlaczniki_swiatel[2] := ADR(wlacznik_13_swiatlo_nad_kanapa_w_salonie);
+wlacznik_14_swiatlo_w_przejsciu_z_przedpokoju_do_salonu(ID:=14, name:='El. wlacznik sw. w przedpokoju 3/4 lub wl. poczworny na dole schodow 1/4',
+		digitalInput:=GVL.din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy, outputs:=GVL.douts_swiatloPrzejscieZPrzedpokojuDoSalonuSufit,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+proste_wlaczniki_swiatel[3] := ADR(wlacznik_14_swiatlo_w_przejsciu_z_przedpokoju_do_salonu);
+
+
+
+
+
+
+
+
 //prosteWlaczniki[1] := wlacznik_ogrzewania_lustra; 
 
 //wlacznikiTrojpozycyjne[1] := wlacznik_bramy_garazowej;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="initializeLightSwitches" Id="{38b20446-df07-4cf5-bdaf-d4a91adc642c}">
+      <Declaration><![CDATA[METHOD PRIVATE initializeLightSwitches
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="initializeShuttterSwitches" Id="{492b662b-675b-49b1-a7d8-d0d474e50baf}">
+      <Declaration><![CDATA[METHOD PRIVATE initializeShuttterSwitches
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="initializeSimpleButtons" Id="{eeee663d-aabf-4d6d-8424-bbe867d0fe6e}">
+      <Declaration><![CDATA[METHOD PRIVATE initializeSimpleButtons
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="initializeUpStopDownButtons" Id="{57487eab-151a-46b6-8b9d-14dcee8cb086}">
+      <Declaration><![CDATA[METHOD PRIVATE initializeUpStopDownButtons
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
       </Implementation>
     </Method>
     <Method Name="inputsOutputsLoop" Id="{5ddbf680-25b6-4be3-b0a7-c03717331c9d}">
@@ -259,11 +280,11 @@ END_VAR
       <Implementation>
         <ST><![CDATA[//TODO pozamieniac dout_1_zaluzja_pralnia_w_gore na konkretny indeksowany DOUT
 
-(* 
+
 wlaczniki_rolet_i_zaluzji[1]^.loop();
 	GVL.dout_1_zaluzja_pralnia_w_gore := GVL.douts_1_zaluzja_pralnia_w_gore[1];
 	GVL.dout_2_zaluzja_pralnia_w_dol := GVL.douts_2_zaluzja_pralnia_w_dol[1];
-	
+(* 	
  wlaczniki_rolet_i_zaluzji[2]^.loop();
 	GVL.dout_3_zaluzja_okno_narozne_kuchnia_w_gore := GVL.douts_3_zaluzja_okno_narozne_kuchnia_w_gore[1];
 	GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol := GVL.douts_4_zaluzja_okno_narozne_kuchnia_w_dol[1];
@@ -289,14 +310,14 @@ wlaczniki_rolet_i_zaluzji[4]^.loop();
 //	GVL.b_led_1 := GVL.douts_ledy1[1];
 	
 
-proste_wlaczniki[1]^.loop();
-	GVL.dout_1_1_1_swiatlo_w_salonie_jadalnia_sufit := GVL.douts_1_1_1_swiatlo_w_salonie_jadalnia_sufit[1];
+proste_wlaczniki_swiatel[1]^.loop();
+	GVL.dout_1zModulu1_przewod_2_o_4_1_swiatloSalonJadalniaSufit := GVL.douts_swiatloSalonJadalniaSufit[1];
 	
-proste_wlaczniki[2]^.loop();
-	GVL.dout_1_2_2_swiatlo_w_salonie_kanapa_sufit := GVL.douts_1_2_2_swiatlo_w_salonie_kanapa_sufit[1];
+proste_wlaczniki_swiatel[2]^.loop();
+	GVL.dout_2zModulu1_przewod_2_o_5_1_swiatloSalonKanapaSufit := GVL.douts_swiatloSalonKanapaSufit[1];
 
-proste_wlaczniki[3]^.loop();
-	GVL.dout_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon := GVL.douts_1_3_3_swiatlo_przejscie_z_przedpokoju_na_salon[1];
+proste_wlaczniki_swiatel[3]^.loop();
+	GVL.dout_3zModulu1_przewod_2_o_7_1_swiatloPrzejscieZPrzedpokojuDoSalonuSufit := GVL.douts_swiatloPrzejscieZPrzedpokojuDoSalonuSufit[1];
 
 
 ]]></ST>
@@ -337,80 +358,34 @@ END_IF
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
-      <LineId Id="991" Count="39" />
+      <LineId Id="1532" Count="39" />
       <LineId Id="71" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.initializeButtons">
-      <LineId Id="38" Count="0" />
-      <LineId Id="55" Count="2" />
-      <LineId Id="63" Count="0" />
-      <LineId Id="58" Count="0" />
-      <LineId Id="64" Count="0" />
-      <LineId Id="166" Count="4" />
-      <LineId Id="165" Count="0" />
-      <LineId Id="171" Count="0" />
-      <LineId Id="176" Count="3" />
-      <LineId Id="155" Count="0" />
-      <LineId Id="160" Count="0" />
-      <LineId Id="180" Count="0" />
-      <LineId Id="182" Count="0" />
-      <LineId Id="184" Count="0" />
+      <LineId Id="208" Count="90" />
+      <LineId Id="300" Count="0" />
+      <LineId Id="302" Count="11" />
+      <LineId Id="301" Count="0" />
+      <LineId Id="299" Count="0" />
       <LineId Id="181" Count="0" />
-      <LineId Id="189" Count="3" />
-      <LineId Id="188" Count="0" />
-      <LineId Id="193" Count="2" />
-      <LineId Id="161" Count="0" />
-      <LineId Id="197" Count="2" />
-      <LineId Id="196" Count="0" />
-      <LineId Id="149" Count="0" />
-      <LineId Id="77" Count="0" />
-      <LineId Id="6" Count="0" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="40" Count="0" />
-      <LineId Id="11" Count="0" />
-      <LineId Id="41" Count="0" />
-      <LineId Id="12" Count="0" />
-      <LineId Id="78" Count="0" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="13" Count="1" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="42" Count="0" />
-      <LineId Id="8" Count="0" />
-      <LineId Id="79" Count="0" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="35" Count="0" />
-      <LineId Id="72" Count="0" />
-      <LineId Id="45" Count="0" />
-      <LineId Id="37" Count="0" />
-      <LineId Id="44" Count="0" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="17" Count="0" />
-      <LineId Id="80" Count="0" />
-      <LineId Id="46" Count="5" />
-      <LineId Id="19" Count="0" />
-      <LineId Id="81" Count="6" />
-      <LineId Id="21" Count="0" />
-      <LineId Id="89" Count="6" />
-      <LineId Id="88" Count="0" />
-      <LineId Id="97" Count="6" />
-      <LineId Id="96" Count="0" />
-      <LineId Id="104" Count="6" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="113" Count="6" />
-      <LineId Id="112" Count="0" />
-      <LineId Id="121" Count="0" />
-      <LineId Id="136" Count="5" />
-      <LineId Id="120" Count="0" />
-      <LineId Id="129" Count="0" />
-      <LineId Id="142" Count="5" />
-      <LineId Id="128" Count="0" />
-      <LineId Id="148" Count="0" />
-      <LineId Id="111" Count="0" />
+      <LineId Id="189" Count="0" />
+      <LineId Id="203" Count="2" />
       <LineId Id="60" Count="0" />
       <LineId Id="59" Count="0" />
       <LineId Id="62" Count="0" />
       <LineId Id="61" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.initializeLightSwitches">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.initializeShuttterSwitches">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.initializeSimpleButtons">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.initializeUpStopDownButtons">
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.inputsOutputsLoop">
       <LineId Id="41" Count="1" />
