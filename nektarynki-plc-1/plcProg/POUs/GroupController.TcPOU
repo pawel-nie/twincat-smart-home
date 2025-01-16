@@ -6,7 +6,7 @@ VAR CONSTANT
 END_VAR
 VAR_INPUT
 	shutters : ARRAY[1..GVL.MAX_SHUTTERS] OF POINTER TO ShutterSwitch;
-	smartLights : ARRAY[1..GVL.MAX_LIGHTS] OF POINTER TO LightSwitch;
+	smartLights : ARRAY[1..GVL.MAX_SMART_LIGHTS] OF POINTER TO LightSwitch;
 	simpleButtons : ARRAY[1..GVL.MAX_SIMPLE_BUTTONS] OF POINTER TO SimpleButton;
 END_VAR
 VAR_OUTPUT
@@ -100,7 +100,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Lights OFF requested', str2:= '', str3:=getSource());
 
-FOR i := 1 TO GVL.MAX_LIGHTS BY 1 DO
+FOR i := 1 TO GVL.MAX_SMART_LIGHTS BY 1 DO
 	smartLights[i]^.turnOff();
 END_FOR
 
@@ -122,7 +122,7 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Lights ON default requested', str2:= '', str3:=getSource());
 
-FOR i := 1 TO GVL.MAX_LIGHTS BY 1 DO
+FOR i := 1 TO GVL.MAX_SMART_LIGHTS BY 1 DO
 	smartLights[i]^.turnOnDefault();
 END_FOR
 

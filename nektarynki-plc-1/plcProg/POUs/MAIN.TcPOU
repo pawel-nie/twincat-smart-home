@@ -50,10 +50,11 @@ VAR
 		wlacznik_28_swiatlo_wysoki_sufit_w_sypialni_rodzicow : SimpleButton();//do namierzenia i podlaczenia
 		wlacznik_29_swiatlo_nad_lozkiem_w_sypialni_rodzicow : SimpleButton();//do namierzenia i podlaczenia
 		wlacznik_30_swiatlo_frontowe : SimpleButton();//do namierzenia i podlaczenia
-		wlacznik_31_swiatlo_podbitki : SimpleButton();//do namierzenia i podlaczenia
+		wlacznik_31_swiatlo_podbitki : SimpleButton();
 		wlacznik_32_swiatlo_w_garazu : SimpleButton();//do namierzenia i podlaczenia
+		wlacznik_33_swiatlo_w_gabinecie : SimpleButton();
 		
-	stopniowe_wlaczniki_swiatel : ARRAY[1..GVL.MAX_LIGHTS] OF POINTER TO LightSwitch;
+	stopniowe_wlaczniki_swiatel : ARRAY[1..GVL.MAX_SMART_LIGHTS] OF POINTER TO LightSwitch;
 		wlacznik_50_swiatlo_w_gornej_lazience_zwisajace_i_nocne : LightSwitch();//do namierzenia i podlaczenia
 		wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie : LightSwitch();//do namierzenia i podlaczenia
 	
@@ -211,23 +212,45 @@ wlaczniki_rolet_i_zaluzji[11] := ADR(wlacznik_11_rolety_garaz);
 
 *)
 
-wlacznik_12_swiatlo_w_jadalni(ID:=12, name:='El. wl. sw. w przedpokoju 1/4 lub wl. poczworny w kuchni na slupku',
+wlacznik_12_swiatlo_w_jadalni(ID:=12, name:='El. wl. sw. w przedpokoju 1/4 lub wl. sw. poczworny w kuchni na slupku 3/4',
 		digitalInput:=GVL.din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy, outputs:=GVL.douts_swiatloSalonJadalniaSufit,
         runAsYouPress:=FALSE, lightSwitch:= TRUE);		
 proste_wlaczniki_swiatel[1] := ADR(wlacznik_12_swiatlo_w_jadalni);
+
 wlacznik_13_swiatlo_nad_kanapa_w_salonie(ID:=13, name:='El. wl. swiatla w przedpokoju 2/4',
 		digitalInput:=GVL.din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski, outputs:=GVL.douts_swiatloSalonKanapaSufit,
         runAsYouPress:=FALSE, lightSwitch:= TRUE);		
 proste_wlaczniki_swiatel[2] := ADR(wlacznik_13_swiatlo_nad_kanapa_w_salonie);
+
 wlacznik_14_swiatlo_w_przejsciu_z_przedpokoju_do_salonu(ID:=14, name:='El. wlacznik sw. w przedpokoju 3/4 lub wl. poczworny na dole schodow 1/4',
 		digitalInput:=GVL.din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy, outputs:=GVL.douts_swiatloPrzejscieZPrzedpokojuDoSalonuSufit,
         runAsYouPress:=FALSE, lightSwitch:= TRUE);		
 proste_wlaczniki_swiatel[3] := ADR(wlacznik_14_swiatlo_w_przejsciu_z_przedpokoju_do_salonu);
 
+wlacznik_31_swiatlo_podbitki(ID:=31, name:='Wl. sw. w przedpokoju przy drzwiach 2/3',
+		digitalInput:=GVL.din_08zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_2z3_pomaranczowy, outputs:=GVL.douts_swiatloZewnetrznePodbitki,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+proste_wlaczniki_swiatel[4] := ADR(wlacznik_31_swiatlo_podbitki);
 
+wlacznik_17_swiatlo_w_kuchni_sufit(ID:=17, name:='Wl. sw. poczworny w kuchni na slupku 2/4',
+		digitalInput:=GVL.din_16zModulu1_przewod_4_s_21_1_slupekKuchnia_2z4_bialoniebieski, outputs:=GVL.douts_swiatloKuchniaSufit,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);		
+proste_wlaczniki_swiatel[5] := ADR(wlacznik_17_swiatlo_w_kuchni_sufit);
 
+wlacznik_16_swiatlo_nad_kontuarem_w_kuchni(ID:=16, name:='Wl. sw. poczworny w kuchni na slupku 1/4',
+		digitalInput:=GVL.din_15zModulu1_przewod_4_s_21_1_slupekKuchnia_1z4_pomaranczowy, outputs:=GVL.douts_swiatloKontuarKuchnia,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);	
+proste_wlaczniki_swiatel[6] := ADR(wlacznik_16_swiatlo_nad_kontuarem_w_kuchni);
 
+wlacznik_18_swiatlo_w_kuchni_pod_szafkami(ID:=18, name:='Wl. sw. poczworny w kuchni na slupku 4/4',
+		digitalInput:=GVL.din_14zModulu1_przewod_4_s_21_1_slupekKuchnia_4z4_brazowy, outputs:=GVL.douts_swiatloKuchniaPodSzafkami,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);	
+proste_wlaczniki_swiatel[7] := ADR(wlacznik_18_swiatlo_w_kuchni_pod_szafkami);
 
+wlacznik_33_swiatlo_w_gabinecie(ID:=33, name:='Wl. sw. w gabinecie najnizszy',
+		digitalInput:=GVL.din_01zModulu3_przewod_14_s_26_1_gabinetNajnizej_bialopomaranczowy, outputs:=GVL.douts_swiatloGabinet,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);	
+proste_wlaczniki_swiatel[8] := ADR(wlacznik_33_swiatlo_w_gabinecie);
 
 
 
@@ -321,7 +344,25 @@ proste_wlaczniki_swiatel[2]^.loop();
 
 proste_wlaczniki_swiatel[3]^.loop();
 	GVL.dout_3zModulu1_przewod_2_o_7_1_swiatloPrzejscieZPrzedpokojuDoSalonuSufit := GVL.douts_swiatloPrzejscieZPrzedpokojuDoSalonuSufit[1];
+	
+proste_wlaczniki_swiatel[4]^.loop();
+	GVL.dout_6zModulu1_przewod_podbitki := GVL.douts_swiatloZewnetrznePodbitki[1];
 
+proste_wlaczniki_swiatel[5]^.loop();
+	GVL.dout_11zModulu1_przewod_3_o_2_1_swiatloKuchniaSufit := GVL.douts_swiatloKuchniaSufit[1];
+	
+proste_wlaczniki_swiatel[6]^.loop();
+	GVL.dout_10zModulu1_przewod_3_o_3_1_swiatloKontuarKuchnia := GVL.douts_swiatloKontuarKuchnia[1];	
+	
+proste_wlaczniki_swiatel[7]^.loop();
+	GVL.dout_12zModulu1_przewod_3_o_1_1_swiatloKuchniaPodSzafkami := GVL.douts_swiatloKuchniaPodSzafkami[1];	
+	
+proste_wlaczniki_swiatel[8]^.loop();
+	GVL.dout_13zModulu1_przewod_4_o_10_1_swiatloGabinet := GVL.douts_swiatloGabinet[1];	
+	
+	
+	
+	
 
 ]]></ST>
       </Implementation>
@@ -367,11 +408,25 @@ END_IF
     <LineIds Name="MAIN.initializeButtons">
       <LineId Id="208" Count="90" />
       <LineId Id="300" Count="0" />
-      <LineId Id="302" Count="11" />
+      <LineId Id="302" Count="3" />
+      <LineId Id="331" Count="0" />
+      <LineId Id="306" Count="3" />
+      <LineId Id="332" Count="0" />
+      <LineId Id="310" Count="3" />
+      <LineId Id="333" Count="0" />
+      <LineId Id="317" Count="2" />
       <LineId Id="301" Count="0" />
+      <LineId Id="334" Count="0" />
+      <LineId Id="323" Count="2" />
       <LineId Id="299" Count="0" />
+      <LineId Id="335" Count="0" />
+      <LineId Id="326" Count="1" />
       <LineId Id="181" Count="0" />
+      <LineId Id="328" Count="0" />
+      <LineId Id="336" Count="0" />
+      <LineId Id="329" Count="1" />
       <LineId Id="189" Count="0" />
+      <LineId Id="337" Count="4" />
       <LineId Id="203" Count="2" />
       <LineId Id="60" Count="0" />
       <LineId Id="59" Count="0" />
@@ -414,7 +469,18 @@ END_IF
       <LineId Id="63" Count="1" />
       <LineId Id="74" Count="1" />
       <LineId Id="78" Count="5" />
+      <LineId Id="100" Count="0" />
+      <LineId Id="92" Count="2" />
+      <LineId Id="101" Count="0" />
       <LineId Id="53" Count="0" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="110" Count="2" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="105" Count="3" />
       <LineId Id="52" Count="0" />
       <LineId Id="55" Count="0" />
     </LineIds>

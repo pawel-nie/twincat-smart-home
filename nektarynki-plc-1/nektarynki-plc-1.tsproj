@@ -15,11 +15,36 @@
 		</System>
 		<Plc>
 			<Project GUID="{A14C7FBD-5B32-49C5-96AB-4C1D0189B914}" Name="plcProg" PrjFilePath="plcProg\plcProg.plcproj" TmcFilePath="plcProg\plcProg.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{C7BA5969-90D6-49CB-565D-E8C8D920EAD9}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{185ADAA3-AB14-DDD4-176F-CEDF06E7C979}">
 					<Name>plcProg Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
 						<Name>PlcTask Inputs</Name>
+						<Var>
+							<Name>GVL.din_16zModulu2_przewod_14_s_26_1_gabinetPrawieNajnizej_brazowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik w gabinecie prawie]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_01zModulu3_przewod_14_s_26_1_gabinetNajnizej_bialopomaranczowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik w gabinecie najnizszy]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_14zModulu1_przewod_4_s_21_1_slupekKuchnia_4z4_brazowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 4/4]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_15zModulu1_przewod_4_s_21_1_slupekKuchnia_1z4_pomaranczowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 1/4]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_16zModulu1_przewod_4_s_21_1_slupekKuchnia_2z4_bialoniebieski</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 2/4]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
 						<Var>
 							<Name>GVL.din_1_1_1</Name>
 							<Comment><![CDATA[garaż po prawej stronie od drzwi]]></Comment>
@@ -60,45 +85,8 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy</Name>
-							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w gabinecie gora]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski</Name>
-							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w gabinecie dol]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy</Name>
-							<Comment><![CDATA[bylo din1_10_10 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 1/4 lub wlacznik poczworny w kuchni na slupku]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski</Name>
-							<Comment><![CDATA[bylo din1_11_11 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 2/4]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy</Name>
-							<Comment><![CDATA[bylo din1_12_12 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 3/4 lub wlacznik poczworny na dole schodow 1/4]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_13zModulu1_przewod_xxxxxxxx_koniecPrzedpokojuElektronicznyPoczworny_4z4_bialobrazowy</Name>
-							<Comment><![CDATA[din_1_13_13 //zasilanie bialo-zielony: Elektroniczny wlacznik swiatla w przedpokoju 4/4	]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_1_14_14</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_1_15_15</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_1_16_16</Name>
+							<Name>GVL.din_05zModulu1_przewod_5_s_27_1_pralnia_1z2_pomaranczowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w pralni gora]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -107,18 +95,13 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.din_05zModulu1_przewod_5_s_27_1_pralnia_1z2_pomaranczowy</Name>
-							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w pralni gora]]></Comment>
+							<Name>GVL.din_04zModulu2_przewod_3_s_30_1_kuchnia_1z2_niebieski</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia dol]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL.din_03zModulu2_przewod_3_s_30_1_kuchnia_2z2_zielony</Name>
 							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia gora]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_04zModulu2_przewod_3_s_30_1_kuchnia_1z2_niebieski</Name>
-							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia dol]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -141,9 +124,67 @@
 							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w kuchni slide dol]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
+						<Var>
+							<Name>GVL.din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w gabinecie gora]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w gabinecie dol]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_08zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_2z3_pomaranczowy</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik swiatla w przedpokoju przy drzwiach 2/3]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy</Name>
+							<Comment><![CDATA[bylo din1_10_10 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 1/4 lub wlacznik poczworny w kuchni na slupku 1/4]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski</Name>
+							<Comment><![CDATA[bylo din1_11_11 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 2/4]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy</Name>
+							<Comment><![CDATA[bylo din1_12_12 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 3/4 lub wlacznik poczworny na dole schodow 1/4]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_13zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_4z4_bialobrazowy</Name>
+							<Comment><![CDATA[din_1_13_13 //zasilanie bialo-zielony: Elektroniczny wlacznik swiatla w przedpokoju 4/4	]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_1_14_14</Name>
+							<Comment><![CDATA[5-s-23-1 prawdopodobnie pralnia wlacznik swiatla]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_1_15_15</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.din_1_16_16</Name>
+							<Type>BOOL</Type>
+						</Var>
 					</Vars>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
+						<Var>
+							<Name>GVL.dout_12zModulu1_przewod_3_o_1_1_swiatloKuchniaPodSzafkami</Name>
+							<Comment><![CDATA[3_o_1_1]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_13zModulu1_przewod_4_o_10_1_swiatloGabinet</Name>
+							<Comment><![CDATA[4_o_9_1, 4_o_10_1]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
 						<Var>
 							<Name>GVL.dout_1_zaluzja_pralnia_w_gore</Name>
 							<Comment><![CDATA[-------------------------------------------------------------------------------------------------	
@@ -250,87 +291,77 @@ OUTPUTS]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_4zModulu1_przewod_x_o_x_x_swiatloSrodekSalonuSufit</Name>
+							<Name>GVL.dout_4zModulu1_przewod_2_o_6_1_swiatloSrodekSalonuSufit</Name>
+							<Comment><![CDATA[2-o-6-1]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_5zModulu1_przewod_swiatloPrzedDomem</Name>
+							<Comment><![CDATA[frontowe pod balkoenem]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_6zModulu1_przewod_podbitki</Name>
+							<Comment><![CDATA[podbitki]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_7zModulu1_przewod_1_o_27_1_przewod_xxxxxx_swiatloPrzedpokojBlizejDrzwi</Name>
+							<Comment><![CDATA[1_o_27_1 na razie spiete u gory, nie podlaczone]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_8zModulu1_przewod_xxxxxx_swiatloPrzedpokojBlizejSalonu</Name>
+							<Comment><![CDATA[xxxxx to jest obwod S sterowania, znalezc ]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_9zModulu1_przewod_5_o_11_1_swiatloPralnia</Name>
 							<Comment><![CDATA[xxxxx]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloKontuarKuchnia</Name>
+							<Name>GVL.dout_10zModulu1_przewod_3_o_3_1_swiatloKontuarKuchnia</Name>
+							<Comment><![CDATA[3_o_3_1]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_11zModulu1_przewod_3_o_2_1_swiatloKuchniaSufit</Name>
+							<Comment><![CDATA[3_o_2_1]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_14zModulu1_przewod_xxxxxx_swiatloTrepy</Name>
 							<Comment><![CDATA[xxxxx]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloKuchniaSufit</Name>
+							<Name>GVL.dout_15zModulu1_przewod_xxxxxx_swiatloKorytarzPunktySufit</Name>
 							<Comment><![CDATA[xxxxx]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloKuchniaPodSzafkami</Name>
+							<Name>GVL.dout_16zModulu1_przewod_xxxxxx_swiatloZyrandolKorytarz</Name>
 							<Comment><![CDATA[xxxxx]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloPrzedpokojBlizejSalonu</Name>
+							<Name>GVL.dout_1zModulu2_przewod_xxxxxx_swiatloToaletkaSypialniaRodzicow</Name>
 							<Comment><![CDATA[xxxxx]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloPrzedpokojBlizejDrzwi</Name>
+							<Name>GVL.dout_2zModulu2_przewod_xxxxxx_swiatloNiskiSufitSypialniaRodzicow</Name>
 							<Comment><![CDATA[xxxxx]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloTrepy</Name>
+							<Name>GVL.dout_3zModulu2_przewod_xxxxxx_swiatloWysokiSufitSypialniaRodzicow</Name>
 							<Comment><![CDATA[xxxxx]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloKorytarzPunktySufit</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloZyrandolKorytarz</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloPralnia</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloToaletkaSypialniaRodzicow</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatlo</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloNiskiSufitSypialniaRodzicow</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloWysokiSufitSypialniaRodzicow</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloNadLozkiemSypialniaRodzicow</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloPrzedDomem</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloPodbitki</Name>
+							<Name>GVL.dout_4zModulu2_przewod_xxxxxx_swiatloNadLozkiemSypialniaRodzicow</Name>
 							<Comment><![CDATA[xxxxx]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
@@ -2234,6 +2265,7 @@ Bit 15 = Acyc. Function atcive (e.g. K-Bus Reset)
 		<MappingInfo Identifier="{00000000-2001-0850-0020-500810000403}" Id="#x02030010"/>
 		<OwnerA Name="TIPC^plcProg^plcProg Instance">
 			<OwnerB Name="TIID^Device 2 (CX-BK)^Box 1 (CX-BK)">
+				<Link VarA="PlcTask Inputs^GVL.din_01zModulu3_przewod_14_s_26_1_gabinetNajnizej_bialopomaranczowy" VarB="Term 4 (KL1809)^Channel 1^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski" VarB="Term 4 (KL1809)^Channel 2^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_03zModulu2_przewod_3_s_30_1_kuchnia_2z2_zielony" VarB="Term 3 (KL1809)^Channel 3^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy" VarB="Term 4 (KL1809)^Channel 3^Input"/>
@@ -2243,11 +2275,21 @@ Bit 15 = Acyc. Function atcive (e.g. K-Bus Reset)
 				<Link VarA="PlcTask Inputs^GVL.din_05zModulu2_przewod_3_s_30_1_kuchnia_2z2_pomaranczowy" VarB="Term 3 (KL1809)^Channel 5^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_06zModulu2_przewod_3_s_30_1_kuchnia_1z2_brazowy" VarB="Term 3 (KL1809)^Channel 6^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_07zModulu2_przewod_3_s_30_1_kuchnia_2z2_bialoniebieski" VarB="Term 3 (KL1809)^Channel 7^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_08zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_2z3_pomaranczowy" VarB="Term 2 (KL1809)^Channel 8^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_08zModulu2_przewod_3_s_30_1_kuchnia_1z2_bialopomaranczowy" VarB="Term 3 (KL1809)^Channel 8^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy" VarB="Term 2 (KL1809)^Channel 10^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski" VarB="Term 2 (KL1809)^Channel 11^Input"/>
 				<Link VarA="PlcTask Inputs^GVL.din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy" VarB="Term 2 (KL1809)^Channel 12^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_13zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_4z4_bialobrazowy" VarB="Term 3 (KL1809)^Channel 13^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_14zModulu1_przewod_4_s_21_1_slupekKuchnia_4z4_brazowy" VarB="Term 2 (KL1809)^Channel 14^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_15zModulu1_przewod_4_s_21_1_slupekKuchnia_1z4_pomaranczowy" VarB="Term 2 (KL1809)^Channel 15^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_16zModulu1_przewod_4_s_21_1_slupekKuchnia_2z4_bialoniebieski" VarB="Term 2 (KL1809)^Channel 16^Input"/>
+				<Link VarA="PlcTask Inputs^GVL.din_16zModulu2_przewod_14_s_26_1_gabinetPrawieNajnizej_brazowy" VarB="Term 3 (KL1809)^Channel 16^Input"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_10_zaluzja_gabinet_w_dol" VarB="Term 13 (KL2809)^Channel 4^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_10zModulu1_przewod_3_o_3_1_swiatloKontuarKuchnia" VarB="Term 9 (KL2809)^Channel 10^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_11zModulu1_przewod_3_o_2_1_swiatloKuchniaSufit" VarB="Term 9 (KL2809)^Channel 11^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_12zModulu1_przewod_3_o_1_1_swiatloKuchniaPodSzafkami" VarB="Term 9 (KL2809)^Channel 12^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_13zModulu1_przewod_4_o_10_1_swiatloGabinet" VarB="Term 9 (KL2809)^Channel 13^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_1_zaluzja_pralnia_w_gore" VarB="Term 12 (KL2809)^Channel 11^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_1zModulu1_przewod_2_o_4_1_swiatloSalonJadalniaSufit" VarB="Term 9 (KL2809)^Channel 1^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_2_zaluzja_pralnia_w_dol" VarB="Term 12 (KL2809)^Channel 12^Output"/>
@@ -2257,6 +2299,7 @@ Bit 15 = Acyc. Function atcive (e.g. K-Bus Reset)
 				<Link VarA="PlcTask Outputs^GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol" VarB="Term 12 (KL2809)^Channel 14^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_5_zaluzja_wykusz_w_gore" VarB="Term 12 (KL2809)^Channel 15^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_6_zaluzja_wykusz_w_dol" VarB="Term 12 (KL2809)^Channel 16^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_6zModulu1_przewod_podbitki" VarB="Term 9 (KL2809)^Channel 6^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_7_zaluzja_slide_w_gore" VarB="Term 13 (KL2809)^Channel 1^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_8_zaluzja_slide_w_dol" VarB="Term 13 (KL2809)^Channel 2^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_9_zaluzja_gabinet_w_gore" VarB="Term 13 (KL2809)^Channel 3^Output"/>

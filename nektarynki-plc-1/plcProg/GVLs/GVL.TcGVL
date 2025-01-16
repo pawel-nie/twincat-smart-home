@@ -6,9 +6,10 @@ VAR_GLOBAL CONSTANT
     MAX_SHUTTER_OUTPUTS : INT := 1;
 	MAX_LIGHT_OUTPUTS_PER_LEVEL : INT := 3;
 	MAX_SIMPLE_OUTPUTS : INT := 3;
+	
 	MAX_SHUTTERS : INT := 11;
-	MAX_LIGHTS : INT := 1;//TODO 50 ALBO MNIEJ;
-	MAX_SIMPLE_BUTTONS : INT := 3; //TODO PEWNIE WIECEJ
+	MAX_SMART_LIGHTS : INT := 0;//TODO 50 ALBO MNIEJ;
+	MAX_SIMPLE_BUTTONS : INT := 8; //TODO PEWNIE WIECEJ
 END_VAR
 
 VAR_GLOBAL
@@ -37,13 +38,21 @@ VAR_GLOBAL
     din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie gora
 	din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie dol
 	
-
-	din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy AT %I* : BOOL;//bylo din1_10_10 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 1/4 lub wlacznik poczworny w kuchni na slupku
+	din_08zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_2z3_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w przedpokoju przy drzwiach 2/3
+	
+	din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy AT %I* : BOOL;//bylo din1_10_10 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 1/4 lub wlacznik poczworny w kuchni na slupku 1/4
 	din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski AT %I* : BOOL; //bylo din1_11_11 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 2/4
 	din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy AT %I* : BOOL; //bylo din1_12_12 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 3/4 lub wlacznik poczworny na dole schodow 1/4
-	din_13zModulu1_przewod_xxxxxxxx_koniecPrzedpokojuElektronicznyPoczworny_4z4_bialobrazowy AT %I* : BOOL; //din_1_13_13 //zasilanie bialo-zielony: Elektroniczny wlacznik swiatla w przedpokoju 4/4	
+	din_13zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_4z4_bialobrazowy AT %I* : BOOL; //din_1_13_13 //zasilanie bialo-zielony: Elektroniczny wlacznik swiatla w przedpokoju 4/4	
 
-	
+	din_14zModulu1_przewod_4_s_21_1_slupekKuchnia_4z4_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 4/4
+	din_15zModulu1_przewod_4_s_21_1_slupekKuchnia_1z4_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 1/4
+	din_16zModulu1_przewod_4_s_21_1_slupekKuchnia_2z4_bialoniebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 2/4
+
+	din_16zModulu2_przewod_14_s_26_1_gabinetPrawieNajnizej_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik w gabinecie prawie
+	din_01zModulu3_przewod_14_s_26_1_gabinetNajnizej_bialopomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik w gabinecie najnizszy
+
+    //5-s-23-1 prawdopodobnie pralnia wlacznik swiatla
 	din_1_14_14 AT %I* : BOOL;
 	din_1_15_15 AT %I* : BOOL;
 	din_1_16_16 AT %I* : BOOL;
@@ -113,45 +122,66 @@ VAR_GLOBAL
 
 	dout_1zModulu1_przewod_2_o_4_1_swiatloSalonJadalniaSufit AT %Q* : BOOL; //2-o-4-1
 		douts_swiatloSalonJadalniaSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
 	dout_2zModulu1_przewod_2_o_5_1_swiatloSalonKanapaSufit AT %Q* : BOOL; //2-o-5-1
 		douts_swiatloSalonKanapaSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
 	dout_3zModulu1_przewod_2_o_7_1_swiatloPrzejscieZPrzedpokojuDoSalonuSufit AT %Q* : BOOL; //2-o-7-1
 		douts_swiatloPrzejscieZPrzedpokojuDoSalonuSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_4zModulu1_przewod_x_o_x_x_swiatloSrodekSalonuSufit AT %Q* : BOOL; //xxxxx
+		
+	dout_4zModulu1_przewod_2_o_6_1_swiatloSrodekSalonuSufit AT %Q* : BOOL; //2-o-6-1
 		douts_swiatloSrodekSalonuSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-    
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloKontuarKuchnia AT %Q* : BOOL; //xxxxx
-		douts_swiatloKontuarKuchnia : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloKuchniaSufit AT %Q* : BOOL; //xxxxx
-		douts_swiatloKuchniaSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloKuchniaPodSzafkami AT %Q* : BOOL; //xxxxx
-		douts_swiatloKuchniaPodSzafkami : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloPrzedpokojBlizejSalonu AT %Q* : BOOL; //xxxxx
-		douts_swiatloPrzedpokojBlizejSalonu : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloPrzedpokojBlizejDrzwi AT %Q* : BOOL; //xxxxx
-		douts_swiatloPrzedpokojBlizejDrzwi : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloTrepy AT %Q* : BOOL; //xxxxx
-		douts_swiatloTrepy : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloKorytarzPunktySufit AT %Q* : BOOL; //xxxxx
-		douts_swiatloKorytarzPunktySufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloZyrandolKorytarz AT %Q* : BOOL; //xxxxx
-		douts_swiatloZyrandolKorytarz : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloPralnia AT %Q* : BOOL; //xxxxx
-		douts_swiatloPralnia : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloToaletkaSypialniaRodzicow AT %Q* : BOOL; //xxxxx
-		douts_swiatloToaletkaSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatlo AT %Q* : BOOL; //xxxxx
-		douts_swiatloNiskiSufitSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloNiskiSufitSypialniaRodzicow AT %Q* : BOOL; //xxxxx
-		douts_swiatloWysokiSufitSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloWysokiSufitSypialniaRodzicow AT %Q* : BOOL; //xxxxx
-		douts_swiatlo : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloNadLozkiemSypialniaRodzicow AT %Q* : BOOL; //xxxxx
-		douts_swiatloNadLozkiemSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloPrzedDomem AT %Q* : BOOL; //xxxxx
+		
+	dout_5zModulu1_przewod_swiatloPrzedDomem AT %Q* : BOOL; //frontowe pod balkoenem
 		douts_swiatloPrzedDomem : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_xxxxxxxx_przewod_xxxxxx_swiatloPodbitki AT %Q* : BOOL; //xxxxx
-		douts_swiatloPodbitki : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_6zModulu1_przewod_podbitki AT %Q* : BOOL; //podbitki
+		douts_swiatloZewnetrznePodbitki : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;	
+		
+	dout_7zModulu1_przewod_1_o_27_1_przewod_xxxxxx_swiatloPrzedpokojBlizejDrzwi AT %Q* : BOOL; //1_o_27_1 na razie spiete u gory, nie podlaczone
+		douts_swiatloPrzedpokojBlizejDrzwi : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_8zModulu1_przewod_xxxxxx_swiatloPrzedpokojBlizejSalonu AT %Q* : BOOL; //xxxxx to jest obwod S sterowania, znalezc 
+		douts_swiatloPrzedpokojBlizejSalonu : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_9zModulu1_przewod_5_o_11_1_swiatloPralnia AT %Q* : BOOL; //xxxxx
+		douts_swiatloPralnia : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_10zModulu1_przewod_3_o_3_1_swiatloKontuarKuchnia AT %Q* : BOOL; //3_o_3_1
+		douts_swiatloKontuarKuchnia : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_11zModulu1_przewod_3_o_2_1_swiatloKuchniaSufit AT %Q* : BOOL; //3_o_2_1
+		douts_swiatloKuchniaSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_12zModulu1_przewod_3_o_1_1_swiatloKuchniaPodSzafkami AT %Q* : BOOL; //3_o_1_1
+		douts_swiatloKuchniaPodSzafkami : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_13zModulu1_przewod_4_o_10_1_swiatloGabinet AT %Q* : BOOL; //4_o_9_1, 4_o_10_1
+		douts_swiatloGabinet : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+
+	dout_14zModulu1_przewod_xxxxxx_swiatloTrepy AT %Q* : BOOL; //xxxxx
+		douts_swiatloTrepy : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_15zModulu1_przewod_xxxxxx_swiatloKorytarzPunktySufit AT %Q* : BOOL; //xxxxx
+		douts_swiatloKorytarzPunktySufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_16zModulu1_przewod_xxxxxx_swiatloZyrandolKorytarz AT %Q* : BOOL; //xxxxx
+		douts_swiatloZyrandolKorytarz : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+
+	dout_1zModulu2_przewod_xxxxxx_swiatloToaletkaSypialniaRodzicow AT %Q* : BOOL; //xxxxx
+		douts_swiatloToaletkaSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	//dout_xxxxxxxx_przewod_xxxxxx_swiatlo AT %Q* : BOOL; //xxxxx
+	//	douts_swiatloNiskiSufitSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_2zModulu2_przewod_xxxxxx_swiatloNiskiSufitSypialniaRodzicow AT %Q* : BOOL; //xxxxx
+		douts_swiatloWysokiSufitSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_3zModulu2_przewod_xxxxxx_swiatloWysokiSufitSypialniaRodzicow AT %Q* : BOOL; //xxxxx
+		douts_swiatlo : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_4zModulu2_przewod_xxxxxx_swiatloNadLozkiemSypialniaRodzicow AT %Q* : BOOL; //xxxxx
+		douts_swiatloNadLozkiemSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+
+
 	dout_xxxxxxxx_przewod_xxxxxx_swiatloGaraz AT %Q* : BOOL; //xxxxx
 		douts_swiatloGaraz : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
