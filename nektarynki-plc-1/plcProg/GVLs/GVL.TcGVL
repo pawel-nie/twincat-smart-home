@@ -9,7 +9,7 @@ VAR_GLOBAL CONSTANT
 	
 	MAX_SHUTTERS : INT := 11;
 	MAX_SMART_LIGHTS : INT := 0;//TODO 50 ALBO MNIEJ;
-	MAX_SIMPLE_BUTTONS : INT := 8; //TODO PEWNIE WIECEJ
+	MAX_SIMPLE_BUTTONS : INT := 11; //TODO PEWNIE WIECEJ
 END_VAR
 
 VAR_GLOBAL
@@ -23,35 +23,46 @@ VAR_GLOBAL
 	din_1_7_7 AT %I* : BOOL;
 	din_1_8_8 AT %I* : BOOL;
 	din_1_9_9 AT %I* : BOOL; 
-	din_05zModulu1_przewod_5_s_27_1_pralnia_1z2_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w pralni gora
+	
 	din_04zModulu1_przewod_5_s_27_1_pralnia_2z2_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w pralni dol
-
-	din_04zModulu2_przewod_3_s_30_1_kuchnia_1z2_niebieski  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia dol
-	din_03zModulu2_przewod_3_s_30_1_kuchnia_2z2_zielony  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia gora
-    
-    din_06zModulu2_przewod_3_s_30_1_kuchnia_1z2_brazowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni wykusz gora
-	din_05zModulu2_przewod_3_s_30_1_kuchnia_2z2_pomaranczowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni wykusz dol
-
-    din_08zModulu2_przewod_3_s_30_1_kuchnia_1z2_bialopomaranczowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni slide gora
-	din_07zModulu2_przewod_3_s_30_1_kuchnia_2z2_bialoniebieski  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni slide dol
-
-    din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie gora
-	din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie dol
-	
+	din_05zModulu1_przewod_5_s_27_1_pralnia_1z2_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w pralni gora
+	din_06zModulu1_przewod_1_s_25_1_koniecPrzedpokoju_2z2_zielony AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik podwojny na koncu przedpokoju lub wlacznik poczworny na dole schodow 1/4
+	din_07zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_1z3_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w przedpokoju przy drzwiach 1/3
 	din_08zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_2z3_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w przedpokoju przy drzwiach 2/3
-	
+	din_09zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_1z3_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w przedpokoju przy drzwiach 3/3 lub wlacznik podwojny na koncu przedpokoju 1/2
+
 	din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy AT %I* : BOOL;//bylo din1_10_10 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 1/4 lub wlacznik poczworny w kuchni na slupku 1/4
 	din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski AT %I* : BOOL; //bylo din1_11_11 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 2/4
-	din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy AT %I* : BOOL; //bylo din1_12_12 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 3/4 lub wlacznik poczworny na dole schodow 1/4
+	din_12zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_3z4_bialopomaranczowy AT %I* : BOOL; //bylo din1_12_12 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 3/4 lub wlacznik poczworny na dole schodow 3/4
 	din_13zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_4z4_bialobrazowy AT %I* : BOOL; //din_1_13_13 //zasilanie bialo-zielony: Elektroniczny wlacznik swiatla w przedpokoju 4/4	
-
+	
 	din_14zModulu1_przewod_4_s_21_1_slupekKuchnia_4z4_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 4/4
 	din_15zModulu1_przewod_4_s_21_1_slupekKuchnia_1z4_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 1/4
 	din_16zModulu1_przewod_4_s_21_1_slupekKuchnia_2z4_bialoniebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 2/4
 
-	din_16zModulu2_przewod_14_s_26_1_gabinetPrawieNajnizej_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik w gabinecie prawie
-	din_01zModulu3_przewod_14_s_26_1_gabinetNajnizej_bialopomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik w gabinecie najnizszy
+	din_03zModulu2_przewod_3_s_30_1_kuchnia_2z2_zielony AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia gora
+    din_04zModulu2_przewod_3_s_30_1_kuchnia_1z2_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia dol
 
+	din_05zModulu2_przewod_3_s_30_1_kuchnia_2z2_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni wykusz dol
+	din_06zModulu2_przewod_3_s_30_1_kuchnia_1z2_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni wykusz gora
+
+    din_07zModulu2_przewod_3_s_30_1_kuchnia_2z2_bialoniebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni slide dol
+	din_08zModulu2_przewod_3_s_30_1_kuchnia_1z2_bialopomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni slide gora
+	
+	din_12zModulu2_przewod_4_s_14_1_dolSchodow_2z4_niebieski AT %I* : BOOL; //zasilanie bialo-niebieski: Wlacznik poczworny na dole schodow 2/4
+	din_13zModulu2_przewod_4_s_14_1_dolSchodow_4z4_bialopomaranczowy AT %I* : BOOL; //zasilanie bialo-niebieski: Wlacznik poczworny na dole schodow 4/4
+	din_14zModulu2_przewod_18_s_38_1_goraSchodow_2z4_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny na gorze schodow 2/4
+	din_15zModulu2_przewod_18_s_38_1_goraSchodow_3z4_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny na gorze schodow 3/4
+
+	din_16zModulu2_przewod_14_s_26_1_gabinetPrawieNajnizej_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik w gabinecie prawie
+
+	din_01zModulu3_przewod_14_s_26_1_gabinetNajnizej_bialopomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik w gabinecie najnizszy
+	din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie dol
+	din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie gora
+
+	din_07zModulu3_przewod_5_s_23_1_pralniaNajnizej_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w pralni
+	
+		
     //5-s-23-1 prawdopodobnie pralnia wlacznik swiatla
 	din_1_14_14 AT %I* : BOOL;
 	din_1_15_15 AT %I* : BOOL;
@@ -144,7 +155,7 @@ VAR_GLOBAL
 	dout_8zModulu1_przewod_xxxxxx_swiatloPrzedpokojBlizejSalonu AT %Q* : BOOL; //xxxxx to jest obwod S sterowania, znalezc 
 		douts_swiatloPrzedpokojBlizejSalonu : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
-	dout_9zModulu1_przewod_5_o_11_1_swiatloPralnia AT %Q* : BOOL; //xxxxx
+	dout_9zModulu1_przewod_5_o_11_1_swiatloPralnia AT %Q* : BOOL; //5_o_11_1
 		douts_swiatloPralnia : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
 	dout_10zModulu1_przewod_3_o_3_1_swiatloKontuarKuchnia AT %Q* : BOOL; //3_o_3_1
@@ -161,9 +172,11 @@ VAR_GLOBAL
 
 	dout_14zModulu1_przewod_xxxxxx_swiatloTrepy AT %Q* : BOOL; //xxxxx
 		douts_swiatloTrepy : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_15zModulu1_przewod_xxxxxx_swiatloKorytarzPunktySufit AT %Q* : BOOL; //xxxxx
+		
+	dout_15zModulu1_przewod_18_o_18_1_2_swiatloKorytarzPunktySufit AT %Q* : BOOL; //18_o_18_1 zasilanie z L
 		douts_swiatloKorytarzPunktySufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-	dout_16zModulu1_przewod_xxxxxx_swiatloZyrandolKorytarz AT %Q* : BOOL; //xxxxx
+		
+	dout_16zModulu1_przewod_18_o_18_1_3_swiatloZyrandolKorytarz AT %Q* : BOOL; //18_o_18_1 zasilanie z PE
 		douts_swiatloZyrandolKorytarz : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 
 	dout_1zModulu2_przewod_xxxxxx_swiatloToaletkaSypialniaRodzicow AT %Q* : BOOL; //xxxxx

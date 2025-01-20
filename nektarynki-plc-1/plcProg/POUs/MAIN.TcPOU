@@ -252,6 +252,20 @@ wlacznik_33_swiatlo_w_gabinecie(ID:=33, name:='Wl. sw. w gabinecie najnizszy',
         runAsYouPress:=FALSE, lightSwitch:= TRUE);	
 proste_wlaczniki_swiatel[8] := ADR(wlacznik_33_swiatlo_w_gabinecie);
 
+wlacznik_22_swiatlo_punkty_na_suficie_w_korytarzu(ID:=22, name:='Wl. sw. poczworny gora schodow 1/4',
+		digitalInput:=GVL.din_12zModulu2_przewod_4_s_14_1_dolSchodow_2z4_niebieski, outputs:=GVL.douts_swiatloKorytarzPunktySufit,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);	
+proste_wlaczniki_swiatel[9] := ADR(wlacznik_22_swiatlo_punkty_na_suficie_w_korytarzu);
+
+wlacznik_23_swiatlo_zyrandol_w_korytarzu(ID:=23, name:='Wl. sw. poczworny gora schodow 2/4',
+		digitalInput:=GVL.din_14zModulu2_przewod_18_s_38_1_goraSchodow_2z4_pomaranczowy, outputs:=GVL.douts_swiatloZyrandolKorytarz,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);	
+proste_wlaczniki_swiatel[10] := ADR(wlacznik_23_swiatlo_zyrandol_w_korytarzu);
+
+wlacznik_25_swiatlo_w_pralni(ID:=25, name:='Wl. sw. pralnia najnizszy',
+		digitalInput:=GVL.din_07zModulu3_przewod_5_s_23_1_pralniaNajnizej_niebieski, outputs:=GVL.douts_swiatloPralnia,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);	
+proste_wlaczniki_swiatel[11] := ADR(wlacznik_25_swiatlo_w_pralni);
 
 
 //prosteWlaczniki[1] := wlacznik_ogrzewania_lustra; 
@@ -360,6 +374,15 @@ proste_wlaczniki_swiatel[7]^.loop();
 proste_wlaczniki_swiatel[8]^.loop();
 	GVL.dout_13zModulu1_przewod_4_o_10_1_swiatloGabinet := GVL.douts_swiatloGabinet[1];	
 	
+proste_wlaczniki_swiatel[9]^.loop();
+	GVL.dout_15zModulu1_przewod_18_o_18_1_2_swiatloKorytarzPunktySufit := GVL.douts_swiatloKorytarzPunktySufit[1];
+
+proste_wlaczniki_swiatel[10]^.loop();
+	GVL.dout_16zModulu1_przewod_18_o_18_1_3_swiatloZyrandolKorytarz := GVL.douts_swiatloZyrandolKorytarz[1];
+	
+proste_wlaczniki_swiatel[11]^.loop();
+	GVL.dout_9zModulu1_przewod_5_o_11_1_swiatloPralnia := GVL.douts_swiatloPralnia[1];
+	
 	
 	
 	
@@ -427,7 +450,16 @@ END_IF
       <LineId Id="329" Count="1" />
       <LineId Id="189" Count="0" />
       <LineId Id="337" Count="4" />
-      <LineId Id="203" Count="2" />
+      <LineId Id="203" Count="0" />
+      <LineId Id="342" Count="3" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="346" Count="0" />
+      <LineId Id="348" Count="2" />
+      <LineId Id="205" Count="0" />
+      <LineId Id="354" Count="0" />
+      <LineId Id="356" Count="2" />
+      <LineId Id="347" Count="0" />
+      <LineId Id="355" Count="0" />
       <LineId Id="60" Count="0" />
       <LineId Id="59" Count="0" />
       <LineId Id="62" Count="0" />
@@ -479,8 +511,15 @@ END_IF
       <LineId Id="110" Count="2" />
       <LineId Id="115" Count="0" />
       <LineId Id="104" Count="0" />
-      <LineId Id="116" Count="0" />
-      <LineId Id="105" Count="3" />
+      <LineId Id="116" Count="1" />
+      <LineId Id="119" Count="1" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="126" Count="1" />
+      <LineId Id="106" Count="2" />
       <LineId Id="52" Count="0" />
       <LineId Id="55" Count="0" />
     </LineIds>
