@@ -89,7 +89,7 @@ _ret2 :]]></ST>
       </Implementation>
     </Method>
     <Method Name="requestLightsOff" Id="{985aeeea-4a3c-4846-a7a2-a8f187eeda96}">
-      <Declaration><![CDATA[METHOD requestLightsOff : BOOL
+      <Declaration><![CDATA[  METHOD requestLightsOff : BOOL
 VAR_INPUT
 END_VAR
 

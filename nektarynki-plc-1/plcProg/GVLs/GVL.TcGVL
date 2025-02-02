@@ -9,7 +9,7 @@ VAR_GLOBAL CONSTANT
 	
 	MAX_SHUTTERS : INT := 11;
 	MAX_SMART_LIGHTS : INT := 0;//TODO 50 ALBO MNIEJ;
-	MAX_SIMPLE_BUTTONS : INT := 11; //TODO PEWNIE WIECEJ
+	MAX_SIMPLE_BUTTONS : INT := 14; //TODO PEWNIE WIECEJ
 END_VAR
 
 VAR_GLOBAL
@@ -29,7 +29,7 @@ VAR_GLOBAL
 	din_06zModulu1_przewod_1_s_25_1_koniecPrzedpokoju_2z2_zielony AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik podwojny na koncu przedpokoju lub wlacznik poczworny na dole schodow 1/4
 	din_07zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_1z3_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w przedpokoju przy drzwiach 1/3
 	din_08zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_2z3_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w przedpokoju przy drzwiach 2/3
-	din_09zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_1z3_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w przedpokoju przy drzwiach 3/3 lub wlacznik podwojny na koncu przedpokoju 1/2
+	din_09zModulu1_przewod_1_s_5_1_przedpokojPrzyDrzwiach_3z3_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w przedpokoju przy drzwiach 3/3 lub wlacznik podwojny na koncu przedpokoju 1/2
 
 	din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy AT %I* : BOOL;//bylo din1_10_10 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 1/4 lub wlacznik poczworny w kuchni na slupku 1/4
 	din_11zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_2z4_bialoniebieski AT %I* : BOOL; //bylo din1_11_11 //zasilanie biało-zielony: Elektroniczny wlacznik swiatla w przedpokoju 2/4
@@ -59,11 +59,19 @@ VAR_GLOBAL
 	din_01zModulu3_przewod_14_s_26_1_gabinetNajnizej_bialopomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik w gabinecie najnizszy
 	din_02zModulu3_przewod_14_s_26_1_gabinet_2z2_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie dol
 	din_03zModulu3_przewod_14_s_26_1_gabinet_1z2_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w gabinecie gora
-
-	din_07zModulu3_przewod_5_s_23_1_pralniaNajnizej_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w pralni
 	
-		
-    //5-s-23-1 prawdopodobnie pralnia wlacznik swiatla
+	din_04zModulu3_przewod_14_s_40_1_lazienka_1z2_zielony AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik podwojny w gornej lazience 1/2
+	din_05zModulu3_przewod_14_s_40_1_lazienka_2z2_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik podwojny w gornej lazience 2/2
+	din_07zModulu3_przewod_5_s_23_1_pralniaNajnizej_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w pralni
+	din_08zModulu3_przewod_13_s_48_1_bezBalkonu_1z2_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w sypialni bez balkonu 1/2
+	din_09zModulu3_przewod_13_s_48_1_bezBalkonu_2z2_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w sypialni bez balkonu 1/2
+	
+	din_10zModulu3_przewod_13_s_44_1_bezBalkonu_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w sypialni bez balkonu
+
+	din_11zModulu3_przewod_12_s_50_1_zBalkonem_1z2_brazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w sypialni z balkonem gora
+	din_12zModulu3_przewod_12_s_50_1_zBalkonem_2z2_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w sypialni z balkonem dol
+    
+
 	din_1_14_14 AT %I* : BOOL;
 	din_1_15_15 AT %I* : BOOL;
 	din_1_16_16 AT %I* : BOOL;
@@ -149,10 +157,10 @@ VAR_GLOBAL
 	dout_6zModulu1_przewod_podbitki AT %Q* : BOOL; //podbitki
 		douts_swiatloZewnetrznePodbitki : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;	
 		
-	dout_7zModulu1_przewod_1_o_27_1_przewod_xxxxxx_swiatloPrzedpokojBlizejDrzwi AT %Q* : BOOL; //1_o_27_1 na razie spiete u gory, nie podlaczone
+	dout_7zModulu1_przewod_1_o_27_1_swiatloPrzedpokojBlizejDrzwi AT %Q* : BOOL; //1_o_27_1
 		douts_swiatloPrzedpokojBlizejDrzwi : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
-	dout_8zModulu1_przewod_xxxxxx_swiatloPrzedpokojBlizejSalonu AT %Q* : BOOL; //xxxxx to jest obwod S sterowania, znalezc 
+	dout_1zModulu2_przewod_1_s_70_1_swiatloPrzedpokojBlizejSalonu AT %Q* : BOOL; //1_s_70_1 to jest byly obwod 'S' sterowania 
 		douts_swiatloPrzedpokojBlizejSalonu : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
 	dout_9zModulu1_przewod_5_o_11_1_swiatloPralnia AT %Q* : BOOL; //5_o_11_1
@@ -194,11 +202,19 @@ VAR_GLOBAL
 	dout_4zModulu2_przewod_xxxxxx_swiatloNadLozkiemSypialniaRodzicow AT %Q* : BOOL; //xxxxx
 		douts_swiatloNadLozkiemSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 
-
 	dout_xxxxxxxx_przewod_xxxxxx_swiatloGaraz AT %Q* : BOOL; //xxxxx
 		douts_swiatloGaraz : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_6zModulu2_przewod_14_o_22_1_2_swiatloGornaLazienka AT %Q* : BOOL;
+	dout_7zModulu2_przewod_14_o_22_1_3_swiatloGornaLazienka AT %Q* : BOOL;
+	dout_8zModulu2_przewod_14_o_23_1_2_swiatloGornaLazienka AT %Q* : BOOL;
+		douts_swiatloGornaLazienkaSufitowe : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+	dout_9zModulu2_przewod_14_o_23_1_3_swiatloGornaLazienka AT %Q* : BOOL; 
+	dout_10zModulu2_przewod_xxx_swiatloGornaLazienkaPodlogowe AT %Q* : BOOL;
+		douts_swiatloGornaLazienkaWiszaceiPodlogowe : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
-	
+	dout_11zModulu2_przewod_13_o_19_1_swiatloSypialniaBezBalkonu AT %Q* : BOOL; //13_o_19_1
+		douts_swiatloSypialniaBezBalkonu : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>
