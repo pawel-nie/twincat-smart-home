@@ -46,18 +46,17 @@ VAR
 		wlacznik_24_swiatlo_przypodlogowe_w_korytarzu : SimpleButton(); //do namierzenia i podlaczenia jako 12 V albo 24 V
 		wlacznik_25_swiatlo_w_pralni : SimpleButton(); //do namierzenia i podlaczenia
 		wlacznik_26_swiatlo_nad_toaletka_w_sypialni_rodzicow : SimpleButton(); //do namierzenia i podlaczenia
-		wlacznik_27_swiatlo_niski_sufit_w_sypialni_rodzicow : SimpleButton(); //do namierzenia i podlaczenia
-		wlacznik_28_swiatlo_wysoki_sufit_w_sypialni_rodzicow : SimpleButton();//do namierzenia i podlaczenia
+		wlacznik_27_swiatlo_niski_sufit_i_wysoki_sufit_w_sypialni_rodzicow : SimpleButton(); //do namierzenia i podlaczenia
 		wlacznik_29_swiatlo_nad_lozkiem_w_sypialni_rodzicow : SimpleButton();//do namierzenia i podlaczenia
 		wlacznik_30_swiatlo_frontowe : SimpleButton();//do namierzenia i podlaczenia
 		wlacznik_31_swiatlo_podbitki : SimpleButton();
 		wlacznik_32_swiatlo_w_garazu : SimpleButton();//do namierzenia i podlaczenia
 		wlacznik_33_swiatlo_w_gabinecie : SimpleButton();
 		wlacznik_34_swiatlo_w_sypialni_bez_balkonu : SimpleButton();
+		wlacznik_35_swiatlo_w_gornej_lazience_wiszace : SimpleButton();
 		
 	stopniowe_wlaczniki_swiatel : ARRAY[1..GVL.MAX_SMART_LIGHTS] OF POINTER TO LightSwitch;
-		wlacznik_50_swiatlo_w_gornej_lazience_zwisajace_i_nocne : LightSwitch();//do namierzenia i podlaczenia
-		wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie : LightSwitch();//do namierzenia i podlaczenia
+		wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie_i_nocne : LightSwitch();
 	
 	wlaczniki_trojpozycyjne : ARRAY[1..10] OF UpStopDownButton;
 		wlacznik_70_brama_garazowa : UpStopDownButton();//do namierzenia i podlaczenia
@@ -288,25 +287,32 @@ wlacznik_26_swiatlo_nad_toaletka_w_sypialni_rodzicow(ID:=26, name:='Wl. sw. w sy
         runAsYouPress:=FALSE, lightSwitch:= TRUE);	
 proste_wlaczniki_swiatel[15] := ADR(wlacznik_26_swiatlo_nad_toaletka_w_sypialni_rodzicow);
 
-wlacznik_27_swiatlo_niski_sufit_w_sypialni_rodzicow(ID:=27, name:='Wl. sw. w sypialni rodzicow przy drzwiach 1/1 lub przy lozku 2/2',
-		digitalInput:=GVL.din_01zModulu4_przewod_11_s_42_1_rodzicow_1z1_bialobrazowy, outputs:=GVL.douts_swiatloNiskiSufitSypialniaRodzicow,
+wlacznik_27_swiatlo_niski_sufit_i_wysoki_sufit_w_sypialni_rodzicow(ID:=27, name:='Wl. sw. w sypialni rodzicow przy drzwiach 1/1 lub przy lozku 2/2',
+		digitalInput:=GVL.din_01zModulu4_przewod_11_s_42_1_rodzicow_1z1_bialobrazowy, outputs:=GVL.douts_swiatloNiskiIWysokiSufitSypialniaRodzicow,
         runAsYouPress:=FALSE, lightSwitch:= TRUE);	
-proste_wlaczniki_swiatel[16] := ADR(wlacznik_27_swiatlo_niski_sufit_w_sypialni_rodzicow);
-
-wlacznik_28_swiatlo_wysoki_sufit_w_sypialni_rodzicow(ID:=28, name:='Wl. sw. w sypialni rodzicow przy drzwiach 1/1 lub przy drzwiach balkonowych 1/1',
-		digitalInput:=GVL.din_02zModulu4_przewod_11_s_42_1_rodzicow_1z1_bialopomaranczowy, outputs:=GVL.douts_swiatloWysokiSufitSypialniaRodzicow,
-        runAsYouPress:=FALSE, lightSwitch:= TRUE);	
-proste_wlaczniki_swiatel[17] := ADR(wlacznik_28_swiatlo_wysoki_sufit_w_sypialni_rodzicow);
+proste_wlaczniki_swiatel[16] := ADR(wlacznik_27_swiatlo_niski_sufit_i_wysoki_sufit_w_sypialni_rodzicow);
 
 wlacznik_29_swiatlo_nad_lozkiem_w_sypialni_rodzicow(ID:=29, name:='Wl. sw. w sypialni rodzicow przy drzwiach 1/2 lub przy lozku 1/1',
 		digitalInput:=GVL.din_03zModulu4_przewod_11_s_42_1_rodzicow_1z2_bialoniebieski, outputs:=GVL.douts_swiatloNadLozkiemSypialniaRodzicow,
         runAsYouPress:=FALSE, lightSwitch:= TRUE);	
-proste_wlaczniki_swiatel[18] := ADR(wlacznik_29_swiatlo_nad_lozkiem_w_sypialni_rodzicow);
+proste_wlaczniki_swiatel[17] := ADR(wlacznik_29_swiatlo_nad_lozkiem_w_sypialni_rodzicow);
 
+wlacznik_35_swiatlo_w_gornej_lazience_wiszace(ID:=35, name:='Wl. sw. w gornej lazience 2/2 lub na korytarzu 2/2',
+		digitalInput:=GVL.din_05zModulu3_przewod_14_s_40_1_lazienka_2z2_niebieski, outputs:=GVL.douts_swiatloWiszaceGornaLazienka,
+        runAsYouPress:=FALSE, lightSwitch:= TRUE);	
+proste_wlaczniki_swiatel[18] := ADR(wlacznik_35_swiatlo_w_gornej_lazience_wiszace);
 
-
-
-
+(*
+wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie_i_nocne(ID:= 51, name:='Smart wl. sw. w gornej lazience 1/2',
+		digitalInput:=GVL.din_04zModulu3_przewod_14_s_40_1_lazienka_1z2_zielony, 
+		small_outputs:=GVL.douts_swiatloSlabeGornaLazienka,
+		medium_outputs:=GVL.douts_swiatloSrednieGornaLazienka,
+		big_outputs:=GVL.douts_swiatloMocneGornaLazienka,
+		defaultDayOutput:=E_OutputLevel.BIG,
+		defaultNightOutput:=E_OutputLevel.SMALL,
+		levelsManaged:=3);
+stopniowe_wlaczniki_swiatel[1] := ADR(wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie_i_nocne);
+*)
 
 //prosteWlaczniki[1] := wlacznik_ogrzewania_lustra; 
 
@@ -400,8 +406,13 @@ wlaczniki_rolet_i_zaluzji[8]^.loop();
 	
 //wlaczniki_swiatel[2]^.loop();
 //	GVL.b_led_1 := GVL.douts_ledy1[1];
-	
 
+(*
+stopniowe_wlaczniki_swiatel[1]^.loop();
+	GVL.dout_3zModulu2_przewod_14_o_23_1_3_swiatloSlabeGornaLazienka := GVL.douts_swiatloSlabeGornaLazienka[1];
+	GVL.dout_4zModulu2_przewod_14_o_24_1_2_swiatloSrednieGornaLazienka := GVL.douts_swiatloSrednieGornaLazienka[1];
+	GVL.dout_5zModulu2_przewod_14_o_23_1_2_swiatloMocneGornaLazienka := GVL.douts_swiatloMocneGornaLazienka[1];
+*)
 proste_wlaczniki_swiatel[1]^.loop();
 	GVL.dout_1zModulu1_przewod_2_o_4_1_swiatloSalonJadalniaSufit := GVL.douts_swiatloSalonJadalniaSufit[1];
 	
@@ -448,15 +459,14 @@ proste_wlaczniki_swiatel[15]^.loop();
 	GVL.dout_8zModulu1_przewod_11_o_18_1_3_swiatloToaletkaSypialniaRodzicow := GVL.douts_swiatloToaletkaSypialniaRodzicow[1];	
 	
 proste_wlaczniki_swiatel[16]^.loop();
-	GVL.dout_12zModulu1_przewod_11_o_18_1_2_swiatloNiskiSufitSypialniaRodzicow := GVL.douts_swiatloNiskiSufitSypialniaRodzicow[1];	
+	GVL.dout_12zModulu1_przewod_11_o_18_1_2_swiatloNiskiIWysokiSufitSypialniaRodzicow := GVL.douts_swiatloNiskiIWysokiSufitSypialniaRodzicow[1];	
 	
 proste_wlaczniki_swiatel[17]^.loop();
-	GVL.dout_14zModulu1_przewod_xxxxxx_swiatloWysokiSufitSypialniaRodzicow := GVL.douts_swiatloWysokiSufitSypialniaRodzicow[1];	
-	
-proste_wlaczniki_swiatel[18]^.loop();
 	GVL.dout_2zModulu2_przewod_11_o_17_1_swiatloNadLozkiemSypialniaRodzicow := GVL.douts_swiatloNadLozkiemSypialniaRodzicow[1];	
-	
-	
+
+proste_wlaczniki_swiatel[18]^.loop();
+	GVL.dout_14zModulu1_przewod_14_o_24_1_3_swiatloWiszaceGornaLazienka := GVL.douts_swiatloWiszaceGornaLazienka[1];	
+
 ]]></ST>
       </Implementation>
     </Method>
@@ -541,15 +551,17 @@ END_IF
       <LineId Id="60" Count="0" />
       <LineId Id="392" Count="2" />
       <LineId Id="370" Count="0" />
-      <LineId Id="390" Count="0" />
-      <LineId Id="398" Count="2" />
-      <LineId Id="391" Count="0" />
       <LineId Id="404" Count="3" />
       <LineId Id="402" Count="1" />
       <LineId Id="401" Count="0" />
-      <LineId Id="396" Count="1" />
+      <LineId Id="412" Count="2" />
+      <LineId Id="422" Count="0" />
+      <LineId Id="397" Count="0" />
       <LineId Id="395" Count="0" />
+      <LineId Id="415" Count="6" />
+      <LineId Id="423" Count="0" />
       <LineId Id="389" Count="0" />
+      <LineId Id="424" Count="0" />
       <LineId Id="59" Count="0" />
       <LineId Id="62" Count="0" />
       <LineId Id="61" Count="0" />
@@ -596,7 +608,11 @@ END_IF
       <LineId Id="62" Count="0" />
       <LineId Id="46" Count="0" />
       <LineId Id="51" Count="0" />
-      <LineId Id="63" Count="1" />
+      <LineId Id="181" Count="0" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="176" Count="0" />
+      <LineId Id="178" Count="2" />
+      <LineId Id="64" Count="0" />
       <LineId Id="74" Count="1" />
       <LineId Id="78" Count="5" />
       <LineId Id="100" Count="0" />
@@ -627,9 +643,11 @@ END_IF
       <LineId Id="168" Count="0" />
       <LineId Id="161" Count="1" />
       <LineId Id="169" Count="0" />
-      <LineId Id="163" Count="1" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="175" Count="0" />
       <LineId Id="170" Count="0" />
-      <LineId Id="165" Count="2" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="174" Count="0" />
       <LineId Id="55" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.systemService">

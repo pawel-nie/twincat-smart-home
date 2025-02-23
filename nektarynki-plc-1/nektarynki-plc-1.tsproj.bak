@@ -15,7 +15,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{A14C7FBD-5B32-49C5-96AB-4C1D0189B914}" Name="plcProg" PrjFilePath="plcProg\plcProg.plcproj" TmcFilePath="plcProg\plcProg.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{14740CE7-5282-B510-41EF-5EC36BCE723D}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plcProg\plcProg.tmc" TmcHash="{5E73F38D-66C9-6A95-F573-ECFDD968C99B}">
 					<Name>plcProg Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
@@ -235,6 +235,11 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
+							<Name>GVL.din_13zModulu3_przewod_18_s_55_1_korytarzPrzySypialniach_1z1_zielony</Name>
+							<Comment><![CDATA[zasilanie bialo-zielony: Wylacznik swiatla korytarz przy sypialniach]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
 							<Name>GVL.din_14ZModulu3_przewod_11_S_42_1_rodzicow_1z2_brazowy</Name>
 							<Comment><![CDATA[zasilanie bialo-zielony: Wlacznik roletowy w sypialni rodzicow gora]]></Comment>
 							<Type>BOOL</Type>
@@ -274,11 +279,6 @@
 						</Var>
 						<Var>
 							<Name>GVL.din_1_16_16</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.din_13zModulu3_przewod_18_s_55_1_korytarzPrzySypialniach_1z1_zielony</Name>
-							<Comment><![CDATA[zasilanie bialo-zielony: Wylacznik swiatla korytarz przy sypialniach]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 					</Vars>
@@ -455,44 +455,28 @@ OUTPUTS]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_8zModulu1_przewod_xxxxxx_swiatloToaletkaSypialniaRodzicow</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
+							<Name>GVL.dout_8zModulu1_przewod_11_o_18_1_3_swiatloToaletkaSypialniaRodzicow</Name>
+							<Comment><![CDATA[11_o_18_1_3]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_12zModulu1_przewod_xxxxxx_swiatloNiskiSufitSypialniaRodzicow</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
+							<Name>GVL.dout_12zModulu1_przewod_11_o_18_1_2_swiatloNiskiIWysokiSufitSypialniaRodzicow</Name>
+							<Comment><![CDATA[11_o_18_1_3]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_14zModulu1_przewod_xxxxxx_swiatloWysokiSufitSypialniaRodzicow</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
+							<Name>GVL.dout_14zModulu1_przewod_14_o_24_1_3_swiatloWiszaceGornaLazienka</Name>
+							<Comment><![CDATA[14_o_24_1_3]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL.dout_2zModulu2_przewod_xxxxxx_swiatloNadLozkiemSypialniaRodzicow</Name>
-							<Comment><![CDATA[xxxxx]]></Comment>
+							<Name>GVL.dout_2zModulu2_przewod_11_o_17_1_swiatloNadLozkiemSypialniaRodzicow</Name>
+							<Comment><![CDATA[11_o_17_1]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL.dout_xxxxxxxx_przewod_xxxxxx_swiatloGaraz</Name>
 							<Comment><![CDATA[xxxxx]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_6zModulu2_przewod_14_o_22_1_2_swiatloGornaLazienka</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_7zModulu2_przewod_14_o_22_1_3_swiatloGornaLazienka</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_8zModulu2_przewod_14_o_23_1_2_swiatloGornaLazienka</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL.dout_9zModulu2_przewod_14_o_23_1_3_swiatloGornaLazienka</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -502,6 +486,21 @@ OUTPUTS]]></Comment>
 						<Var>
 							<Name>GVL.dout_11zModulu2_przewod_13_o_19_1_swiatloSypialniaBezBalkonu</Name>
 							<Comment><![CDATA[13_o_19_1]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_3zModulu2_przewod_14_o_23_1_3_swiatloSlabeGornaLazienka</Name>
+							<Comment><![CDATA[14_o_23_1_3 ]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_4zModulu2_przewod_14_o_24_1_2_swiatloSrednieGornaLazienka</Name>
+							<Comment><![CDATA[14_o_24_1_2 ]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL.dout_5zModulu2_przewod_14_o_23_1_2_swiatloMocneGornaLazienka</Name>
+							<Comment><![CDATA[14_o_23_1_2 ]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 					</Vars>
@@ -2448,11 +2447,11 @@ Bit 15 = Acyc. Function atcive (e.g. K-Bus Reset)
 				<Link VarA="PlcTask Outputs^GVL.dout_11zModulu1_przewod_3_o_2_1_swiatloKuchniaSufit" VarB="Term 9 (KL2809)^Channel 11^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_11zModulu2_przewod_13_o_19_1_swiatloSypialniaBezBalkonu" VarB="Term 10 (KL2809)^Channel 11^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_12_zaluzja_balkon_w_dol" VarB="Term 13 (KL2809)^Channel 6^Output"/>
-				<Link VarA="PlcTask Outputs^GVL.dout_12zModulu1_przewod_xxxxxx_swiatloNiskiSufitSypialniaRodzicow" VarB="Term 9 (KL2809)^Channel 12^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_12zModulu1_przewod_11_o_18_1_2_swiatloNiskiIWysokiSufitSypialniaRodzicow" VarB="Term 9 (KL2809)^Channel 12^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_13_zaluzja_nad_wykuszem_w_gore" VarB="Term 13 (KL2809)^Channel 7^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_13zModulu1_przewod_4_o_10_1_swiatloGabinet" VarB="Term 9 (KL2809)^Channel 13^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_14_zaluzja_nad_wykuszem_w_dol" VarB="Term 13 (KL2809)^Channel 8^Output"/>
-				<Link VarA="PlcTask Outputs^GVL.dout_14zModulu1_przewod_xxxxxx_swiatloWysokiSufitSypialniaRodzicow" VarB="Term 9 (KL2809)^Channel 14^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_14zModulu1_przewod_14_o_24_1_3_swiatloWiszaceGornaLazienka" VarB="Term 9 (KL2809)^Channel 14^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_15_zaluzja_okno_bez_balkonu_w_gore" VarB="Term 13 (KL2809)^Channel 9^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_15zModulu1_przewod_18_o_18_1_2_swiatloKorytarzPunktySufit" VarB="Term 9 (KL2809)^Channel 15^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_16_zaluzja_okno_bez_balkonu_w_dol" VarB="Term 13 (KL2809)^Channel 10^Output"/>
@@ -2462,23 +2461,22 @@ Bit 15 = Acyc. Function atcive (e.g. K-Bus Reset)
 				<Link VarA="PlcTask Outputs^GVL.dout_1zModulu2_przewod_1_s_70_1_swiatloPrzedpokojBlizejSalonu" VarB="Term 10 (KL2809)^Channel 1^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_2_zaluzja_pralnia_w_dol" VarB="Term 12 (KL2809)^Channel 12^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_2zModulu1_przewod_2_o_5_1_swiatloSalonKanapaSufit" VarB="Term 9 (KL2809)^Channel 2^Output"/>
-				<Link VarA="PlcTask Outputs^GVL.dout_2zModulu2_przewod_xxxxxx_swiatloNadLozkiemSypialniaRodzicow" VarB="Term 10 (KL2809)^Channel 2^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_2zModulu2_przewod_11_o_17_1_swiatloNadLozkiemSypialniaRodzicow" VarB="Term 10 (KL2809)^Channel 2^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_3_zaluzja_okno_narozne_kuchnia_w_gore" VarB="Term 12 (KL2809)^Channel 13^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_3zModulu1_przewod_2_o_7_1_swiatloPrzejscieZPrzedpokojuDoSalonuSufit" VarB="Term 9 (KL2809)^Channel 3^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_3zModulu2_przewod_14_o_23_1_3_swiatloSlabeGornaLazienka" VarB="Term 10 (KL2809)^Channel 3^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_4_zaluzja_okno_narozne_kuchnia_w_dol" VarB="Term 12 (KL2809)^Channel 14^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_4zModulu2_przewod_14_o_24_1_2_swiatloSrednieGornaLazienka" VarB="Term 10 (KL2809)^Channel 4^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_5_zaluzja_wykusz_w_gore" VarB="Term 12 (KL2809)^Channel 15^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_5zModulu2_przewod_14_o_23_1_2_swiatloMocneGornaLazienka" VarB="Term 10 (KL2809)^Channel 5^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_6_zaluzja_wykusz_w_dol" VarB="Term 12 (KL2809)^Channel 16^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_6zModulu1_przewod_podbitki" VarB="Term 9 (KL2809)^Channel 6^Output"/>
-				<Link VarA="PlcTask Outputs^GVL.dout_6zModulu2_przewod_14_o_22_1_2_swiatloGornaLazienka" VarB="Term 10 (KL2809)^Channel 6^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_7_zaluzja_slide_w_gore" VarB="Term 13 (KL2809)^Channel 1^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_7zModulu1_przewod_1_o_27_1_swiatloPrzedpokojBlizejDrzwi" VarB="Term 9 (KL2809)^Channel 7^Output"/>
-				<Link VarA="PlcTask Outputs^GVL.dout_7zModulu2_przewod_14_o_22_1_3_swiatloGornaLazienka" VarB="Term 10 (KL2809)^Channel 7^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_8_zaluzja_slide_w_dol" VarB="Term 13 (KL2809)^Channel 2^Output"/>
-				<Link VarA="PlcTask Outputs^GVL.dout_8zModulu1_przewod_xxxxxx_swiatloToaletkaSypialniaRodzicow" VarB="Term 9 (KL2809)^Channel 8^Output"/>
-				<Link VarA="PlcTask Outputs^GVL.dout_8zModulu2_przewod_14_o_23_1_2_swiatloGornaLazienka" VarB="Term 10 (KL2809)^Channel 8^Output"/>
+				<Link VarA="PlcTask Outputs^GVL.dout_8zModulu1_przewod_11_o_18_1_3_swiatloToaletkaSypialniaRodzicow" VarB="Term 9 (KL2809)^Channel 8^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_9_zaluzja_gabinet_w_gore" VarB="Term 13 (KL2809)^Channel 3^Output"/>
 				<Link VarA="PlcTask Outputs^GVL.dout_9zModulu1_przewod_5_o_11_1_swiatloPralnia" VarB="Term 9 (KL2809)^Channel 9^Output"/>
-				<Link VarA="PlcTask Outputs^GVL.dout_9zModulu2_przewod_14_o_23_1_3_swiatloGornaLazienka" VarB="Term 10 (KL2809)^Channel 9^Output"/>
 			</OwnerB>
 		</OwnerA>
 	</Mappings>
