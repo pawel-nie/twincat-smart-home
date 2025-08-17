@@ -106,7 +106,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[inputsOutputsLoop();
+        <ST><![CDATA[verifyIsTurnedOn();
+inputsOutputsLoop();
 
 IF pressed.Q THEN
 	GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Button pressed', str2:= '', str3:=getSource());
@@ -126,11 +127,9 @@ ELSE
 	IF pressed.Q THEN
 		IF isOn THEN 			//turned on -> lets turn off
 			turnOff();
-			isOn := FALSE;
 			stopHoldTimer();
 		ELSE 					//turned off -> lets turn on
 			turnOn();
-			isOn := TRUE;
 			IF withHold THEN
 				GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Button turned ON with hold time miliseconds=', str2:=TO_STRING(TIME_TO_INT(holdTime)), str3:=getSource());
 				holdTimer(IN:= TRUE);
@@ -140,8 +139,7 @@ ELSE
 	END_IF
 	
 	IF withHold AND readyToBeTurnedOff AND NOT holdTimer.Q THEN
-		setOutputs(state:= FALSE);
-		isOn := FALSE;
+		turnOff();
 		readyToBeTurnedOff := FALSE;
 		GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Button turned OFF automatically after hold time miliseconds=', str2:=TO_STRING(TIME_TO_INT(holdTime)), str3:=getSource());
 	END_IF
@@ -229,6 +227,26 @@ END_VAR
         <ST><![CDATA[setOutputs(state:= TRUE);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="verifyIsTurnedOn" Id="{a5248c6e-d2cf-4cc4-8a39-d446cdc1918a}">
+      <Declaration><![CDATA[METHOD PRIVATE verifyIsTurnedOn
+VAR_INPUT
+END_VAR
+
+VAR
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[isOn := FALSE;
+FOR i := 1 TO MAX_OUTPUTS BY 1 DO
+	IF outputs[i] = TRUE THEN
+		isOn := TRUE;
+		RETURN;
+	END_IF
+END_FOR
+
+RETURN;]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="SimpleButton">
       <LineId Id="9" Count="0" />
     </LineIds>
@@ -263,6 +281,7 @@ END_VAR
     </LineIds>
     <LineIds Name="SimpleButton.loop">
       <LineId Id="84" Count="0" />
+      <LineId Id="93" Count="0" />
       <LineId Id="55" Count="0" />
       <LineId Id="13" Count="0" />
       <LineId Id="50" Count="0" />
@@ -279,10 +298,8 @@ END_VAR
       <LineId Id="16" Count="0" />
       <LineId Id="18" Count="0" />
       <LineId Id="29" Count="1" />
-      <LineId Id="39" Count="0" />
       <LineId Id="71" Count="0" />
       <LineId Id="32" Count="1" />
-      <LineId Id="40" Count="0" />
       <LineId Id="52" Count="0" />
       <LineId Id="62" Count="0" />
       <LineId Id="53" Count="0" />
@@ -291,7 +308,8 @@ END_VAR
       <LineId Id="31" Count="0" />
       <LineId Id="17" Count="0" />
       <LineId Id="74" Count="0" />
-      <LineId Id="76" Count="4" />
+      <LineId Id="76" Count="1" />
+      <LineId Id="79" Count="1" />
       <LineId Id="75" Count="0" />
       <LineId Id="15" Count="0" />
       <LineId Id="59" Count="0" />
@@ -323,6 +341,12 @@ END_VAR
     </LineIds>
     <LineIds Name="SimpleButton.turnOn">
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="SimpleButton.verifyIsTurnedOn">
+      <LineId Id="33" Count="0" />
+      <LineId Id="25" Count="5" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="17" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

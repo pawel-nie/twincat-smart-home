@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="LightSwitch" Id="{aec94d50-ff8e-4733-83a7-9ffb2f475799}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK LightSwitch
+  <POU Name="SequentialLightSwitch" Id="{aec94d50-ff8e-4733-83a7-9ffb2f475799}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK SequentialLightSwitch
 
 VAR CONSTANT
 	MAX_OUTPUTS_PER_LEVEL : INT := GVL.MAX_LIGHT_OUTPUTS_PER_LEVEL;
@@ -17,7 +17,7 @@ VAR_INPUT
 	big_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	superstrong_outputs : REFERENCE TO ARRAY[1..MAX_OUTPUTS_PER_LEVEL] OF BOOL;
 	
-	levelsManaged : INT := 3;
+	levelsManaged : INT := 3; //max 4
 	
 	defaultDayOutput : E_OutputLevel;
 	defaultNightOutput : E_OutputLevel;
@@ -26,6 +26,10 @@ END_VAR
 VAR	
 	initialized : BOOL := FALSE;
 	isOn : BOOL := FALSE;
+	smallOutputsSet : BOOL := FALSE;
+	mediumOutputsSet : BOOL := FALSE;
+	bigOutputsSet: BOOL := FALSE;
+	superStrongOutputsSet: BOOL := FALSE;
 	
 	wasRecentlyActive : BOOL := FALSE;
 	pressed : R_TRIG;
@@ -38,13 +42,7 @@ VAR
 	pressedTimer : TON := (PT := T#10S);
 	pressedTimeMiliseconds : INT := 0;
 	firstLongPress : BOOL := FALSE;
-
-	turnedOnStrongest : BOOL := FALSE;
 	turnedOnLongSelector : BOOL := FALSE;
-	smallOutputsSet : BOOL := FALSE;
-	mediumOutputsSet : BOOL := FALSE;
-	bigOutputsSet: BOOL := FALSE;
-	superStrongOutputsSet: BOOL := FALSE;
 	
 	consecutiveClicks : INT := 0;
 END_VAR
@@ -140,15 +138,12 @@ VAR
 	str3: INT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[inputsOutputsLoop();
+        <ST><![CDATA[verifyIsTurnedOn();
+inputsOutputsLoop();
 
-					//	HMI.led1_1 := MAIN.arr1[1]; HMI.led2_1 := MAIN.arr2[1]; HMI.led2_2 := MAIN.arr2[2]; HMI.led3 := MAIN.arr3[1]; HMI.led4_1 := MAIN.arr4[1]; HMI.led4_2 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
-
-				//GVL.b_led_1 := MAIN.arr1[1]; GVL.b_led_2 := MAIN.arr2[1]; GVL.b_led_10 := MAIN.arr2[2]; GVL.b_led_3 := MAIN.arr3[1]; GVL.b_led_4 := MAIN.arr4[1]; GVL.b_led_12 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
 
 IF NOT inactivityTimeout.Q THEN
 	firstLongPress := FALSE;	
-	turnedOnStrongest := FALSE;
 END_IF
 
 IF digitalInput THEN
@@ -161,10 +156,6 @@ IF wasRecentlyActive AND NOT digitalInput AND NOT inactivityTimeout.Q THEN
 	GVL.EventLogger.print3(level:= TcEventSeverity.Verbose, str1:='Activity timeout', str2:= '', str3:=getSource());
 	consecutiveClicks := 0;
 	wasRecentlyActive := FALSE;
-	smallOutputsSet := FALSE;
-	mediumOutputsSet := FALSE;
-	bigOutputsSet := FALSE;
-	superStrongOutputsSet := FALSE;
 END_IF
 
 IF pressed.Q THEN
@@ -222,8 +213,6 @@ END_VAR]]></Declaration>
         <ST><![CDATA[IF levelsManaged >= 1 AND TIME_TO_DWORD(pressedTimer.ET) >= 1000 THEN
 	IF NOT smallOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.SMALL, state := TRUE);
-		smallOutputsSet := TRUE;
-		isOn := TRUE;
 		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press turn on output ', str2:=TO_STRING(E_OutputLevel.SMALL), str3:=getSource());
 	END_IF
 END_IF
@@ -231,8 +220,6 @@ END_IF
 IF levelsManaged >= 2 AND TIME_TO_DWORD(pressedTimer.ET) >= 2000 THEN
 	IF NOT mediumOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.MEDIUM, state := TRUE);
-		mediumOutputsSet := TRUE;
-		isOn := TRUE;
 		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press turn on output', str2:=TO_STRING(E_OutputLevel.SMALL), str3:=getSource());
 	END_IF
 END_IF
@@ -240,8 +227,6 @@ END_IF
 IF levelsManaged >= 3 AND TIME_TO_DWORD(pressedTimer.ET) >= 3000 THEN
 	IF NOT bigOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.BIG, state := TRUE);
-		bigOutputsSet := TRUE;
-		isOn := TRUE;
 		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press turn on output', str2:=TO_STRING(E_OutputLevel.SMALL), str3:=getSource());
 	END_IF
 END_IF
@@ -249,8 +234,6 @@ END_IF
 IF levelsManaged >= 4 AND TIME_TO_DWORD(pressedTimer.ET) >= 4000 THEN
 	IF NOT superStrongOutputsSet THEN
 		setOutputs(outputLevel := E_OutputLevel.SUPERSTRONG, state := TRUE);
-		superStrongOutputsSet := TRUE;
-		isOn := TRUE;
 		GVL.EventLogger.print3(level:=TcEventSeverity.Verbose, str1:='Long press turn on output', str2:=TO_STRING(E_OutputLevel.SMALL), str3:=getSource());
 	END_IF
 END_IF
@@ -393,11 +376,65 @@ END_VAR]]></Declaration>
 		
 END_CASE
 
-turnedOnStrongest := TRUE;
 isOn := TRUE;]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="LightSwitch">
+    <Method Name="verifyIsTurnedOn" Id="{4e977ce7-4f11-4414-adce-fc6f7d22aa32}">
+      <Declaration><![CDATA[METHOD PRIVATE verifyIsTurnedOn
+VAR_INPUT
+END_VAR
+
+VAR
+	i : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[isOn := FALSE;
+smallOutputsSet := FALSE;
+mediumOutputsSet := FALSE;
+bigOutputsSet := FALSE;
+superStrongOutputsSet := FALSE;
+
+IF levelsManaged >= 1 THEN
+	FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+		IF small_outputs[i] = TRUE THEN
+			isOn := TRUE;
+			smallOutputsSet := TRUE;
+		END_IF
+	END_FOR
+END_IF
+
+IF levelsManaged >= 2 THEN
+	FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+		IF medium_outputs[i] = TRUE THEN
+			isOn := TRUE;
+			mediumOutputsSet := TRUE;
+		END_IF
+	END_FOR
+END_IF
+
+IF levelsManaged >= 3 THEN
+	FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+		IF big_outputs[i] = TRUE THEN
+			isOn := TRUE;
+			bigOutputsSet := TRUE;
+		END_IF
+	END_FOR
+END_IF
+
+IF levelsManaged >= 4 THEN
+	FOR i := 1 TO MAX_OUTPUTS_PER_LEVEL BY 1 DO
+		IF superstrong_outputs[i] = TRUE THEN
+			isOn := TRUE;
+			superStrongOutputsSet := TRUE;
+		END_IF
+	END_FOR
+END_IF
+
+
+RETURN;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="SequentialLightSwitch">
       <LineId Id="179" Count="0" />
       <LineId Id="182" Count="0" />
       <LineId Id="181" Count="0" />
@@ -405,7 +442,7 @@ isOn := TRUE;]]></ST>
       <LineId Id="208" Count="0" />
       <LineId Id="195" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.doSpecialAction">
+    <LineIds Name="SequentialLightSwitch.doSpecialAction">
       <LineId Id="7" Count="2" />
       <LineId Id="12" Count="0" />
       <LineId Id="35" Count="0" />
@@ -418,7 +455,7 @@ isOn := TRUE;]]></ST>
       <LineId Id="28" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.getSource">
+    <LineIds Name="SequentialLightSwitch.getSource">
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="12" Count="0" />
@@ -428,24 +465,27 @@ isOn := TRUE;]]></ST>
       <LineId Id="13" Count="0" />
       <LineId Id="10" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.inputsOutputsLoop">
+    <LineIds Name="SequentialLightSwitch.inputsOutputsLoop">
       <LineId Id="6" Count="7" />
       <LineId Id="5" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.isTurnedOnLongSelector">
+    <LineIds Name="SequentialLightSwitch.isTurnedOnLongSelector">
       <LineId Id="5" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.loop">
-      <LineId Id="310" Count="2" />
-      <LineId Id="456" Count="1" />
-      <LineId Id="319" Count="5" />
+    <LineIds Name="SequentialLightSwitch.loop">
+      <LineId Id="480" Count="0" />
+      <LineId Id="310" Count="0" />
+      <LineId Id="489" Count="0" />
+      <LineId Id="319" Count="2" />
+      <LineId Id="323" Count="1" />
       <LineId Id="471" Count="0" />
       <LineId Id="326" Count="3" />
       <LineId Id="331" Count="0" />
       <LineId Id="433" Count="0" />
       <LineId Id="332" Count="0" />
       <LineId Id="416" Count="0" />
-      <LineId Id="333" Count="8" />
+      <LineId Id="333" Count="0" />
+      <LineId Id="338" Count="3" />
       <LineId Id="415" Count="0" />
       <LineId Id="431" Count="0" />
       <LineId Id="421" Count="1" />
@@ -472,21 +512,21 @@ isOn := TRUE;]]></ST>
       <LineId Id="375" Count="0" />
       <LineId Id="225" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.manageLongPress">
+    <LineIds Name="SequentialLightSwitch.manageLongPress">
       <LineId Id="160" Count="0" />
-      <LineId Id="167" Count="3" />
+      <LineId Id="167" Count="1" />
       <LineId Id="198" Count="0" />
-      <LineId Id="171" Count="7" />
+      <LineId Id="171" Count="5" />
       <LineId Id="199" Count="0" />
-      <LineId Id="179" Count="7" />
+      <LineId Id="179" Count="5" />
       <LineId Id="200" Count="0" />
-      <LineId Id="187" Count="7" />
+      <LineId Id="187" Count="5" />
       <LineId Id="201" Count="0" />
       <LineId Id="195" Count="0" />
       <LineId Id="163" Count="0" />
       <LineId Id="152" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.setOutputs">
+    <LineIds Name="SequentialLightSwitch.setOutputs">
       <LineId Id="46" Count="0" />
       <LineId Id="42" Count="0" />
       <LineId Id="5" Count="0" />
@@ -513,7 +553,7 @@ isOn := TRUE;]]></ST>
       <LineId Id="17" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.turnOff">
+    <LineIds Name="SequentialLightSwitch.turnOff">
       <LineId Id="5" Count="1" />
       <LineId Id="13" Count="0" />
       <LineId Id="17" Count="6" />
@@ -528,7 +568,7 @@ isOn := TRUE;]]></ST>
       <LineId Id="45" Count="0" />
       <LineId Id="44" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.turnOnDefault">
+    <LineIds Name="SequentialLightSwitch.turnOnDefault">
       <LineId Id="6" Count="0" />
       <LineId Id="19" Count="0" />
       <LineId Id="8" Count="0" />
@@ -539,7 +579,7 @@ isOn := TRUE;]]></ST>
       <LineId Id="7" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
-    <LineIds Name="LightSwitch.turnOnStrongestOutput">
+    <LineIds Name="SequentialLightSwitch.turnOnStrongestOutput">
       <LineId Id="5" Count="1" />
       <LineId Id="30" Count="0" />
       <LineId Id="14" Count="0" />
@@ -560,9 +600,31 @@ isOn := TRUE;]]></ST>
       <LineId Id="58" Count="0" />
       <LineId Id="16" Count="0" />
       <LineId Id="7" Count="0" />
-      <LineId Id="67" Count="0" />
       <LineId Id="41" Count="0" />
       <LineId Id="40" Count="0" />
+    </LineIds>
+    <LineIds Name="SequentialLightSwitch.verifyIsTurnedOn">
+      <LineId Id="94" Count="4" />
+      <LineId Id="128" Count="0" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="132" Count="4" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="150" Count="4" />
+      <LineId Id="138" Count="1" />
+      <LineId Id="143" Count="1" />
+      <LineId Id="155" Count="4" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="147" Count="1" />
+      <LineId Id="160" Count="4" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="17" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

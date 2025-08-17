@@ -6,7 +6,7 @@ VAR CONSTANT
 END_VAR
 VAR_INPUT
 	shutters : ARRAY[1..GVL.MAX_SHUTTERS] OF POINTER TO ShutterSwitch;
-	smartLights : ARRAY[1..GVL.MAX_SMART_LIGHTS] OF POINTER TO LightSwitch;
+	sequentialLightSwitches : ARRAY[1..GVL.MAX_SEQUENTIAL_SWITCHES] OF POINTER TO SequentialLightSwitch;
 	simpleButtons : ARRAY[1..GVL.MAX_SIMPLE_BUTTONS] OF POINTER TO SimpleButton;
 END_VAR
 VAR_OUTPUT
@@ -100,10 +100,11 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Lights OFF requested', str2:= '', str3:=getSource());
 
-FOR i := 1 TO GVL.MAX_SMART_LIGHTS BY 1 DO
-	smartLights[i]^.turnOff();
+(*
+FOR i := 1 TO GVL.MAX_SEQUENTIAL_SWITCHES BY 1 DO
+	sequentialLightSwitches[i]^.turnOff();
 END_FOR
-
+*)
 FOR i := 1 TO GVL.MAX_SIMPLE_BUTTONS BY 1 DO
 	IF simpleButtons[i]^.isLightSwitch() THEN
 		simpleButtons[i]^.turnOff();
@@ -122,10 +123,11 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[GVL.EventLogger.print3(level:= TcEventSeverity.Info, str1:='Lights ON default requested', str2:= '', str3:=getSource());
 
-FOR i := 1 TO GVL.MAX_SMART_LIGHTS BY 1 DO
-	smartLights[i]^.turnOnDefault();
+(*
+FOR i := 1 TO GVL.MAX_SEQUENTIAL_SWITCHES BY 1 DO
+	sequentialLightSwitches[i]^.turnOnDefault();
 END_FOR
-
+*)
 FOR i := 1 TO GVL.MAX_SIMPLE_BUTTONS BY 1 DO
 	IF simpleButtons[i]^.isLightSwitch() THEN
 		simpleButtons[i]^.turnOn();
@@ -198,6 +200,7 @@ currentShutterNumber := 1;]]></ST>
       <LineId Id="19" Count="0" />
       <LineId Id="37" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="52" Count="0" />
       <LineId Id="9" Count="1" />
       <LineId Id="41" Count="0" />
       <LineId Id="39" Count="0" />
@@ -205,7 +208,9 @@ currentShutterNumber := 1;]]></ST>
       <LineId Id="38" Count="0" />
     </LineIds>
     <LineIds Name="GroupController.requestLightsOnDefault">
-      <LineId Id="18" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="19" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="1" />
       <LineId Id="36" Count="4" />

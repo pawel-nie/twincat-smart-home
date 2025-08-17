@@ -13,9 +13,6 @@ VAR
 	sEventText : STRING(255) := 'Some informational event';
 	
 	groupController : GroupController;
-	
-//	CsvPersistentEventStorage : FB_CsvPersistentEventStorage;
-//	EventLogger : EventLogger(CsvPersistentEventStorage);
 
 	wlaczniki_rolet_i_zaluzji : ARRAY[1..GVL.MAX_SHUTTERS] OF POINTER TO ShutterSwitch;
 	wlacznik_1_zaluzja_pralnia : ShutterSwitch();
@@ -55,9 +52,9 @@ VAR
 		wlacznik_34_swiatlo_w_sypialni_bez_balkonu : SimpleButton();
 		wlacznik_35_swiatlo_w_gornej_lazience_wiszace : SimpleButton();
 		
-	stopniowe_wlaczniki_swiatel : ARRAY[1..GVL.MAX_SMART_LIGHTS] OF POINTER TO LightSwitch;
-		wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie_i_nocne : LightSwitch();
-	
+	sekwencyjne_wlaczniki_swiatel : ARRAY[1..GVL.MAX_SEQUENTIAL_SWITCHES] OF POINTER TO SequentialLightSwitch;
+	(*	wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie_i_nocne : SequentialLightSwitch();
+	*)
 	wlaczniki_trojpozycyjne : ARRAY[1..10] OF UpStopDownButton;
 		wlacznik_70_brama_garazowa : UpStopDownButton();//do namierzenia i podlaczenia
 		
@@ -88,7 +85,7 @@ END_VAR
 			
 	initialized := TRUE;
 	groupController(shutters:= wlaczniki_rolet_i_zaluzji, 
-					smartLights:= stopniowe_wlaczniki_swiatel,
+					sequentialLightSwitches:= sekwencyjne_wlaczniki_swiatel,
 					simpleButtons:= proste_wlaczniki_swiatel);
 
 END_IF
@@ -308,51 +305,16 @@ wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie_i_nocne(ID:= 51, name:='
 		small_outputs:=GVL.douts_swiatloSlabeGornaLazienka,
 		medium_outputs:=GVL.douts_swiatloSrednieGornaLazienka,
 		big_outputs:=GVL.douts_swiatloMocneGornaLazienka,
+		superstrong_outputs:=GVL.douts_swiatloMocneGornaLazienka,
 		defaultDayOutput:=E_OutputLevel.BIG,
 		defaultNightOutput:=E_OutputLevel.SMALL,
-		levelsManaged:=3);
-stopniowe_wlaczniki_swiatel[1] := ADR(wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie_i_nocne);
+		levelsManaged:=4);
+sekwencyjne_wlaczniki_swiatel[1] := ADR(wlacznik_51_swiatlo_w_gornej_lazience_punkty_na_suficie_i_nocne);
 *)
 
 //prosteWlaczniki[1] := wlacznik_ogrzewania_lustra; 
 
 //wlacznikiTrojpozycyjne[1] := wlacznik_bramy_garazowej;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="initializeLightSwitches" Id="{38b20446-df07-4cf5-bdaf-d4a91adc642c}">
-      <Declaration><![CDATA[METHOD PRIVATE initializeLightSwitches
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="initializeShuttterSwitches" Id="{492b662b-675b-49b1-a7d8-d0d474e50baf}">
-      <Declaration><![CDATA[METHOD PRIVATE initializeShuttterSwitches
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="initializeSimpleButtons" Id="{eeee663d-aabf-4d6d-8424-bbe867d0fe6e}">
-      <Declaration><![CDATA[METHOD PRIVATE initializeSimpleButtons
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="initializeUpStopDownButtons" Id="{57487eab-151a-46b6-8b9d-14dcee8cb086}">
-      <Declaration><![CDATA[METHOD PRIVATE initializeUpStopDownButtons
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[]]></ST>
       </Implementation>
     </Method>
     <Method Name="inputsOutputsLoop" Id="{5ddbf680-25b6-4be3-b0a7-c03717331c9d}">
@@ -408,11 +370,12 @@ wlaczniki_rolet_i_zaluzji[8]^.loop();
 //	GVL.b_led_1 := GVL.douts_ledy1[1];
 
 (*
-stopniowe_wlaczniki_swiatel[1]^.loop();
+sekwencyjne_wlaczniki_swiatel[1]^.loop();
 	GVL.dout_3zModulu2_przewod_14_o_23_1_3_swiatloSlabeGornaLazienka := GVL.douts_swiatloSlabeGornaLazienka[1];
 	GVL.dout_4zModulu2_przewod_14_o_24_1_2_swiatloSrednieGornaLazienka := GVL.douts_swiatloSrednieGornaLazienka[1];
 	GVL.dout_5zModulu2_przewod_14_o_23_1_2_swiatloMocneGornaLazienka := GVL.douts_swiatloMocneGornaLazienka[1];
 *)
+	
 proste_wlaczniki_swiatel[1]^.loop();
 	GVL.dout_1zModulu1_przewod_2_o_4_1_swiatloSalonJadalniaSufit := GVL.douts_swiatloSalonJadalniaSufit[1];
 	
@@ -432,7 +395,7 @@ proste_wlaczniki_swiatel[6]^.loop();
 	GVL.dout_10zModulu1_przewod_3_o_3_1_swiatloKontuarKuchnia := GVL.douts_swiatloKontuarKuchnia[1];	
 	
 proste_wlaczniki_swiatel[7]^.loop();
-	GVL.dout_12zModulu1_przewod_3_o_1_1_swiatloKuchniaPodSzafkami := GVL.douts_swiatloKuchniaPodSzafkami[1];	
+	GVL.dout_6zModulu2_przewod_3_o_1_1_swiatloKuchniaPodSzafkami := GVL.douts_swiatloKuchniaPodSzafkami[1];	
 	
 proste_wlaczniki_swiatel[8]^.loop();
 	GVL.dout_13zModulu1_przewod_4_o_10_1_swiatloGabinet := GVL.douts_swiatloGabinet[1];	
@@ -505,7 +468,7 @@ END_IF
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
-      <LineId Id="1532" Count="39" />
+      <LineId Id="1710" Count="39" />
       <LineId Id="71" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.initializeButtons">
@@ -555,28 +518,17 @@ END_IF
       <LineId Id="402" Count="1" />
       <LineId Id="401" Count="0" />
       <LineId Id="412" Count="2" />
-      <LineId Id="422" Count="0" />
+      <LineId Id="429" Count="0" />
       <LineId Id="397" Count="0" />
       <LineId Id="395" Count="0" />
-      <LineId Id="415" Count="6" />
-      <LineId Id="423" Count="0" />
-      <LineId Id="389" Count="0" />
-      <LineId Id="424" Count="0" />
+      <LineId Id="415" Count="3" />
+      <LineId Id="428" Count="0" />
+      <LineId Id="419" Count="2" />
+      <LineId Id="423" Count="1" />
+      <LineId Id="430" Count="0" />
       <LineId Id="59" Count="0" />
       <LineId Id="62" Count="0" />
       <LineId Id="61" Count="0" />
-    </LineIds>
-    <LineIds Name="MAIN.initializeLightSwitches">
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="MAIN.initializeShuttterSwitches">
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="MAIN.initializeSimpleButtons">
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="MAIN.initializeUpStopDownButtons">
-      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.inputsOutputsLoop">
       <LineId Id="41" Count="1" />
@@ -612,6 +564,7 @@ END_IF
       <LineId Id="177" Count="0" />
       <LineId Id="176" Count="0" />
       <LineId Id="178" Count="2" />
+      <LineId Id="185" Count="0" />
       <LineId Id="64" Count="0" />
       <LineId Id="74" Count="1" />
       <LineId Id="78" Count="5" />

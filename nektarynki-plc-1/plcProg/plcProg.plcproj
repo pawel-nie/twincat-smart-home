@@ -47,7 +47,7 @@
     <Compile Include="POUs\GroupController.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\LightSwitch.TcPOU">
+    <Compile Include="POUs\SequentialLightSwitch.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\log_persistence\EventLogger.TcPOU">

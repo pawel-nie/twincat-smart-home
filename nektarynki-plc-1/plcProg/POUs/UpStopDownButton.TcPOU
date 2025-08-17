@@ -55,8 +55,6 @@ END_VAR
         <ST><![CDATA[pressed(CLK:= digitalInput);
 returnTimer(IN:= pressed.Q);
 
-//GVL.b_led_1 := MAIN.arr1[1]; GVL.b_led_2 := MAIN.arr2[1]; GVL.b_led_10 := MAIN.arr2[2]; GVL.b_led_3 := MAIN.arr3[1]; GVL.b_led_4 := MAIN.arr4[1]; GVL.b_led_12 := MAIN.arr4[2]; //HMI.led4_3 := MAIN.arr4[3];		
-
 IF pressed.Q THEN
 	readyToRelease := TRUE;
 	
@@ -140,7 +138,8 @@ END_FOR
       <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="UpStopDownButton.loop">
-      <LineId Id="84" Count="15" />
+      <LineId Id="84" Count="1" />
+      <LineId Id="88" Count="11" />
       <LineId Id="115" Count="1" />
       <LineId Id="106" Count="5" />
       <LineId Id="68" Count="0" />

@@ -8,7 +8,7 @@ VAR_GLOBAL CONSTANT
 	MAX_SIMPLE_OUTPUTS : INT := 3;
 	
 	MAX_SHUTTERS : INT := 11;
-	MAX_SMART_LIGHTS : INT := 1;//TODO 50 ALBO MNIEJ;
+	MAX_SEQUENTIAL_SWITCHES : INT := 0;//TODO 50 ALBO MNIEJ;
 	MAX_SIMPLE_BUTTONS : INT := 18; //TODO PEWNIE WIECEJ
 END_VAR
 
@@ -40,6 +40,7 @@ VAR_GLOBAL
 	din_15zModulu1_przewod_4_s_21_1_slupekKuchnia_1z4_pomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 1/4
 	din_16zModulu1_przewod_4_s_21_1_slupekKuchnia_2z4_bialoniebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik poczworny w kuchni na slupku 2/4
 
+	//todo swiatlo kontuar led, swiatlo zewnetrzne nad drzwiami
 	din_03zModulu2_przewod_3_s_30_1_kuchnia_2z2_zielony AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia gora
     din_04zModulu2_przewod_3_s_30_1_kuchnia_1z2_niebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w kuchni kuchnia dol
 
@@ -78,6 +79,7 @@ VAR_GLOBAL
 	din_01zModulu4_przewod_11_s_42_1_rodzicow_1z1_bialobrazowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w sypialni rodzicow przy drzwiach 1z1 lub wlacznik przy lozku po lewej 2/2 lub wlacznik przy lozku po prawej 2/2
     din_02zModulu4_przewod_11_s_42_1_rodzicow_1z1_bialopomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w sypialni rodzicow przy drzwiach 1z1 lub wlacznik przy balkonie 1/1
 	din_03zModulu4_przewod_11_s_42_1_rodzicow_1z2_bialoniebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w sypialni rodzicow przy drzwiach 1z2 lub wlacznik przy lozku po lewej 1/1 lub wlacznik przy lozku po prawej 1/1
+	//todo wlacznik roletowy garaz
 	
     din_1_14_14 AT %I* : BOOL;
 	din_1_15_15 AT %I* : BOOL;
@@ -158,7 +160,7 @@ VAR_GLOBAL
 	dout_4zModulu1_przewod_2_o_6_1_swiatloSrodekSalonuSufit AT %Q* : BOOL; //2-o-6-1
 		douts_swiatloSrodekSalonuSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
-	dout_5zModulu1_przewod_swiatloPrzedDomem AT %Q* : BOOL; //frontowe pod balkoenem
+	dout_5zModulu1_przewod_swiatloPrzedDomem AT %Q* : BOOL; //frontowe pod balkonem
 		douts_swiatloPrzedDomem : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
 	dout_6zModulu1_przewod_podbitki AT %Q* : BOOL; //podbitki
@@ -178,15 +180,9 @@ VAR_GLOBAL
 		
 	dout_11zModulu1_przewod_3_o_2_1_swiatloKuchniaSufit AT %Q* : BOOL; //3_o_2_1
 		douts_swiatloKuchniaSufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-		
-	dout_12zModulu1_przewod_3_o_1_1_swiatloKuchniaPodSzafkami AT %Q* : BOOL; //3_o_1_1
-		douts_swiatloKuchniaPodSzafkami : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-		
+			
 	dout_13zModulu1_przewod_4_o_10_1_swiatloGabinet AT %Q* : BOOL; //4_o_9_1, 4_o_10_1
 		douts_swiatloGabinet : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-
-	dout_14zModulu1_przewod_xxxxxx_swiatloTrepy AT %Q* : BOOL; //xxxxx
-		douts_swiatloTrepy : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
 	dout_15zModulu1_przewod_18_o_18_1_2_swiatloKorytarzPunktySufit AT %Q* : BOOL; //18_o_18_1 zasilanie z L
 		douts_swiatloKorytarzPunktySufit : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
@@ -196,9 +192,6 @@ VAR_GLOBAL
 
 	dout_8zModulu1_przewod_11_o_18_1_3_swiatloToaletkaSypialniaRodzicow AT %Q* : BOOL; //11_o_18_1_3
 		douts_swiatloToaletkaSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
-		
-	//dout_xxxxxxxx_przewod_xxxxxx_swiatlo AT %Q* : BOOL; //xxxxx
-	//	douts_swiatloNiskiSufitSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
 	dout_12zModulu1_przewod_11_o_18_1_2_swiatloNiskiIWysokiSufitSypialniaRodzicow AT %Q* : BOOL; //11_o_18_1_3
 		douts_swiatloNiskiIWysokiSufitSypialniaRodzicow : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
@@ -218,8 +211,15 @@ VAR_GLOBAL
 	dout_5zModulu2_przewod_14_o_23_1_2_swiatloMocneGornaLazienka AT %Q* : BOOL; //14_o_23_1_2 
 		douts_swiatloMocneGornaLazienka : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
+	dout_6zModulu2_przewod_3_o_1_1_swiatloKuchniaPodSzafkami AT %Q* : BOOL; //3_o_1_1
+		douts_swiatloKuchniaPodSzafkami : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 	
-
+	dout_7zModulu2_przewod_xxxxxx_swiatloTrepy AT %Q* : BOOL; //17-o-12-1,18-o-13-1
+		douts_swiatloTrepy : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
+	dout_8zModulu2_przewod_18_o_14_1_swiatloKorytarzPrzypodlogowe AT %Q* : BOOL; //18-o-14-1
+		douts_swiatloKorytarzPrzypodlogowe : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
+		
 	dout_xxxxxxxx_przewod_xxxxxx_swiatloGaraz AT %Q* : BOOL; //xxxxx
 		douts_swiatloGaraz : ARRAY[1..MAX_LIGHT_OUTPUTS_PER_LEVEL] OF BOOL;
 		
