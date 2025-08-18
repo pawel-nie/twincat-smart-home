@@ -103,13 +103,13 @@ END_VAR]]></Declaration>
 //		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 1 - ', str2:='turning off all lights', str3:=getSource());
 //		MAIN.groupController.requestLightsOff();
 		
-	2:
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2 - ', str2:='opening all shutters', str3:=getSource());
-		MAIN.groupController.requestShuttersOpen();
+//	2:
+//		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 2 - ', str2:='opening all shutters', str3:=getSource());
+//		MAIN.groupController.requestShuttersOpen();
 		
-	4:
-		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 4 - ', str2:='closing all shutters', str3:=getSource());
-		MAIN.groupController.requestShuttersClose();
+//	4:
+//		GVL.EventLogger.print3(level:=TcEventSeverity.Info, str1:='Special action for button 4 - ', str2:='closing all shutters', str3:=getSource());
+//		MAIN.groupController.requestShuttersClose();
 		
 END_CASE]]></ST>
       </Implementation>

@@ -80,6 +80,13 @@ VAR_GLOBAL
     din_02zModulu4_przewod_11_s_42_1_rodzicow_1z1_bialopomaranczowy AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w sypialni rodzicow przy drzwiach 1z1 lub wlacznik przy balkonie 1/1
 	din_03zModulu4_przewod_11_s_42_1_rodzicow_1z2_bialoniebieski AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik swiatla w sypialni rodzicow przy drzwiach 1z2 lub wlacznik przy lozku po lewej 1/1 lub wlacznik przy lozku po prawej 1/1
 	//todo wlacznik roletowy garaz
+	din_11zModulu4_przewod_7_s_100_1_garaz_1z6_braszowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w garazu przu drzwiach pralni 1/6 kotlownia góra
+    din_12zModulu4_przewod_7_s_100_1_garaz_2z6_bialobrazowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w garazu przu drzwiach pralni 2/6 kotlownia dol
+	din_13zModulu4_przewod_7_s_100_1_garaz_3z6_pomaranczowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w garazu przu drzwiach pralni 3/6 warsztat góra
+    din_14zModulu4_przewod_7_s_100_1_garaz_4z6_bialopomaranczowy  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w garazu przu drzwiach pralni 4/6 warsztat dol
+	din_15zModulu4_przewod_7_s_100_1_garaz_5z6_niebieski  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w garazu przu drzwiach pralni 5/6 potrójne góra
+    din_16zModulu4_przewod_7_s_100_1_garaz_6z6_bialoniebieski  AT %I* : BOOL; //zasilanie bialo-zielony: Wlacznik roletowy w garazu przu drzwiach pralni 6/6 potrójne dol
+
 	
     din_1_14_14 AT %I* : BOOL;
 	din_1_15_15 AT %I* : BOOL;

@@ -182,32 +182,31 @@ wlacznik_8_zaluzja_okno_bez_balkonu(ID:=8, name:='Wlacznik zaluzji okna w sypial
 		down_outputs:=GVL.douts_16_zaluzja_okno_bez_balkonu_w_dol, 
 		shortTime:=T#500MS, longTime:= T#37S);
 wlaczniki_rolet_i_zaluzji[8] := ADR(wlacznik_8_zaluzja_okno_bez_balkonu);
-(*
+
 wlacznik_9_roleta_kotlownia(ID:=9, name:='Wlacznik rolety okna w kotlowni', 
-		digitalInputUp:=GVL.din_35,
-		digitalInputDown:=GVL.din_36,
+		digitalInputUp:=GVL.din_11zModulu4_przewod_7_s_100_1_garaz_1z6_braszowy,
+		digitalInputDown:=GVL.din_12zModulu4_przewod_7_s_100_1_garaz_2z6_bialobrazowy,
 		up_outputs:=GVL.douts_17_roleta_kotlownia_w_gore, 
 		down_outputs:=GVL.douts_18_roleta_kotlownia_w_dol, 
-		shortTime:=T#250MS, longTime:= T#25S);
+		shortTime:=T#500MS, longTime:= T#13S);
 wlaczniki_rolet_i_zaluzji[9] := ADR(wlacznik_9_roleta_kotlownia);
 
 wlacznik_10_roleta_warsztat(ID:=10, name:='Wlacznik rolety okna w warsztacie', 
-		digitalInputUp:=GVL.din_37,
-		digitalInputDown:=GVL.din_38,
+		digitalInputUp:=GVL.din_13zModulu4_przewod_7_s_100_1_garaz_3z6_pomaranczowy,
+		digitalInputDown:=GVL.din_14zModulu4_przewod_7_s_100_1_garaz_4z6_bialopomaranczowy,
 		up_outputs:=GVL.douts_19_roleta_warsztat_w_gore, 
 		down_outputs:=GVL.douts_20_roleta_warsztat_w_dol, 
-		shortTime:=T#250MS, longTime:= T#25S);
+		shortTime:=T#500MS, longTime:= T#13S);
 wlaczniki_rolet_i_zaluzji[10] := ADR(wlacznik_10_roleta_warsztat);
 
 wlacznik_11_rolety_garaz(ID:=11, name:='Wlacznik rolety okna w kotlowni', 
-		digitalInputUp:=GVL.din_39,
-		digitalInputDown:=GVL.din_40,
+		digitalInputUp:=GVL.din_15zModulu4_przewod_7_s_100_1_garaz_5z6_niebieski,
+		digitalInputDown:=GVL.din_16zModulu4_przewod_7_s_100_1_garaz_6z6_bialoniebieski,
 		up_outputs:=GVL.douts_21_roleta_kotlownia_w_gore, 
 		down_outputs:=GVL.douts_22_roleta_kotlownia_w_dol, 
-		shortTime:=T#250MS, longTime:= T#25S);
+		shortTime:=T#500MS, longTime:= T#13S);
 wlaczniki_rolet_i_zaluzji[11] := ADR(wlacznik_11_rolety_garaz);
 
-*)
 
 wlacznik_12_swiatlo_w_jadalni(ID:=12, name:='El. wl. sw. w przedpokoju 1/4 lub wl. sw. poczworny w kuchni na slupku 3/4',
 		digitalInput:=GVL.din_10zModulu1_przewod_1_s_25_1_koniecPrzedpokojuElektronicznyPoczworny_1z4_brazowy, outputs:=GVL.douts_swiatloSalonJadalniaSufit,
@@ -357,8 +356,19 @@ wlaczniki_rolet_i_zaluzji[7]^.loop();
 wlaczniki_rolet_i_zaluzji[8]^.loop();
 	GVL.dout_15_zaluzja_okno_bez_balkonu_w_gore := GVL.douts_15_zaluzja_okno_bez_balkonu_w_gore[1];
 	GVL.dout_16_zaluzja_okno_bez_balkonu_w_dol := GVL.douts_16_zaluzja_okno_bez_balkonu_w_dol[1];
+	
+wlaczniki_rolet_i_zaluzji[9]^.loop();
+	GVL.dout_17_roleta_kotlownia_w_gore := GVL.douts_17_roleta_kotlownia_w_gore[1];
+	GVL.dout_18_roleta_kotlownia_w_dol := GVL.douts_18_roleta_kotlownia_w_dol[1];
 
-//TODO pozostale wlaczniki rolet
+wlaczniki_rolet_i_zaluzji[10]^.loop();
+	GVL.dout_19_roleta_warsztat_w_gore := GVL.douts_19_roleta_warsztat_w_gore[1];
+	GVL.dout_20_roleta_warsztat_w_dol := GVL.douts_20_roleta_warsztat_w_dol[1];
+	
+wlaczniki_rolet_i_zaluzji[11]^.loop();
+	GVL.dout_21_roleta_kotlownia_w_gore := GVL.douts_21_roleta_kotlownia_w_gore[1];
+	GVL.dout_22_roleta_kotlownia_w_dol := GVL.douts_22_roleta_kotlownia_w_dol[1];
+	
 
 
 //wlaczniki_swiatel[1]^.loop();
@@ -474,7 +484,8 @@ END_IF
     <LineIds Name="MAIN.initializeButtons">
       <LineId Id="208" Count="56" />
       <LineId Id="383" Count="0" />
-      <LineId Id="266" Count="32" />
+      <LineId Id="266" Count="30" />
+      <LineId Id="298" Count="0" />
       <LineId Id="300" Count="0" />
       <LineId Id="302" Count="3" />
       <LineId Id="331" Count="0" />
@@ -550,8 +561,15 @@ END_IF
       <LineId Id="158" Count="0" />
       <LineId Id="134" Count="1" />
       <LineId Id="133" Count="0" />
+      <LineId Id="189" Count="0" />
+      <LineId Id="191" Count="1" />
+      <LineId Id="190" Count="0" />
+      <LineId Id="193" Count="2" />
       <LineId Id="45" Count="0" />
-      <LineId Id="29" Count="0" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="198" Count="1" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="200" Count="0" />
       <LineId Id="47" Count="0" />
       <LineId Id="59" Count="1" />
       <LineId Id="71" Count="0" />
